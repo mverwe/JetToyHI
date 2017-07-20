@@ -14,6 +14,7 @@ using namespace std;
 #include "pythiaEvent.hh"
 #include "csSubtractor.hh"
 #include "softDropGroomer.hh"
+#include "softDropCounter.hh"
 #include "treeWriter.hh"
 #include "jetMatcher.hh"
 
@@ -124,12 +125,16 @@ int main () {
     std::vector<double> zgCSSD = sdgCS.getZgs();
     std::vector<int> ndropCSSD = sdgCS.getNDroppedBranches();
 
-    // cout <<   "CS SD      pt y phi zg ndrop" << endl;
+    softDropCounter sdcCS(0.1, 0.0, 0.4, 0.1);
+    sdcCS.run(jetsCS);
+    std::vector<double> nCSSD = sdcCS.calculateNSD(0.0);
+
+    // cout <<   "CS SD      pt y phi zg ndrop nsd" << endl;
     // for(unsigned int ij = 0; ij<jetsCSSD.size(); ++ij) {
     //   if(jetsCSSD[ij].pt()>20.)
     //     std::cout << "jet " << jetsCSSD[ij].pt() << " " 
     //               << jetsCSSD[ij].rap() << " " << jetsCSSD[ij].phi() << " "
-    //               << zgCSSD[ij] << " " << ndropCSSD[ij] << std::endl;
+    //               << zgCSSD[ij] << " " << ndropCSSD[ij] << " " << nSD[ij] << std::endl;
 
     // }
 
@@ -158,6 +163,7 @@ int main () {
     jmCS.setTagJets(jetsSig);
     jmCS.matchJets();
     std::vector<fastjet::PseudoJet> jetsCSMatch = jmCS.getBaseJetsOrderedToTag();
+    std::vector<double> nCSSDMatch = jmCS.reorderedToTag(nCSSD);
 
     jetMatcher jmCSSD;
     jmCSSD.setMaxDist(R);
@@ -184,6 +190,7 @@ int main () {
     trw.addIntCollection("ndropGenSD",ndropSigSDMatch);
     trw.addJetCollection("csJetSD",jetsCSSDMatch);
     trw.addDoubleCollection("zgCSSD",zgCSSDMatch);
+    trw.addDoubleCollection("nCSSD",nCSSDMatch);
     trw.addIntCollection("ndropCSSD",ndropCSSDMatch);
 
     // trw.addIntCollection("ndropGen",ndropSigSD);
