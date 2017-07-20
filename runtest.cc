@@ -6,15 +6,24 @@
 using namespace fastjet;
 using namespace std;
 
+//root stuff
+#include "TFile.h"
+#include "TTree.h"
+
 #include "thermalEvent.hh"
 #include "pythiaEvent.hh"
 #include "csSubtractor.hh"
 #include "softDropGroomer.hh"
+#include "treeWriter.hh"
 
 int main () {
 
   // Number of events, generated and listed ones.
   unsigned int nEvent    = 2;
+
+  //to write info to root tree
+  treeWriter trw;
+  trw.setTreeName("jetTree");
 
   //event generators
   thermalEvent thrm;
@@ -28,6 +37,9 @@ int main () {
   fastjet::GhostedAreaSpec ghost_spec(ghost_etamax, active_area_repeats, ghost_area);
   fastjet::AreaDefinition area_def = fastjet::AreaDefinition(fastjet::active_area,ghost_spec);
   JetDefinition jet_def(antikt_algorithm, R);
+
+  //the stuff you want to store in the tree
+  std::vector<double> zgSigSD;
 
   for(unsigned int ie = 0; ie<nEvent; ++ie) {
 
@@ -127,7 +139,8 @@ int main () {
     sdgSig.setR0(R);
     sdgSig.setInputJets(jetsSig);
     std::vector<fastjet::PseudoJet> jetsSigSD = sdgSig.doGrooming();
-    std::vector<double> zgSigSD = sdgSig.getZgs();
+    //std::vector<double> zgSigSD = sdgSig.getZgs();
+    zgSigSD = sdgSig.getZgs();
     std::vector<int> ndropSigSD = sdgSig.getNDroppedBranches();
 
     cout <<   "Sig SD      pt y phi zg ndrop" << endl;
@@ -139,7 +152,17 @@ int main () {
 
     }
 
-    
+
+    trw.addDoubleCollection("zgGen",zgSigSD);
+
+    trw.fillTree();
     
   }//event loop
+
+  TTree *trOut = trw.getTree();
+
+  TFile *fout = new TFile("JetToyHIResult.root","RECREATE");
+  trOut->Write();
+  fout->Write();
+  fout->Close();
 }
