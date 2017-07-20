@@ -28,7 +28,7 @@ public :
   thermalEvent() {
 
     meanpt_ = 0.7;
-    mult_   = 9000;
+    mult_   = 12000;
     etaMin_ = -3.;
     etaMax_ = 3.;
     
@@ -38,6 +38,10 @@ public :
     
   }
 
+  void setMult(unsigned int m) { mult_ = m; }
+  void setMult(double mpt)     { meanpt_ = mpt; }
+  void setEtaRange(double min, double max) { etaMin_ =  min; etaMax_ =  max; }
+  
   std::vector<fastjet::PseudoJet> createThermalEvent() {
 
     std::vector<fastjet::PseudoJet> particles;
