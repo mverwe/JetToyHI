@@ -23,7 +23,7 @@ class treeWriter {
   std::map<std::string,std::vector<double>  > doubleMaps_;
   
   
-  std::vector<std::map<std::string,std::vector<fastjet::PseudoJet> > > jetMaps_;
+  // std::vector<std::map<std::string,std::vector<fastjet::PseudoJet> > > jetMaps_;
     
  public :
   treeWriter() {
@@ -38,23 +38,40 @@ class treeWriter {
   void fillTree() {treeOut_->Fill();}
 
   void addJetCollection(std::string name, std::vector<fastjet::PseudoJet> v) {
-    std::map<std::string,std::vector<fastjet::PseudoJet> > myMap;
-    for(fastjet::PseudoJet val : v)
-      myMap[name].push_back(val);
-    jetMaps_.push_back(myMap);
+
+    //we are storing the pt, eta, phi and mass of the jets
+    std::vector<double> pt;  pt.reserve(v.size());
+    std::vector<double> eta; eta.reserve(v.size());
+    std::vector<double> phi; phi.reserve(v.size());
+    std::vector<double> m;   m.reserve(v.size());
+    for( fastjet::PseudoJet jet : v ) {
+      pt.push_back(jet.pt());
+      eta.push_back(jet.eta());
+      phi.push_back(jet.phi());
+      m.push_back(jet.m());
+    }
+    addDoubleCollection(name+"Pt",pt);
+    addDoubleCollection(name+"Eta",eta);
+    addDoubleCollection(name+"Phi",phi);
+    addDoubleCollection(name+"M",m);
   }
 
   void addDoubleCollection(std::string name, std::vector<double> v) {
     doubleMaps_[name] = v;
-    bookBranchVec(name);
+    bookBranchDoubleVec(name);
   }
 
   void addIntCollection(std::string name, std::vector<int> v) {
     intMaps_[name] = v;
+    bookBranchIntVec(name);
   }
 
-  void bookBranchVec(std::string name) { //, std::vector<double> var) {
+  void bookBranchDoubleVec(std::string name) {
     if(!treeOut_->GetBranch(name.c_str())) treeOut_->Branch(name.c_str(),&doubleMaps_[name]);
+  }
+
+  void bookBranchIntVec(std::string name) {
+    if(!treeOut_->GetBranch(name.c_str())) treeOut_->Branch(name.c_str(),&intMaps_[name]);
   }
 
 };

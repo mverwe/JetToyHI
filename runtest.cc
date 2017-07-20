@@ -153,7 +153,9 @@ int main () {
     }
 
 
+    trw.addJetCollection("sigSDJet",jetsSigSD);
     trw.addDoubleCollection("zgGen",zgSigSD);
+    trw.addIntCollection("ndropGen",ndropSigSD);
 
     trw.fillTree();
     
