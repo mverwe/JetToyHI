@@ -32,13 +32,11 @@ public :
     zcut_ = 0.1;
     beta_ = 0.;
     r0_   = 0.4;
-    jetPtMin_ = 10.;
   }
 
   void setZcut(double c)     { zcut_ = c; }
   void setBeta(double b)     { beta_ = b; }
   void setR0(double r)       { r0_   = r; }
-  void setJetPtMin(double m) { jetPtMin_ = m; }
 
   void setInputJets(std::vector<fastjet::PseudoJet> v) { fjInputs_ = v; }
 
@@ -51,6 +49,7 @@ public :
     fjOutputs_.reserve(fjInputs_.size());
     zg_.reserve(fjInputs_.size());
     drBranches_.reserve(fjInputs_.size());
+    
     for(fastjet::PseudoJet& jet : fjInputs_) {
       std::vector<fastjet::PseudoJet> particles, ghosts;
       fastjet::SelectorIsPureGhost().sift(jet.constituents(), ghosts, particles);
@@ -58,14 +57,22 @@ public :
       fastjet::JetDefinition jet_def(fastjet::cambridge_algorithm,999.);
       fastjet::ClusterSequence cs(particles, jet_def);
 
-      std::vector<fastjet::PseudoJet> tempJets = fastjet::sorted_by_pt(cs.inclusive_jets(jetPtMin_));
-      if(tempJets.size()<1) continue;
-
+      std::vector<fastjet::PseudoJet> tempJets = fastjet::sorted_by_pt(cs.inclusive_jets());
+      if(tempJets.size()<1) {
+        fjOutputs_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
+        zg_.push_back(-1.);
+        drBranches_.push_back(-1.);
+        continue;
+      }
+      
       fastjet::contrib::SoftDrop * sd = new fastjet::contrib::SoftDrop(beta_, zcut_, r0_ );
       sd->set_verbose_structure(true);
 
       fastjet::PseudoJet transformedJet = tempJets[0];
       if ( transformedJet == 0 ) {
+        fjOutputs_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
+        zg_.push_back(-1.);
+        drBranches_.push_back(-1.);
         if(sd) { delete sd; sd = 0;}
         continue;
       }
@@ -82,7 +89,6 @@ public :
 
       if(sd) { delete sd; sd = 0;}
     }
-
     return fjOutputs_;
   }
 };

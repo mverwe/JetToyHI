@@ -83,7 +83,10 @@ public :
     csjets.reserve(jets.size());
     for(fastjet::PseudoJet& jet : jets) {
       fastjet::PseudoJet subtracted_jet = subtractor_(jet);
-      csjets.push_back(subtracted_jet);
+      std::vector<fastjet::PseudoJet> particles, ghosts;
+      fastjet::SelectorIsPureGhost().sift(subtracted_jet.constituents(), ghosts, particles);
+      if(particles.size()>0.) //don't store ghost jets
+        csjets.push_back(subtracted_jet);
     }
 
     return csjets;
