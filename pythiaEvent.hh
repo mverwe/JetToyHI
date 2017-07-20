@@ -23,7 +23,7 @@ public :
     // MV: selected some ATLAS tune - no idea how good it is - but missing LHPDF so running default tune now
     pythia.readString("Beams:eCM = 5002.");
     pythia.readString("HardQCD:all = on");
-    pythia.readString("PhaseSpace:pTHatMin = 200.");
+    pythia.readString("PhaseSpace:pTHatMin = 120.");
     pythia.readString("Next:numberShowInfo = 0");
     pythia.readString("Next:numberShowProcess = 0");
     pythia.readString("Next:numberShowEvent = 0");
