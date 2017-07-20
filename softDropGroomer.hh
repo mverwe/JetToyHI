@@ -74,6 +74,7 @@ public :
       double zg = transformedJet.structure_of<fastjet::contrib::SoftDrop>().symmetry();
       int ndrop = transformedJet.structure_of<fastjet::contrib::SoftDrop>().dropped_count();
       //std::vector<double> dropped_symmetry = transformedJet.structure_of<fastjet::contrib::SoftDrop>().dropped_symmetry();
+      // std::cout << "ptG: " << transformedJet.pt() << " zg: " << zg << std::endl;
       
       fjOutputs_.push_back( transformedJet ); //put CA reclusterd jet after softDrop into vector
       zg_.push_back(zg);

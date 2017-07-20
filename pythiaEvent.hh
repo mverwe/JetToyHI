@@ -21,13 +21,15 @@ public :
 
     // Generator. LHC process and output selection. Initialization.
     // MV: selected some ATLAS tune - no idea how good it is - but missing LHPDF so running default tune now
-    pythia.readString("Beams:eCM = 14000.");
+    pythia.readString("Beams:eCM = 5002.");
     pythia.readString("HardQCD:all = on");
     pythia.readString("PhaseSpace:pTHatMin = 200.");
     pythia.readString("Next:numberShowInfo = 0");
     pythia.readString("Next:numberShowProcess = 0");
     pythia.readString("Next:numberShowEvent = 0");
     //pythia.readString("Tune:pp = 19");
+    pythia.readString("Random:setSeed = on");
+    pythia.readString("Random:seed = 0");
     pythia.init();
 
   }
