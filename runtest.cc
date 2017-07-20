@@ -15,11 +15,12 @@ using namespace std;
 #include "csSubtractor.hh"
 #include "softDropGroomer.hh"
 #include "treeWriter.hh"
+#include "jetMatcher.hh"
 
 int main () {
 
   // Number of events, generated and listed ones.
-  unsigned int nEvent    = 2;
+  unsigned int nEvent    = 1;
 
   //to write info to root tree
   treeWriter trw;
@@ -152,10 +153,35 @@ int main () {
 
     }
 
+    jetMatcher jmCS;
+    jmCS.setMaxDist(R);
+    jmCS.setBaseJets(jetsCS);
+    jmCS.setTagJets(jetsSig);
+    jmCS.matchJets();
+    std::vector<fastjet::PseudoJet> jetsCSMatch = jmCS.getBaseJetsOrderedToTag();
 
-    trw.addJetCollection("sigSDJet",jetsSigSD);
-    trw.addDoubleCollection("zgGen",zgSigSD);
-    trw.addIntCollection("ndropGen",ndropSigSD);
+    jetMatcher jmCSSD;
+    jmCSSD.setMaxDist(R);
+    jmCSSD.setBaseJets(jetsCSSD);
+    jmCSSD.setTagJets(jetsSig);
+    jmCSSD.matchJets();
+    std::vector<fastjet::PseudoJet> jetsCSSDMatch = jmCSSD.getBaseJetsOrderedToTag();
+
+    jetMatcher jmSigSD;
+    jmSigSD.setMaxDist(R);
+    jmSigSD.setBaseJets(jetsSigSD);
+    jmSigSD.setTagJets(jetsSig);
+    jmSigSD.matchJets();
+    std::vector<fastjet::PseudoJet> jetsSigSDMatch = jmSigSD.getBaseJetsOrderedToTag();
+    
+    trw.addJetCollection("sigJet",jetsSig);
+    trw.addJetCollection("csJet",jetsCSMatch);
+    trw.addJetCollection("sigJetSD",jetsSigSDMatch);
+    trw.addJetCollection("csJetSD",jetsCSSDMatch);
+
+    // trw.addJetCollection("sigSDJet",jetsSigSD);
+    // trw.addDoubleCollection("zgGen",zgSigSD);
+    // trw.addIntCollection("ndropGen",ndropSigSD);
 
     trw.fillTree();
     

@@ -21,10 +21,7 @@ class treeWriter {
   const char *treeName_;
   std::map<std::string,std::vector<int>  > intMaps_;
   std::map<std::string,std::vector<double>  > doubleMaps_;
-  
-  
-  // std::vector<std::map<std::string,std::vector<fastjet::PseudoJet> > > jetMaps_;
-    
+      
  public :
   treeWriter() {
     treeOut_ = new TTree("treeOut","JetToyHI tree");
