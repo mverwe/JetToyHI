@@ -20,17 +20,19 @@ private :
   double alpha_;
   double rParam_;
   double ghostArea_;
+  double rho_;
+  double rhom_;
   std::vector<fastjet::PseudoJet> fjInputs_;
 
   contrib::ConstituentSubtractor subtractor_;
-  
 
+  
 public :
   csSubtractor() {
     alpha_ = 1.;
     rParam_ = 0.4;
     ghostArea_ = 0.005;
-
+    
     subtractor_.set_distance_type(contrib::ConstituentSubtractor::deltaR);
     subtractor_.set_max_distance(rParam_); //free parameter for the maximal allowed distance between particle i and ghost k
     subtractor_.set_alpha(alpha_); // free parameter for the distance measure (the exponent of particle pt). Note that in older versions of the package alpha was multiplied by two but in newer versions this is not the case anymore
@@ -43,6 +45,9 @@ public :
   void setGhostArea(double a) { ghostArea_ = a; }
 
   void setInputParticles(std::vector<fastjet::PseudoJet> v) { fjInputs_ = v; }
+
+  double getRho()  const { return rho_; }
+  double getRhoM() const { return rhom_; }
   
   std::vector<fastjet::PseudoJet> doSubtraction() {
 
@@ -63,6 +68,9 @@ public :
     fastjet::Selector selector = fastjet::SelectorAbsRapMax(4.-0.4) * (!fastjet::SelectorNHardest(2));
     fastjet::JetMedianBackgroundEstimator bkgd_estimator(selector, jet_def_bkgd, area_def_bkgd);
     bkgd_estimator.set_particles(fjInputs_);
+
+    rho_ = bkgd_estimator.rho();
+    rhom_ = bkgd_estimator.rho_m();
 
     /*
     cout << "Background estimation:" << endl;
