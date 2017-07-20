@@ -1,6 +1,6 @@
 # JetToyHI
 
-## Installation
+## Install on lxplus
 
 First install fastjet and the contrib package (you only have to do this once)
 ```

@@ -142,6 +142,36 @@ class jetMatcher {
   }
 
   //-------------------------------------------------------------------------------
+  std::vector<fastjet::PseudoJet> reorderedToBase(std::vector<fastjet::PseudoJet> v) {
+    std::vector<fastjet::PseudoJet> vecReordered;
+    vecReordered.resize(fjBase_.size());
+    if(v.size() != fjTag_.size()) {
+      std::cout << "WARNING: vector size not compatible. Not ordering" << std::endl;
+      return vecReordered;
+    }
+    for (unsigned int i = 0; i < v.size(); i++) {
+      if(fjTagMatchIds_[i]<0) continue;
+      vecReordered[fjTagMatchIds_[i]] = v[i];
+    }
+    return vecReordered;
+  }
+
+  //-------------------------------------------------------------------------------
+  std::vector<fastjet::PseudoJet> reorderedToTag(std::vector<fastjet::PseudoJet> v) {
+    std::vector<fastjet::PseudoJet> vecReordered;
+    vecReordered.resize(fjTag_.size());
+    if(v.size() != fjBase_.size()) {
+      std::cout << "WARNING: vector size not compatible. Not ordering" << std::endl;
+      return vecReordered;
+    }
+    for (unsigned int i = 0; i < v.size(); i++) {
+      if(fjBaseMatchIds_[i]<0) continue;
+      vecReordered[fjBaseMatchIds_[i]] = v[i];
+    }
+    return vecReordered;
+  }
+  
+  //-------------------------------------------------------------------------------
   std::vector<double> reorderedToBase(std::vector<double> v) {
     std::vector<double> vecReordered;
     vecReordered.resize(fjBase_.size());

@@ -40,13 +40,10 @@ int main () {
   fastjet::AreaDefinition area_def = fastjet::AreaDefinition(fastjet::active_area,ghost_spec);
   JetDefinition jet_def(antikt_algorithm, R);
 
-  //the stuff you want to store in the tree
-  std::vector<double> zgSigSD;
-
   unsigned int entryDiv = ((unsigned int)(nEvent/20));
   for(unsigned int ie = 0; ie<nEvent; ++ie) {
 
-    if(ie%entryDiv == 0) std::cout << "Event #" << ie << std::endl;
+    //if(ie%entryDiv == 0) std::cout << "Event #" << ie << std::endl;
   
     std::vector<fastjet::PseudoJet> particlesBkg = thrm.createThermalEvent();
 
@@ -70,50 +67,10 @@ int main () {
 
     fastjet::ClusterSequenceArea csSig(particlesSig, jet_def, area_def);
     std::vector<fastjet::PseudoJet> jetsSig = sorted_by_pt(csSig.inclusive_jets(10.));
-  
-    // print out some infos
-    //    cout << "Clustering with " << jet_def.description() << endl;
-
-    // print the jets
-    // cout <<   "Bkg        pt y phi" << endl;
-    // for(fastjet::PseudoJet& jet : jetsBkg) {
-    //   vector<PseudoJet> constituents = jet.constituents();
-    //   if(jet.pt()>100.)
-    //     std::cout << "jet " << jet.pt() << " " 
-    //               << jet.rap() << " " << jet.phi()
-    //               << " area: " << jet.area() << " nconst: " << constituents.size() << std::endl;
-    // }
-
-    // cout <<   "Sig        pt y phi" << endl;
-    // for(fastjet::PseudoJet& jet : jetsSig) {
-    //   vector<PseudoJet> constituents = jet.constituents();
-    //   if(jet.pt()>10.)
-    //     std::cout << "jet " << jet.pt() << " " 
-    //               << jet.rap() << " " << jet.phi()
-    //               << " area: " << jet.area() << " nconst: " << constituents.size() << std::endl;
-    // }
-
-    // std::cout << "#jetsMerged: " << jetsMerged.size() << std::endl;
-    // cout <<   "Merged        pt y phi" << endl;
-    // for(fastjet::PseudoJet& jet : jetsMerged) {
-    //   vector<PseudoJet> constituents = jet.constituents();
-    //   if(jet.pt()>100.)
-    //     std::cout << "jet " << jet.pt() << " " 
-    //               << jet.rap() << " " << jet.phi()
-    //               << " area: " << jet.area() << " nconst: " << constituents.size() << std::endl;
-    // }
 
     csSubtractor csSub;
     csSub.setInputParticles(particlesMerged);
     std::vector<fastjet::PseudoJet> jetsCS = csSub.doSubtraction();
-
-    // std::cout << "subtracted #jetsCS: " << jetsCS.size() << std::endl;
-    // cout <<   "CS        pt y phi" << endl;
-    // for(fastjet::PseudoJet& jet : jetsCS) {
-    //   if(jet.pt()>20.)
-    //     std::cout << "jet " << jet.pt() << " " 
-    //               << jet.rap() << " " << jet.phi() << std::endl;
-    // }
 
     //SoftDrop grooming classic
     softDropGroomer sdgCS;
@@ -129,33 +86,14 @@ int main () {
     sdcCS.run(jetsCS);
     std::vector<double> nCSSD = sdcCS.calculateNSD(0.0);
 
-    // cout <<   "CS SD      pt y phi zg ndrop nsd" << endl;
-    // for(unsigned int ij = 0; ij<jetsCSSD.size(); ++ij) {
-    //   if(jetsCSSD[ij].pt()>20.)
-    //     std::cout << "jet " << jetsCSSD[ij].pt() << " " 
-    //               << jetsCSSD[ij].rap() << " " << jetsCSSD[ij].phi() << " "
-    //               << zgCSSD[ij] << " " << ndropCSSD[ij] << " " << nSD[ij] << std::endl;
-
-    // }
-
     softDropGroomer sdgSig;
     sdgSig.setZcut(0.1);
     sdgSig.setBeta(0.);
     sdgSig.setR0(R);
     sdgSig.setInputJets(jetsSig);
     std::vector<fastjet::PseudoJet> jetsSigSD = sdgSig.doGrooming();
-    //std::vector<double> zgSigSD = sdgSig.getZgs();
-    zgSigSD = sdgSig.getZgs();
+    std::vector<double> zgSigSD = sdgSig.getZgs();
     std::vector<int> ndropSigSD = sdgSig.getNDroppedBranches();
-
-    // cout <<   "Sig SD      pt y phi zg ndrop" << endl;
-    // for(unsigned int ij = 0; ij<jetsSigSD.size(); ++ij) {
-    //   if(jetsSigSD[ij].pt()>10.)
-    //     std::cout << "jet " << jetsSigSD[ij].pt() << " " 
-    //               << jetsSigSD[ij].rap() << " " << jetsSigSD[ij].phi() << " "
-    //               << zgSigSD[ij] << " " << ndropSigSD[ij] << std::endl;
-
-    // }
 
     jetMatcher jmCS;
     jmCS.setMaxDist(R);
@@ -163,37 +101,42 @@ int main () {
     jmCS.setTagJets(jetsSig);
     jmCS.matchJets();
     std::vector<fastjet::PseudoJet> jetsCSMatch = jmCS.getBaseJetsOrderedToTag();
+    
+    // jetMatcher jmCSSD;
+    // jmCSSD.setMaxDist(R);
+    // jmCSSD.setBaseJets(jetsCSSD);
+    // jmCSSD.setTagJets(jetsSig);
+    // jmCSSD.matchJets();
+    //std::vector<fastjet::PseudoJet> jetsCSSDMatch = jmCSSD.getBaseJetsOrderedToTag();
+
+    //reorder groomed observables to CS matching order
+    std::vector<fastjet::PseudoJet> jetsCSSDMatch = jmCS.reorderedToTag(jetsCSSD);
+    std::vector<double> zgCSSDMatch = jmCS.reorderedToTag(zgCSSD);
+    std::vector<int> ndropCSSDMatch = jmCS.reorderedToTag(ndropCSSD);
+
     std::vector<double> nCSSDMatch = jmCS.reorderedToTag(nCSSD);
 
-    jetMatcher jmCSSD;
-    jmCSSD.setMaxDist(R);
-    jmCSSD.setBaseJets(jetsCSSD);
-    jmCSSD.setTagJets(jetsSig);
-    jmCSSD.matchJets();
-    std::vector<fastjet::PseudoJet> jetsCSSDMatch = jmCSSD.getBaseJetsOrderedToTag();
-    std::vector<double> zgCSSDMatch = jmCSSD.reorderedToTag(zgCSSD);
-    std::vector<int> ndropCSSDMatch = jmCSSD.reorderedToTag(ndropCSSD);
+    //std::cout << "nCS: " << jetsCS.size() << " nCSSD: " << jetsCSSD.size() << " nCSSD: " << nCSSD.size() << std::endl;
 
-    jetMatcher jmSigSD;
-    jmSigSD.setMaxDist(R);
-    jmSigSD.setBaseJets(jetsSigSD);
-    jmSigSD.setTagJets(jetsSig);
-    jmSigSD.matchJets();
-    std::vector<fastjet::PseudoJet> jetsSigSDMatch = jmSigSD.getBaseJetsOrderedToTag();
-    std::vector<double> zgSigSDMatch = jmSigSD.reorderedToTag(zgSigSD);
-    std::vector<int> ndropSigSDMatch = jmSigSD.reorderedToTag(ndropSigSD);
+    // jetMatcher jmSigSD;
+    // jmSigSD.setMaxDist(R);
+    // jmSigSD.setBaseJets(jetsSigSD);
+    // jmSigSD.setTagJets(jetsSig);
+    // jmSigSD.matchJets();
+    // std::vector<fastjet::PseudoJet> jetsSigSDMatch = jmSigSD.getBaseJetsOrderedToTag();
+    //std::vector<fastjet::PseudoJet> jetsSigSDMatch = jmSig.reorderedToTag();
+    //std::vector<double> zgSigSDMatch = jmSig.reorderedToTag(zgSigSD);
+    //std::vector<int> ndropSigSDMatch = jmSig.reorderedToTag(ndropSigSD);
     
     trw.addJetCollection("sigJet",jetsSig);
     trw.addJetCollection("csJet",jetsCSMatch);
-    trw.addJetCollection("sigJetSD",jetsSigSDMatch);
-    trw.addDoubleCollection("zgGenSD",zgSigSDMatch);
-    trw.addIntCollection("ndropGenSD",ndropSigSDMatch);
+    trw.addJetCollection("sigJetSD",jetsSigSD);
+    trw.addDoubleCollection("zgGenSD",zgSigSD);
+    trw.addIntCollection("ndropGenSD",ndropSigSD);
     trw.addJetCollection("csJetSD",jetsCSSDMatch);
     trw.addDoubleCollection("zgCSSD",zgCSSDMatch);
     trw.addDoubleCollection("nCSSD",nCSSDMatch);
     trw.addIntCollection("ndropCSSD",ndropCSSDMatch);
-
-    // trw.addIntCollection("ndropGen",ndropSigSD);
 
     trw.fillTree();
     
