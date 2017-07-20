@@ -38,6 +38,11 @@ class jetMatcher {
 
     int nJets1 = (int)fjBase_.size();
     int nJets2 = (int)fjTag_.size();
+
+    fjBaseMatchIds_.resize(fjBase_.size());
+    fjTagMatchIds_.resize(fjTag_.size());
+    std::fill(fjBaseMatchIds_.begin(),fjBaseMatchIds_.end(),-1);
+    std::fill(fjTagMatchIds_.begin(),fjTagMatchIds_.end(),-1);
     
     std::vector<int> matchIndex1;
     matchIndex1.resize(nJets2+1);
@@ -68,8 +73,12 @@ class jetMatcher {
           dist = dR;
         }
       }//jet2 loop
-      if(matchIndex2[i]>=0)
+      if(matchIndex2[i]>=0) {
         iFlag[i*nJets2+matchIndex2[i]]+=1;//j closest to i
+        if(jet1.pt()>100.) {
+          std::cout << "loop 1: got match jet pt1: " << jet1.pt() << " pt2: " << fjTag_[matchIndex2[i]].pt() << std::endl;
+        }
+      }
     }//jet1 loop
   
     //other way around
@@ -88,14 +97,15 @@ class jetMatcher {
           dist = dR;
         }
       }
-      if(matchIndex1[j]>=0)
+      if(matchIndex1[j]>=0) {
         iFlag[matchIndex1[j]*nJets2+j]+=2;//i closest to j
-    }
+        if(jet2.pt()>100.) {
+          std::cout << "loop 2: got match jet pt1: " << fjBase_[matchIndex1[j]].pt() << " pt2: " << jet2.pt() << " iFlag: " << iFlag[matchIndex1[j]*nJets2+j] << std::endl;
+        }
+      }
+    }//jet2 loop
 
     // check for "true" correlations
-    fjBaseMatchIds_.resize(fjBase_.size());
-    fjTagMatchIds_.resize(fjTag_.size());
-    
     for (int i = 0; i < nJets1; i++) {
       fastjet::PseudoJet jet1 = fjBase_[i];
       if(fabs(jet1.pt())<1e-6) continue; //remove ghosts
@@ -130,6 +140,7 @@ class jetMatcher {
     std::vector<fastjet::PseudoJet> baseReordered;
     baseReordered.resize(fjTag_.size());
     for (unsigned int i = 0; i < fjBase_.size(); i++) {
+      if(fjBaseMatchIds_[i]<0) continue;
       baseReordered[fjBaseMatchIds_[i]] = fjBase_[i];
     }
     return baseReordered;
