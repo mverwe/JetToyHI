@@ -75,9 +75,6 @@ class jetMatcher {
       }//jet2 loop
       if(matchIndex2[i]>=0) {
         iFlag[i*nJets2+matchIndex2[i]]+=1;//j closest to i
-        if(jet1.pt()>100.) {
-          std::cout << "loop 1: got match jet pt1: " << jet1.pt() << " pt2: " << fjTag_[matchIndex2[i]].pt() << std::endl;
-        }
       }
     }//jet1 loop
   
@@ -99,9 +96,6 @@ class jetMatcher {
       }
       if(matchIndex1[j]>=0) {
         iFlag[matchIndex1[j]*nJets2+j]+=2;//i closest to j
-        if(jet2.pt()>100.) {
-          std::cout << "loop 2: got match jet pt1: " << fjBase_[matchIndex1[j]].pt() << " pt2: " << jet2.pt() << " iFlag: " << iFlag[matchIndex1[j]*nJets2+j] << std::endl;
-        }
       }
     }//jet2 loop
 
@@ -130,6 +124,7 @@ class jetMatcher {
     std::vector<fastjet::PseudoJet> tagReordered;
     tagReordered.resize(fjBase_.size());
     for (unsigned int j = 0; j < fjTag_.size(); j++) {
+      if(fjTagMatchIds_[j]<0) continue;
       tagReordered[fjTagMatchIds_[j]] = fjTag_[j];
     }
     return tagReordered;
@@ -146,6 +141,65 @@ class jetMatcher {
     return baseReordered;
   }
 
+  //-------------------------------------------------------------------------------
+  std::vector<double> reorderedToBase(std::vector<double> v) {
+    std::vector<double> vecReordered;
+    vecReordered.resize(fjBase_.size());
+    if(v.size() != fjTag_.size()) {
+      std::cout << "WARNING: vector size not compatible. Not ordering" << std::endl;
+      return vecReordered;
+    }
+    for (unsigned int i = 0; i < v.size(); i++) {
+      if(fjTagMatchIds_[i]<0) continue;
+      vecReordered[fjTagMatchIds_[i]] = v[i];
+    }
+    return vecReordered;
+  }
+
+  //-------------------------------------------------------------------------------
+  std::vector<double> reorderedToTag(std::vector<double> v) {
+    std::vector<double> vecReordered;
+    vecReordered.resize(fjTag_.size());
+    if(v.size() != fjBase_.size()) {
+      std::cout << "WARNING: vector size not compatible. Not ordering" << std::endl;
+      return vecReordered;
+    }
+    for (unsigned int i = 0; i < v.size(); i++) {
+      if(fjBaseMatchIds_[i]<0) continue;
+      vecReordered[fjBaseMatchIds_[i]] = v[i];
+    }
+    return vecReordered;
+  }
+
+  //-------------------------------------------------------------------------------
+  std::vector<int> reorderedToBase(std::vector<int> v) {
+    std::vector<int> vecReordered;
+    vecReordered.resize(fjBase_.size());
+    if(v.size() != fjTag_.size()) {
+      std::cout << "WARNING: vector size not compatible. Not ordering" << std::endl;
+      return vecReordered;
+    }
+    for (unsigned int i = 0; i < v.size(); i++) {
+      if(fjTagMatchIds_[i]<0) continue;
+      vecReordered[fjTagMatchIds_[i]] = v[i];
+    }
+    return vecReordered;
+  }
+
+  //-------------------------------------------------------------------------------
+  std::vector<int> reorderedToTag(std::vector<int> v) {
+    std::vector<int> vecReordered;
+    vecReordered.resize(fjTag_.size());
+    if(v.size() != fjBase_.size()) {
+      std::cout << "WARNING: vector size not compatible. Not ordering" << std::endl;
+      return vecReordered;
+    }
+    for (unsigned int i = 0; i < v.size(); i++) {
+      if(fjBaseMatchIds_[i]<0) continue;
+      vecReordered[fjBaseMatchIds_[i]] = v[i];
+    }
+    return vecReordered;
+  }
 
 };
 #endif

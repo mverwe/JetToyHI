@@ -48,7 +48,6 @@ public :
 
     // do the clustering with ghosts and get the jets
     //----------------------------------------------------------
-    std::cout << "rParam_: " << rParam_ << std::endl;
     fastjet::JetDefinition jet_def(antikt_algorithm, rParam_);
     fastjet::GhostedAreaSpec ghost_spec(4., 1, ghostArea_);
     fastjet::AreaDefinition area_def = fastjet::AreaDefinition(fastjet::active_area_explicit_ghosts,ghost_spec);
@@ -65,6 +64,7 @@ public :
     fastjet::JetMedianBackgroundEstimator bkgd_estimator(selector, jet_def_bkgd, area_def_bkgd);
     bkgd_estimator.set_particles(fjInputs_);
 
+    /*
     cout << "Background estimation:" << endl;
     cout << "  " << bkgd_estimator.description() << endl << endl;;
     cout << "  Giving, for the full event" << endl;
@@ -75,7 +75,7 @@ public :
     cout << "    sigma_m = " << bkgd_estimator.sigma_m() << endl;
 #endif
     cout << endl;
-    
+    */
     subtractor_.set_background_estimator(&bkgd_estimator);
     subtractor_.set_common_bge_for_rho_and_rhom(true);
 
