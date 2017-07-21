@@ -65,9 +65,9 @@ int main ()
 
     //Embed pythia event into thermal event
     std::vector<fastjet::PseudoJet> particlesMerged;
-    particlesMerged.reserve( particlesSig.size() + particlesBkg.size() ); // preallocate memory
-    particlesMerged.insert( particlesMerged.end(), particlesSig.begin(), particlesSig.end() );
-    particlesMerged.insert( particlesMerged.end(), particlesBkg.begin(), particlesBkg.end() );
+    particlesMerged.reserve(particlesSig.size() + particlesBkg.size()); // preallocate memory
+    particlesMerged.insert(particlesMerged.end(), particlesSig.begin(), particlesSig.end());
+    particlesMerged.insert(particlesMerged.end(), particlesBkg.begin(), particlesBkg.end());
 
     // std::cout << " nBkg: " << particlesBkg.size() << " nSig: " << particlesSig.size() << " nMerged: " << particlesMerged.size() << std::endl;
 
@@ -90,7 +90,7 @@ int main ()
     //---------------------------------------------------------------------------
     
     //run constituent subtraction on hybrid/embedded/merged event
-    csSubtractor csSub(1., -1., 0.005);
+    csSubtractor csSub(1., -1, 0.005);
     csSub.setInputParticles(particlesMerged);
     jetCollection jetCollectionCS(csSub.doSubtraction());
 
@@ -114,7 +114,7 @@ int main ()
     //---------------------------------------------------------------------------
     
     //SoftDrop grooming classic for CS jets
-    softDropGroomer sdgCS(0.1,0.,R);
+    softDropGroomer sdgCS(0.1, 0.0, R);
     jetCollection jetCollectionCSSD(sdgCS.doGrooming(jetCollectionCS.getJet()));
     jetCollectionCSSD.addVector("zgCSSD",    sdgCS.getZgs());
     jetCollectionCSSD.addVector("ndropCSSD", sdgCS.getNDroppedBranches());
@@ -126,7 +126,7 @@ int main ()
     jetCollectionCS.addVector("zCSSD", sdcCS.calculateNSD(1.0));
 
     //SoftDrop grooming classic for signal jets
-    softDropGroomer sdgSig(0.1,0.,R);
+    softDropGroomer sdgSig(0.1, 0., R);
     jetCollection jetCollectionSigSD(sdgSig.doGrooming(jetCollectionSig.getJet()));
     jetCollectionSigSD.addVector("zgSigSD",    sdgSig.getZgs());
     jetCollectionSigSD.addVector("ndropSigSD", sdgSig.getNDroppedBranches());
@@ -142,6 +142,7 @@ int main ()
     jmCS.setBaseJets(jetCollectionCS);
     jmCS.setTagJets(jetCollectionSig);
     jmCS.matchJets();
+
     jmCS.reorderedToTag(jetCollectionCS);
     jmCS.reorderedToTag(jetCollectionCSSD);
 
@@ -150,6 +151,7 @@ int main ()
     jmSK.setBaseJets(jetCollectionSK);
     jmSK.setTagJets(jetCollectionSig);
     jmSK.matchJets();
+    
     jmSK.reorderedToTag(jetCollectionSK);
 
     //std::cout << "nCS: " << jetsCS.size() << " nCSSD: " << jetsCSSD.size() << " nCSSD: " << nCSSD.size() << std::endl;
@@ -159,15 +161,16 @@ int main ()
     //---------------------------------------------------------------------------
     
     //Give variable we want to write out to treeWriter.
-    //Only vectors of the types 'double', 'int', and 'fastjet::PseudoJet' are supported
+    //Only vectors of the types 'jetCollection', and 'double', 'int', 'fastjet::PseudoJet' are supported
+
     trw.addJetCollection("sigJet",   jetCollectionSig);
     trw.addJetCollection("csJet",    jetCollectionCS);
     trw.addJetCollection("sigJetSD", jetCollectionSigSD);
     trw.addJetCollection("csJetSD",  jetCollectionCSSD);
     trw.addJetCollection("skJet",    jetCollectionSK);
 
-    trw.addDoubleCollection("rho",           rho);
-    trw.addDoubleCollection("rhom",          rhom);
+    trw.addDoubleCollection("csRho",         rho);
+    trw.addDoubleCollection("csRhom",        rhom);
     trw.addDoubleCollection("skPtThreshold", skPtThreshold);
     
     trw.fillTree();
