@@ -43,7 +43,7 @@ class treeWriter {
 
   void fillTree() {treeOut_->Fill();}
 
-  void addJetCollection(std::string name, jetCollection c)
+  void addJetCollection(std::string name, jetCollection &c)
   {
      addJetCollection(name, c.getJet());
 
