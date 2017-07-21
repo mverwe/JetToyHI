@@ -1,14 +1,14 @@
-#include "fastjet/PseudoJet.hh"
-#include "fastjet/ClusterSequenceArea.hh"
-
 #include <iostream>
-
-using namespace fastjet;
 using namespace std;
 
-//root stuff
 #include "TFile.h"
 #include "TTree.h"
+
+#include "fastjet/PseudoJet.hh"
+#include "fastjet/ClusterSequenceArea.hh"
+using namespace fastjet;
+
+#include "ProgressBar.h"
 
 #include "thermalEvent.hh"
 #include "pythiaEvent.hh"
@@ -19,10 +19,13 @@ using namespace std;
 #include "treeWriter.hh"
 #include "jetMatcher.hh"
 
-int main () {
+int main ()
+{
+  // Uncomment to silence fastjet banner
+  ClusterSequence::set_fastjet_banner_stream(NULL);
 
   // Number of events, generated and listed ones.
-  unsigned int nEvent    = 2;
+  unsigned int nEvent    = 50;
 
   //to write info to root tree
   treeWriter trw("jetTree");
@@ -40,11 +43,14 @@ int main () {
   fastjet::AreaDefinition area_def = fastjet::AreaDefinition(fastjet::active_area,ghost_spec);
   JetDefinition jet_def(antikt_algorithm, R);
 
-  unsigned int entryDiv = ((unsigned int)(nEvent/20));
-  if(entryDiv==0) entryDiv = 1;
-  for(unsigned int ie = 0; ie<nEvent; ++ie) {
+  ProgressBar Bar(cout, nEvent);
+  Bar.SetStyle(-1);
 
-    if(ie%entryDiv == 0) std::cout << "Event #" << ie << std::endl;
+  unsigned int entryDiv = (nEvent > 20) ? nEvent / 20 : 1;
+  for(unsigned int ie = 0; ie < nEvent; ie++)
+  {
+    Bar.Update(ie);
+    Bar.PrintWithMod(entryDiv);
 
     //---------------------------------------------------------------------------
     //   produce event
@@ -184,6 +190,10 @@ int main () {
     trw.fillTree();
     
   }//event loop
+
+  Bar.Update(nEvent);
+  Bar.Print();
+  Bar.PrintLine();
 
   TTree *trOut = trw.getTree();
 
