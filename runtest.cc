@@ -19,6 +19,7 @@ using namespace fastjet;
 #include "softDropCounter.hh"
 #include "treeWriter.hh"
 #include "jetMatcher.hh"
+#include "randomCones.hh"
 
 int main ()
 {
@@ -26,7 +27,7 @@ int main ()
   ClusterSequence::set_fastjet_banner_stream(NULL);
 
   // Number of events, generated and listed ones.
-  unsigned int nEvent    = 50;
+  unsigned int nEvent    = 1000;
 
   //to write info to root tree
   treeWriter trw("jetTree");
@@ -100,6 +101,10 @@ int main ()
     std::vector<double> rho;    rho.push_back(csSub.getRho());
     std::vector<double> rhom;   rhom.push_back(csSub.getRhoM());
 
+    // randomCones rc(4,R,2.3,rho[0]);
+    // rc.setInputParticles(particlesMerged);
+    // jetCollection jetCollectionRC(rc.run());
+
     //run soft killer on hybrid/embedded/merged event
     skSubtractor skSub(0.4, 3.0);
     skSub.setInputParticles(particlesMerged);
@@ -157,6 +162,14 @@ int main ()
     
     jmSK.reorderedToTag(jetCollectionSK);
 
+    //match the unsubtracted jets to signal jets
+    jetMatcher jmUnSub(R);
+    jmUnSub.setBaseJets(jetCollectionMerged);
+    jmUnSub.setTagJets(jetCollectionSig);
+    jmUnSub.matchJets();
+
+    jmUnSub.reorderedToTag(jetCollectionMerged);
+
     //---------------------------------------------------------------------------
     //   write tree
     //---------------------------------------------------------------------------
@@ -169,6 +182,8 @@ int main ()
     trw.addCollection("sigJetSD",      jetCollectionSigSD);
     trw.addCollection("csJetSD",       jetCollectionCSSD);
     trw.addCollection("skJet",         jetCollectionSK);
+    //trw.addCollection("randomCones",   jetCollectionRC);
+    trw.addCollection("unsubJet",      jetCollectionMerged);
 
     trw.addCollection("csRho",         rho);
     trw.addCollection("csRhom",        rhom);
