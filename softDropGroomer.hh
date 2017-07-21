@@ -14,13 +14,18 @@
 
 using namespace std;
 
+//---------------------------------------------------------------
+// Description
+// This class runs SoftDrop grooming on a set of jets
+// Author: M. Verweij
+//---------------------------------------------------------------
+
 class softDropGroomer {
 
 private :
   double zcut_;
   double beta_;
   double r0_;
-  double jetPtMin_;
   
   std::vector<fastjet::PseudoJet> fjInputs_;   //ungroomed jets
   std::vector<fastjet::PseudoJet> fjOutputs_;  //groomed jets
@@ -28,10 +33,9 @@ private :
   std::vector<int>                drBranches_; //dropped branches
   
 public :
-  softDropGroomer() {
-    zcut_ = 0.1;
-    beta_ = 0.;
-    r0_   = 0.4;
+  softDropGroomer(double zcut = 0.1, double beta = 0., double r0 = 0.4) :
+    zcut_(zcut), beta_(beta), r0_(r0)
+  {
   }
 
   void setZcut(double c)     { zcut_ = c; }

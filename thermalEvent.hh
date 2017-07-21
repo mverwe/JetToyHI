@@ -15,6 +15,12 @@
 using namespace fastjet;
 using namespace std;
 
+//---------------------------------------------------------------
+// Description
+// This class generates a thermal event following Boltzman distribution
+// Author: M. Verweij
+//---------------------------------------------------------------
+
 class thermalEvent {
 
 private :
@@ -25,12 +31,12 @@ private :
   TF1              *funcThrm_;
 
 public :
-  thermalEvent() {
-
-    meanpt_ = 0.7;
-    mult_   = 12000;
-    etaMin_ = -3.;
-    etaMax_ = 3.;
+  thermalEvent(unsigned int mult = 12000, double meanpt = 0.7, double etaMin = -3., double etaMax = 3.) :
+    meanpt_(meanpt),
+    mult_(mult),
+    etaMin_(etaMin),
+    etaMax_(etaMax)
+  {
     
     funcThrm_ = new TF1("funcThrm_","[0]*TMath::Power([1], 2)*x*TMath::Exp(-[1]*x)", 0.2, 200.);
     funcThrm_->SetParNames("Amplitude", "b (GeV/c)^{-1}");

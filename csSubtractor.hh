@@ -14,6 +14,12 @@
 
 using namespace std;
 
+//---------------------------------------------------------------
+// Description
+// This class runs the jet-by-jet constituent subtraction
+// Author: M. Verweij
+//---------------------------------------------------------------
+
 class csSubtractor {
 
 private :
@@ -28,11 +34,10 @@ private :
 
   
 public :
-  csSubtractor() {
-    alpha_ = 1.;
-    rParam_ = 0.4;
-    ghostArea_ = 0.005;
-    
+  csSubtractor(double alpha = 1., double rParam = -1., double ghostArea = 0.005) :
+    alpha_(alpha), rParam_(rParam), ghostArea_(ghostArea)
+  {
+    //init constituent subtractor
     subtractor_.set_distance_type(contrib::ConstituentSubtractor::deltaR);
     subtractor_.set_max_distance(rParam_); //free parameter for the maximal allowed distance between particle i and ghost k
     subtractor_.set_alpha(alpha_); // free parameter for the distance measure (the exponent of particle pt). Note that in older versions of the package alpha was multiplied by two but in newer versions this is not the case anymore

@@ -13,6 +13,7 @@ using namespace std;
 #include "thermalEvent.hh"
 #include "pythiaEvent.hh"
 #include "csSubtractor.hh"
+#include "skSubtractor.hh"
 #include "softDropGroomer.hh"
 #include "softDropCounter.hh"
 #include "treeWriter.hh"
@@ -21,15 +22,14 @@ using namespace std;
 int main () {
 
   // Number of events, generated and listed ones.
-  unsigned int nEvent    = 10;
+  unsigned int nEvent    = 2;
 
   //to write info to root tree
-  treeWriter trw;
-  trw.setTreeName("jetTree");
+  treeWriter trw("jetTree");
 
   //event generators
-  thermalEvent thrm;
-  pythiaEvent pyt;
+  thermalEvent thrm(12000,0.7,-3.,3.);
+  pythiaEvent pyt(120.,14);
 
   //Jet definition
   double R = 0.4;
@@ -83,7 +83,7 @@ int main () {
     //---------------------------------------------------------------------------
     
     //run constituent subtraction on hybrid/embedded/merged event
-    csSubtractor csSub;
+    csSubtractor csSub(1.,-1.,0.005);
     csSub.setInputParticles(particlesMerged);
     std::vector<fastjet::PseudoJet> jetsCS = csSub.doSubtraction();
     std::vector<double> rho;
@@ -91,15 +91,24 @@ int main () {
     std::vector<double> rhom;
     rhom.push_back(csSub.getRhoM());
 
+    //run soft killer on hybrid/embedded/merged event
+    skSubtractor skSub(0.4,3.);
+    skSub.setInputParticles(particlesMerged);
+    std::vector<fastjet::PseudoJet> skEvent = skSub.doSubtraction();
+    std::vector<double> skPtThreshold;
+    skPtThreshold.push_back(skSub.getPtThreshold());
+
+    fastjet::ClusterSequenceArea csSK(skEvent, jet_def, area_def);
+    std::vector<fastjet::PseudoJet> jetsSK = sorted_by_pt(csSK.inclusive_jets());
+
+    //std::cout << "njets CS: " << jetsCS.size() << " SK: " << jetsSK.size() << std::endl;
+    
     //---------------------------------------------------------------------------
     //   Groom the jets
     //---------------------------------------------------------------------------
     
     //SoftDrop grooming classic for CS jets
-    softDropGroomer sdgCS;
-    sdgCS.setZcut(0.1);
-    sdgCS.setBeta(0.);
-    sdgCS.setR0(R);
+    softDropGroomer sdgCS(0.1,0.,R);
     sdgCS.setInputJets(jetsCS);
     std::vector<fastjet::PseudoJet> jetsCSSD = sdgCS.doGrooming();
     std::vector<double> zgCSSD = sdgCS.getZgs();
@@ -109,12 +118,10 @@ int main () {
     softDropCounter sdcCS(0.1, 0.0, 0.4, 0.1);
     sdcCS.run(jetsCS);
     std::vector<double> nCSSD = sdcCS.calculateNSD(0.0);
+    std::vector<double> zCSSD = sdcCS.calculateNSD(1.0);
 
     //SoftDrop grooming classic for signal jets
-    softDropGroomer sdgSig;
-    sdgSig.setZcut(0.1);
-    sdgSig.setBeta(0.);
-    sdgSig.setR0(R);
+    softDropGroomer sdgSig(0.1,0.,R);
     sdgSig.setInputJets(jetsSig);
     std::vector<fastjet::PseudoJet> jetsSigSD = sdgSig.doGrooming();
     std::vector<double> zgSigSD = sdgSig.getZgs();
@@ -124,10 +131,10 @@ int main () {
     softDropCounter sdcSig(0.1, 0.0, 0.4, 0.1);
     sdcSig.run(jetsSig);
     std::vector<double> nSigSD = sdcSig.calculateNSD(0.0);
+    std::vector<double> zSigSD = sdcSig.calculateNSD(1.0);
 
     //match the CS jets to signal jets
-    jetMatcher jmCS;
-    jmCS.setMaxDist(R);
+    jetMatcher jmCS(R);
     jmCS.setBaseJets(jetsCS);
     jmCS.setTagJets(jetsSig);
     jmCS.matchJets();
@@ -140,6 +147,14 @@ int main () {
     std::vector<int> ndropCSSDMatch = jmCS.reorderedToTag(ndropCSSD);
 
     std::vector<double> nCSSDMatch = jmCS.reorderedToTag(nCSSD);
+    std::vector<double> zCSSDMatch = jmCS.reorderedToTag(zCSSD);
+
+    //match the SK jets to signal jets
+    jetMatcher jmSK(R);
+    jmSK.setBaseJets(jetsSK);
+    jmSK.setTagJets(jetsSig);
+    jmSK.matchJets();
+    std::vector<fastjet::PseudoJet> jetsSKMatch = jmSK.getBaseJetsOrderedToTag();
 
     //std::cout << "nCS: " << jetsCS.size() << " nCSSD: " << jetsCSSD.size() << " nCSSD: " << nCSSD.size() << std::endl;
 
@@ -152,15 +167,19 @@ int main () {
     trw.addJetCollection("sigJet",jetsSig);
     trw.addJetCollection("csJet",jetsCSMatch);
     trw.addJetCollection("sigJetSD",jetsSigSD);
-    trw.addDoubleCollection("zgGenSD",zgSigSD);
-    trw.addIntCollection("ndropGenSD",ndropSigSD);
+    trw.addDoubleCollection("zgSigSD",zgSigSD);
+    trw.addIntCollection("ndropSigSD",ndropSigSD);
     trw.addDoubleCollection("nSigSD",nSigSD);
+    trw.addDoubleCollection("zSigSD",zSigSD);
     trw.addJetCollection("csJetSD",jetsCSSDMatch);
     trw.addDoubleCollection("zgCSSD",zgCSSDMatch);
     trw.addIntCollection("ndropCSSD",ndropCSSDMatch);
     trw.addDoubleCollection("nCSSD",nCSSDMatch);
-    trw.addDoubleCollection("rho",rho);
-    trw.addDoubleCollection("rhom",rhom);
+    trw.addDoubleCollection("zCSSD",zCSSDMatch);
+    trw.addDoubleCollection("csRho",rho);
+    trw.addDoubleCollection("csRhom",rhom);
+    trw.addJetCollection("skJet",jetsSKMatch);
+    trw.addDoubleCollection("skPtThreshold",skPtThreshold);
     
     trw.fillTree();
     

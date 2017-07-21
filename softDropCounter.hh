@@ -12,6 +12,12 @@
 #include "fastjet/contrib/SoftDrop.hh"
 #include "fastjet/contrib/Recluster.hh"
 
+//---------------------------------------------------------------
+// Description
+// This class runs iterative SoftDrop on a set of jets
+// Author: Y. Chen
+//---------------------------------------------------------------
+
 class softDropCounter
 {
 private :

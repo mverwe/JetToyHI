@@ -11,23 +11,33 @@
 
 //using namespace std;
 
+//---------------------------------------------------------------
+// Description
+// This class generates a pythia8 event
+// Author: M. Verweij
+//---------------------------------------------------------------
+
 class pythiaEvent {
 
 private :
   Pythia8::Pythia pythia;
+  double pthat_;
+  unsigned int tune_;
 
 public :
-  pythiaEvent() {
-
+  pythiaEvent(double pthat = 120., unsigned int tune = 14) :
+    pthat_(pthat), tune_(tune)
+  {
+    
     // Generator. LHC process and output selection. Initialization.
-    // MV: selected some ATLAS tune - no idea how good it is - but missing LHPDF so running default tune now
+    // tunes: http://home.thep.lu.se/~torbjorn/pythia82html/Tunes.html
     pythia.readString("Beams:eCM = 5002.");
     pythia.readString("HardQCD:all = on");
-    pythia.readString("PhaseSpace:pTHatMin = 120.");
+    pythia.readString(Form("PhaseSpace:pTHatMin = %.1f",pthat_));
     pythia.readString("Next:numberShowInfo = 0");
     pythia.readString("Next:numberShowProcess = 0");
     pythia.readString("Next:numberShowEvent = 0");
-    //pythia.readString("Tune:pp = 19");
+    pythia.readString(Form("Tune:pp = %d",tune_));
     pythia.readString("Random:setSeed = on");
     pythia.readString("Random:seed = 0");
     pythia.init();

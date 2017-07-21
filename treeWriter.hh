@@ -14,6 +14,15 @@
 
 using namespace std;
 
+//---------------------------------------------------------------
+// Description
+// This class writes a root tree
+// Only accepts vectors of the following types: int, double, fastjet::PseudoJet
+// In case of PseudoJet it will store pt, eta, phi and mass as separate vectors
+// in the output tree
+// Authors: Y. Chen, M. Verweij
+//---------------------------------------------------------------
+
 class treeWriter {
 
  private :
@@ -23,8 +32,10 @@ class treeWriter {
   std::map<std::string,std::vector<double>  > doubleMaps_;
       
  public :
-  treeWriter() {
-    treeOut_ = new TTree("treeOut","JetToyHI tree");
+  treeWriter(const char *treeName = "treeOut") :
+    treeName_(treeName)
+  {
+    treeOut_ = new TTree(treeName_,"JetToyHI tree");
     
   }
 

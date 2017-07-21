@@ -11,6 +11,12 @@
 
 using namespace std;
 
+//---------------------------------------------------------------
+// Description
+// This class matches two collections of jets using bijective algorithm
+// Author: M. Verweij
+//---------------------------------------------------------------
+
 class jetMatcher {
 
  private :
@@ -23,8 +29,9 @@ class jetMatcher {
   double                          maxDist_;  //max distance for matching (to limit CPU time)
      
  public :
-  jetMatcher() {
-    maxDist_ = 0.4;
+  jetMatcher(double maxDist = 0.4) :
+    maxDist_(maxDist)
+  {
   }
 
   void setBaseJets(std::vector<fastjet::PseudoJet> v) { fjBase_  = v; }
