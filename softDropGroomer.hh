@@ -48,8 +48,14 @@ public :
   std::vector<double> getZgs()                     const { return zg_;}
   std::vector<int> getNDroppedBranches()           const { return drBranches_;}
   
-  std::vector<fastjet::PseudoJet> doGrooming() {
-
+  std::vector<fastjet::PseudoJet> doGrooming(std::vector<fastjet::PseudoJet> v)
+  {
+     setInputJets(v);
+     return doGrooming();
+  }
+  
+  std::vector<fastjet::PseudoJet> doGrooming()
+  {
     fjOutputs_.reserve(fjInputs_.size());
     zg_.reserve(fjInputs_.size());
     drBranches_.reserve(fjInputs_.size());
