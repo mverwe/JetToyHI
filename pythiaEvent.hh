@@ -23,10 +23,12 @@ private :
   Pythia8::Pythia pythia;
   double pthat_;
   unsigned int tune_;
+  double rapMin_;
+  double rapMax_;
 
 public :
-  pythiaEvent(double pthat = 120., unsigned int tune = 14, double etaMin = -3., double etaMax = 3.) :
-    pthat_(pthat), tune_(tune), etaMin_(etaMin), etaMax_(etaMax)
+  pythiaEvent(double pthat = 120., unsigned int tune = 14, double rapMin = -3., double rapMax = 3.) :
+    pthat_(pthat), tune_(tune), rapMin_(rapMin), rapMax_(rapMax)
   {
     
     // Generator. LHC process and output selection. Initialization.
@@ -52,8 +54,9 @@ public :
 
     for (int i = 0; i < pythia.event.size(); ++i) {
       if (pythia.event[i].isFinal()) {
-        if(pythia.event[i].eta()>etaMin_ && pythia.event[i].eta()<etaMax_)
-          particles.push_back(fastjet::PseudoJet(pythia.event[i].px(),pythia.event[i].py(),pythia.event[i].pz(),pythia.event[i].e()));
+        fastjet::PseudoJet p(pythia.event[i].px(),pythia.event[i].py(),pythia.event[i].pz(),pythia.event[i].e());
+        if(p.rap()>rapMin_ && p.rap()<rapMax_)
+          particles.push_back(p);
       }
     }
 

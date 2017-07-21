@@ -33,16 +33,19 @@ int main ()
 
   //event generators
   thermalEvent thrm(12000, 0.7, -3.0, 3.0);
-  pythiaEvent pyt(120., 14);
+  pythiaEvent pyt(120., 14, -3.0, 3.0);
 
   //Jet definition
   double R                   = 0.4;
-  double ghost_etamax        = 6.0;
+  double ghostRapMax         = 6.0;
   double ghost_area          = 0.005;
   int    active_area_repeats = 1;
-  fastjet::GhostedAreaSpec ghost_spec(ghost_etamax, active_area_repeats, ghost_area);
+  fastjet::GhostedAreaSpec ghost_spec(ghostRapMax, active_area_repeats, ghost_area);
   fastjet::AreaDefinition area_def = fastjet::AreaDefinition(fastjet::active_area,ghost_spec);
-  JetDefinition jet_def(antikt_algorithm, R);
+  fastjet::JetDefinition jet_def(antikt_algorithm, R);
+
+  double jetRapMax = 3.0;
+  fastjet::Selector jet_selector = SelectorAbsRapMax(jetRapMax);
 
   ProgressBar Bar(cout, nEvent);
   Bar.SetStyle(-1);
@@ -77,20 +80,20 @@ int main ()
     
     // run the clustering, extract the jets
     fastjet::ClusterSequenceArea csMerged(particlesMerged, jet_def, area_def);
-    jetCollection jetCollectionMerged(sorted_by_pt(csMerged.inclusive_jets()));
+    jetCollection jetCollectionMerged(sorted_by_pt(jet_selector(csMerged.inclusive_jets())));
 
     // fastjet::ClusterSequenceArea csBkg(particlesBkg, jet_def, area_def);
     // jetCollection jetCollectionBkg(sorted_by_pt(csBkg.inclusive_jets()));
 
     fastjet::ClusterSequenceArea csSig(particlesSig, jet_def, area_def);
-    jetCollection jetCollectionSig(sorted_by_pt(csSig.inclusive_jets(10.)));
+    jetCollection jetCollectionSig(sorted_by_pt(jet_selector(csSig.inclusive_jets(10.))));
 
     //---------------------------------------------------------------------------
     //   background subtraction
     //---------------------------------------------------------------------------
     
     //run constituent subtraction on hybrid/embedded/merged event
-    csSubtractor csSub(1., -1, 0.005);
+    csSubtractor csSub(1., -1, 0.005,ghostRapMax,jetRapMax);
     csSub.setInputParticles(particlesMerged);
     jetCollection jetCollectionCS(csSub.doSubtraction());
 
@@ -105,7 +108,7 @@ int main ()
     skPtThreshold.push_back(skSub.getPtThreshold());
 
     fastjet::ClusterSequenceArea csSK(skEvent, jet_def, area_def);
-    jetCollection jetCollectionSK(sorted_by_pt(csSK.inclusive_jets()));
+    jetCollection jetCollectionSK(sorted_by_pt(jet_selector(csSK.inclusive_jets())));
 
     //std::cout << "njets CS: " << jetsCS.size() << " SK: " << jetsSK.size() << std::endl;
     

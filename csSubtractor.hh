@@ -26,6 +26,8 @@ private :
   double alpha_;
   double rParam_;
   double ghostArea_;
+  double ghostRapMax_;
+  double jetRapMax_;
   double rho_;
   double rhom_;
   std::vector<fastjet::PseudoJet> fjInputs_;
@@ -34,8 +36,12 @@ private :
 
   
 public :
-  csSubtractor(double alpha = 1., double rParam = -1., double ghostArea = 0.005) :
-    alpha_(alpha), rParam_(rParam), ghostArea_(ghostArea)
+  csSubtractor(double alpha = 1., double rParam = -1., double ghostArea = 0.005, double ghostRapMax = 3.0, double jetRapMax = 3.0) :
+    alpha_(alpha),
+    rParam_(rParam),
+    ghostArea_(ghostArea),
+    ghostRapMax_(ghostRapMax),
+    jetRapMax_(jetRapMax)
   {
     //init constituent subtractor
     subtractor_.set_distance_type(contrib::ConstituentSubtractor::deltaR);
@@ -59,18 +65,18 @@ public :
     // do the clustering with ghosts and get the jets
     //----------------------------------------------------------
     fastjet::JetDefinition jet_def(antikt_algorithm, rParam_);
-    fastjet::GhostedAreaSpec ghost_spec(4., 1, ghostArea_);
+    fastjet::GhostedAreaSpec ghost_spec(ghostRapMax_, 1, ghostArea_);
     fastjet::AreaDefinition area_def = fastjet::AreaDefinition(fastjet::active_area_explicit_ghosts,ghost_spec);
-
+    
     fastjet::ClusterSequenceArea cs(fjInputs_, jet_def, area_def);
-    std::vector<fastjet::PseudoJet> jets = fastjet::sorted_by_pt(cs.inclusive_jets());
+    fastjet::Selector jet_selector = SelectorAbsRapMax(jetRapMax_);
+    std::vector<fastjet::PseudoJet> jets = fastjet::sorted_by_pt(jet_selector(cs.inclusive_jets()));
     
     // create what we need for the background estimation
     //----------------------------------------------------------
     fastjet::JetDefinition jet_def_bkgd(fastjet::kt_algorithm, 0.4);
-    fastjet::AreaDefinition area_def_bkgd(fastjet::active_area_explicit_ghosts,
-                                          fastjet::GhostedAreaSpec(4.1,1,ghostArea_));
-    fastjet::Selector selector = fastjet::SelectorAbsRapMax(4.-0.4) * (!fastjet::SelectorNHardest(2));
+    fastjet::AreaDefinition area_def_bkgd(fastjet::active_area_explicit_ghosts,ghost_spec);
+    fastjet::Selector selector = fastjet::SelectorAbsRapMax(ghostRapMax_-0.4) * (!fastjet::SelectorNHardest(2));
     fastjet::JetMedianBackgroundEstimator bkgd_estimator(selector, jet_def_bkgd, area_def_bkgd);
     bkgd_estimator.set_particles(fjInputs_);
 

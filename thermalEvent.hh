@@ -26,16 +26,16 @@ class thermalEvent {
 private :
   double            meanpt_;
   unsigned int      mult_;
-  double            etaMin_;
-  double            etaMax_;
+  double            rapMin_;
+  double            rapMax_;
   TF1              *funcThrm_;
 
 public :
-  thermalEvent(unsigned int mult = 12000, double meanpt = 0.7, double etaMin = -3., double etaMax = 3.) :
+  thermalEvent(unsigned int mult = 12000, double meanpt = 0.7, double rapMin = -3., double rapMax = 3.) :
     meanpt_(meanpt),
     mult_(mult),
-    etaMin_(etaMin),
-    etaMax_(etaMax)
+    rapMin_(rapMin),
+    rapMax_(rapMax)
   {
     
     funcThrm_ = new TF1("funcThrm_","[0]*TMath::Power([1], 2)*x*TMath::Exp(-[1]*x)", 0.2, 200.);
@@ -46,7 +46,7 @@ public :
 
   void setMult(unsigned int m) { mult_ = m; }
   void setMult(double mpt)     { meanpt_ = mpt; }
-  void setEtaRange(double min, double max) { etaMin_ =  min; etaMax_ =  max; }
+  void setRapidityRange(double min, double max) { rapMin_ =  min; rapMax_ =  max; }
   
   std::vector<fastjet::PseudoJet> createThermalEvent() {
 
@@ -58,11 +58,11 @@ public :
       double phimin = 0.;
       double phimax = TMath::TwoPi();
       double phi = gRandom->Rndm() * (phimax - phimin) + phimin;
-      //random eta
-      double eta = gRandom->Rndm() * (etaMax_ - etaMin_) + etaMin_;
+      //random rapidity
+      double rap = gRandom->Rndm() * (rapMax_ - rapMin_) + rapMin_;
       
       fastjet::PseudoJet p4;
-      p4.reset_momentum_PtYPhiM(pt,eta,phi,0.1395);
+      p4.reset_momentum_PtYPhiM(pt,rap,phi,0.1395);
       
       particles.push_back(p4);
     }
