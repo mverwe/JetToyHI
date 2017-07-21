@@ -14,7 +14,7 @@
 //---------------------------------------------------------------
 // Description
 // This class matches two collections of jets using bijective algorithm
-// Author: M. Verweij
+// Author: M. Verweij, Y. Chen
 //---------------------------------------------------------------
 
 class jetMatcher {

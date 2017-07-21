@@ -6,6 +6,12 @@
 
 #include "fastjet/PseudoJet.hh"
 
+//---------------------------------------------------------------
+// Description
+// This class contains jet momentum and associated quantities
+// Author: Y. Chen
+//---------------------------------------------------------------
+
 class jetCollection
 {
 public:
