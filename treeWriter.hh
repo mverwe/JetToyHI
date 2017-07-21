@@ -43,7 +43,27 @@ class treeWriter {
 
   void fillTree() {treeOut_->Fill();}
 
-  void addJetCollection(std::string name, jetCollection &c)
+  void addCollection(std::string name, const jetCollection &c)
+  {
+     addJetCollection(name, c);
+  }
+
+  void addCollection(std::string name, const std::vector<fastjet::PseudoJet> &v)
+  {
+     addJetCollection(name, v);
+  }
+
+  void addCollection(std::string name, const std::vector<double> &v)
+  {
+     addDoubleCollection(name, v);
+  }
+
+  void addCollection(std::string name, const std::vector<int> &v)
+  {
+     addIntCollection(name, v);
+  }
+
+  void addJetCollection(std::string name, const jetCollection &c)
   {
      addJetCollection(name, c.getJet());
 
@@ -56,31 +76,34 @@ class treeWriter {
         addIntCollection(tag, c.getVectorInt(tag));
   }
 
-  void addJetCollection(std::string name, std::vector<fastjet::PseudoJet> v) {
-
+  void addJetCollection(std::string name, const std::vector<fastjet::PseudoJet> v)
+  {
     //we are storing the pt, eta, phi and mass of the jets
     std::vector<double> pt;    pt.reserve(v.size());
     std::vector<double> eta;   eta.reserve(v.size());
     std::vector<double> phi;   phi.reserve(v.size());
     std::vector<double> m;     m.reserve(v.size());
-    for( fastjet::PseudoJet jet : v ) {
+
+    for(const fastjet::PseudoJet jet: v)
+    {
       pt.push_back(jet.pt());
       eta.push_back(jet.eta());
       phi.push_back(jet.phi());
       m.push_back(jet.m());
     }
-    addDoubleCollection(name+"Pt",pt);
-    addDoubleCollection(name+"Eta",eta);
-    addDoubleCollection(name+"Phi",phi);
-    addDoubleCollection(name+"M",m);
+
+    addDoubleCollection(name + "Pt",  pt);
+    addDoubleCollection(name + "Eta", eta);
+    addDoubleCollection(name + "Phi", phi);
+    addDoubleCollection(name + "M",   m);
   }
 
-  void addDoubleCollection(std::string name, std::vector<double> v) {
+  void addDoubleCollection(std::string name, const std::vector<double> v) {
     doubleMaps_[name] = v;
     bookBranchDoubleVec(name);
   }
 
-  void addIntCollection(std::string name, std::vector<int> v) {
+  void addIntCollection(std::string name, const std::vector<int> v) {
     intMaps_[name] = v;
     bookBranchIntVec(name);
   }

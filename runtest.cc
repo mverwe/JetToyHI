@@ -126,7 +126,7 @@ int main ()
     jetCollectionCS.addVector("zCSSD", sdcCS.calculateNSD(1.0));
 
     //SoftDrop grooming classic for signal jets
-    softDropGroomer sdgSig(0.1, 0., R);
+    softDropGroomer sdgSig(0.1, 0.0, R);
     jetCollection jetCollectionSigSD(sdgSig.doGrooming(jetCollectionSig));
     jetCollectionSigSD.addVector("zgSigSD",    sdgSig.getZgs());
     jetCollectionSigSD.addVector("ndropSigSD", sdgSig.getNDroppedBranches());
@@ -154,8 +154,6 @@ int main ()
     
     jmSK.reorderedToTag(jetCollectionSK);
 
-    //std::cout << "nCS: " << jetsCS.size() << " nCSSD: " << jetsCSSD.size() << " nCSSD: " << nCSSD.size() << std::endl;
-
     //---------------------------------------------------------------------------
     //   write tree
     //---------------------------------------------------------------------------
@@ -163,18 +161,18 @@ int main ()
     //Give variable we want to write out to treeWriter.
     //Only vectors of the types 'jetCollection', and 'double', 'int', 'fastjet::PseudoJet' are supported
 
-    trw.addJetCollection("sigJet",   jetCollectionSig);
-    trw.addJetCollection("csJet",    jetCollectionCS);
-    trw.addJetCollection("sigJetSD", jetCollectionSigSD);
-    trw.addJetCollection("csJetSD",  jetCollectionCSSD);
-    trw.addJetCollection("skJet",    jetCollectionSK);
+    trw.addCollection("sigJet",        jetCollectionSig);
+    trw.addCollection("csJet",         jetCollectionCS);
+    trw.addCollection("sigJetSD",      jetCollectionSigSD);
+    trw.addCollection("csJetSD",       jetCollectionCSSD);
+    trw.addCollection("skJet",         jetCollectionSK);
 
-    trw.addDoubleCollection("csRho",         rho);
-    trw.addDoubleCollection("csRhom",        rhom);
-    trw.addDoubleCollection("skPtThreshold", skPtThreshold);
+    trw.addCollection("csRho",         rho);
+    trw.addCollection("csRhom",        rhom);
+    trw.addCollection("skPtThreshold", skPtThreshold);
     
     trw.fillTree();
-    
+
   }//event loop
 
   Bar.Update(nEvent);

@@ -26,8 +26,8 @@ public:
    std::vector<int> getVectorInt(string tag) const;
    void addVector(string tag, std::vector<double> v);
    void addVector(string tag, std::vector<int> v);
-   std::vector<std::string> getListOfKeysDouble();
-   std::vector<std::string> getListOfKeysInt();
+   std::vector<std::string> getListOfKeysDouble() const;
+   std::vector<std::string> getListOfKeysInt() const;
 };
 
 jetCollection::jetCollection(const std::vector<fastjet::PseudoJet> &p)
@@ -72,18 +72,18 @@ void jetCollection::addVector(string tag, std::vector<int> v)
    intmap_[tag] = v;
 }
 
-std::vector<std::string> jetCollection::getListOfKeysDouble()
+std::vector<std::string> jetCollection::getListOfKeysDouble() const
 {
    std::vector<std::string> Result;
-   for(std::map<std::string, std::vector<double>>::iterator iter = doublemap_.begin(); iter != doublemap_.end(); iter++)
+   for(std::map<std::string, std::vector<double>>::const_iterator iter = doublemap_.begin(); iter != doublemap_.end(); iter++)
       Result.push_back(iter->first);
    return Result;
 }
 
-std::vector<std::string> jetCollection::getListOfKeysInt()
+std::vector<std::string> jetCollection::getListOfKeysInt() const
 {
    std::vector<std::string> Result;
-   for(std::map<std::string, std::vector<int>>::iterator iter = intmap_.begin(); iter != intmap_.end(); iter++)
+   for(std::map<std::string, std::vector<int>>::const_iterator iter = intmap_.begin(); iter != intmap_.end(); iter++)
       Result.push_back(iter->first);
    return Result;
 }
