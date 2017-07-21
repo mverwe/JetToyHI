@@ -14,13 +14,14 @@
 
 class jetCollection
 {
-public:
+private:
    std::vector<fastjet::PseudoJet> p_;
    std::map<std::string, std::vector<double>> doublemap_;
    std::map<std::string, std::vector<int>> intmap_;
 public:
    jetCollection(const std::vector<fastjet::PseudoJet> &p);
    ~jetCollection();
+   void setJet(const std::vector<fastjet::PseudoJet> &v);
    std::vector<fastjet::PseudoJet> getJet() const;
    std::vector<double> getVectorDouble(string tag) const;
    std::vector<int> getVectorInt(string tag) const;
@@ -37,6 +38,11 @@ jetCollection::jetCollection(const std::vector<fastjet::PseudoJet> &p)
 
 jetCollection::~jetCollection()
 {
+}
+   
+void jetCollection::setJet(const std::vector<fastjet::PseudoJet> &v)
+{
+   p_ = v;
 }
    
 std::vector<fastjet::PseudoJet> jetCollection::getJet() const

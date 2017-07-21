@@ -231,7 +231,7 @@ std::vector<fastjet::PseudoJet> jetMatcher::reorderedToTag(std::vector<fastjet::
 
 void jetMatcher::reorderedToBase(jetCollection &c)
 {
-   c.p_ = reorderedToBase(c.p_);
+   c.setJet(reorderedToBase(c.getJet()));
 
    std::vector<std::string> doubleKeys = c.getListOfKeysDouble();
    for(std::string tag: doubleKeys)
@@ -244,7 +244,7 @@ void jetMatcher::reorderedToBase(jetCollection &c)
 
 void jetMatcher::reorderedToTag(jetCollection &c)
 {
-   c.p_ = reorderedToTag(c.p_);
+   c.setJet(reorderedToTag(c.getJet()));
 
    std::vector<std::string> doubleKeys = c.getListOfKeysDouble();
    for(std::string tag: doubleKeys)
