@@ -8,7 +8,7 @@
 
 //---------------------------------------------------------------
 // Description
-// This class contains jet momentum and associated quantities
+// This class contains jet momentum and associated quantities for the whole event
 // Author: Y. Chen
 //---------------------------------------------------------------
 
@@ -21,9 +21,9 @@ public:
 public:
    jetCollection(const std::vector<fastjet::PseudoJet> &p);
    ~jetCollection();
-   std::vector<fastjet::PseudoJet> getJet();
-   std::vector<double> getVectorDouble(string tag);
-   std::vector<int> getVectorInt(string tag);
+   std::vector<fastjet::PseudoJet> getJet() const;
+   std::vector<double> getVectorDouble(string tag) const;
+   std::vector<int> getVectorInt(string tag) const;
    void addVector(string tag, std::vector<double> v);
    void addVector(string tag, std::vector<int> v);
    std::vector<std::string> getListOfKeysDouble();
@@ -39,23 +39,23 @@ jetCollection::~jetCollection()
 {
 }
    
-std::vector<fastjet::PseudoJet> jetCollection::getJet()
+std::vector<fastjet::PseudoJet> jetCollection::getJet() const
 {
    return p_;
 }
    
-std::vector<double> jetCollection::getVectorDouble(string tag)
+std::vector<double> jetCollection::getVectorDouble(string tag) const
 {
    if(doublemap_.find(tag) == doublemap_.end())
       return std::vector<double>();
-   return doublemap_[tag];
+   return doublemap_.at(tag);
 }
 
-std::vector<int> jetCollection::getVectorInt(string tag)
+std::vector<int> jetCollection::getVectorInt(string tag) const
 {
    if(intmap_.find(tag) == intmap_.end())
       return std::vector<int>();
-   return intmap_[tag];
+   return intmap_.at(tag);
 }
 
 void jetCollection::addVector(string tag, std::vector<double> v)

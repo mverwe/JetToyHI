@@ -39,6 +39,10 @@ public :
    void setR0(double r)       { r0_   = r; }
    void setRCut(double r)     { rcut_ = r; }
    void setInputJets(const std::vector<fastjet::PseudoJet> &v) { fjInputs_ = v; }
+   void run(const jetCollection &c)
+   {
+      run(c.getJet());
+   }
    void run(const std::vector<fastjet::PseudoJet> &v)
    {
       setInputJets(v);

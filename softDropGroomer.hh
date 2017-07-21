@@ -9,10 +9,9 @@
 
 #include "fastjet/PseudoJet.hh"
 #include "fastjet/ClusterSequenceArea.hh"
-
 #include "fastjet/contrib/SoftDrop.hh"
 
-using namespace std;
+#include "jetCollection.hh"
 
 //---------------------------------------------------------------
 // Description
@@ -47,6 +46,11 @@ public :
   std::vector<fastjet::PseudoJet> getGroomedJets() const { return fjOutputs_;}
   std::vector<double> getZgs()                     const { return zg_;}
   std::vector<int> getNDroppedBranches()           const { return drBranches_;}
+  
+  std::vector<fastjet::PseudoJet> doGrooming(jetCollection &c)
+  {
+     return doGrooming(c.getJet());
+  }
   
   std::vector<fastjet::PseudoJet> doGrooming(std::vector<fastjet::PseudoJet> v)
   {
