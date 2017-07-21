@@ -10,6 +10,7 @@ using namespace fastjet;
 
 #include "ProgressBar.h"
 
+#include "jetCollection.hh"
 #include "thermalEvent.hh"
 #include "pythiaEvent.hh"
 #include "csSubtractor.hh"
@@ -31,13 +32,13 @@ int main ()
   treeWriter trw("jetTree");
 
   //event generators
-  thermalEvent thrm(12000,0.7,-3.,3.);
-  pythiaEvent pyt(120.,14);
+  thermalEvent thrm(12000, 0.7, -3.0, 3.0);
+  pythiaEvent pyt(120., 14);
 
   //Jet definition
-  double R = 0.4;
-  double ghost_etamax = 6.0;
-  double ghost_area    = 0.005;
+  double R                   = 0.4;
+  double ghost_etamax        = 6.0;
+  double ghost_area          = 0.005;
   int    active_area_repeats = 1;
   fastjet::GhostedAreaSpec ghost_spec(ghost_etamax, active_area_repeats, ghost_area);
   fastjet::AreaDefinition area_def = fastjet::AreaDefinition(fastjet::active_area,ghost_spec);
@@ -46,7 +47,7 @@ int main ()
   ProgressBar Bar(cout, nEvent);
   Bar.SetStyle(-1);
 
-  unsigned int entryDiv = (nEvent > 20) ? nEvent / 20 : 1;
+  unsigned int entryDiv = (nEvent > 200) ? nEvent / 200 : 1;
   for(unsigned int ie = 0; ie < nEvent; ie++)
   {
     Bar.Update(ie);
@@ -64,9 +65,9 @@ int main ()
 
     //Embed pythia event into thermal event
     std::vector<fastjet::PseudoJet> particlesMerged;
-    particlesMerged.reserve( particlesSig.size() + particlesBkg.size() ); // preallocate memory
-    particlesMerged.insert( particlesMerged.end(), particlesSig.begin(), particlesSig.end() );
-    particlesMerged.insert( particlesMerged.end(), particlesBkg.begin(), particlesBkg.end() );
+    particlesMerged.reserve(particlesSig.size() + particlesBkg.size()); // preallocate memory
+    particlesMerged.insert(particlesMerged.end(), particlesSig.begin(), particlesSig.end());
+    particlesMerged.insert(particlesMerged.end(), particlesBkg.begin(), particlesBkg.end());
 
     // std::cout << " nBkg: " << particlesBkg.size() << " nSig: " << particlesSig.size() << " nMerged: " << particlesMerged.size() << std::endl;
 
@@ -76,36 +77,35 @@ int main ()
     
     // run the clustering, extract the jets
     fastjet::ClusterSequenceArea csMerged(particlesMerged, jet_def, area_def);
-    std::vector<fastjet::PseudoJet> jetsMerged = sorted_by_pt(csMerged.inclusive_jets());
+    jetCollection jetCollectionMerged(sorted_by_pt(csMerged.inclusive_jets()));
 
     // fastjet::ClusterSequenceArea csBkg(particlesBkg, jet_def, area_def);
-    // std::vector<fastjet::PseudoJet> jetsBkg = sorted_by_pt(csBkg.inclusive_jets());
+    // jetCollection jetCollectionBkg(sorted_by_pt(csBkg.inclusive_jets()));
 
     fastjet::ClusterSequenceArea csSig(particlesSig, jet_def, area_def);
-    std::vector<fastjet::PseudoJet> jetsSig = sorted_by_pt(csSig.inclusive_jets(10.));
+    jetCollection jetCollectionSig(sorted_by_pt(csSig.inclusive_jets(10.)));
 
     //---------------------------------------------------------------------------
     //   background subtraction
     //---------------------------------------------------------------------------
     
     //run constituent subtraction on hybrid/embedded/merged event
-    csSubtractor csSub(1.,-1.,0.005);
+    csSubtractor csSub(1., -1, 0.005);
     csSub.setInputParticles(particlesMerged);
-    std::vector<fastjet::PseudoJet> jetsCS = csSub.doSubtraction();
-    std::vector<double> rho;
-    rho.push_back(csSub.getRho());
-    std::vector<double> rhom;
-    rhom.push_back(csSub.getRhoM());
+    jetCollection jetCollectionCS(csSub.doSubtraction());
+
+    std::vector<double> rho;    rho.push_back(csSub.getRho());
+    std::vector<double> rhom;   rhom.push_back(csSub.getRhoM());
 
     //run soft killer on hybrid/embedded/merged event
-    skSubtractor skSub(0.4,3.);
+    skSubtractor skSub(0.4, 3.0);
     skSub.setInputParticles(particlesMerged);
     std::vector<fastjet::PseudoJet> skEvent = skSub.doSubtraction();
     std::vector<double> skPtThreshold;
     skPtThreshold.push_back(skSub.getPtThreshold());
 
     fastjet::ClusterSequenceArea csSK(skEvent, jet_def, area_def);
-    std::vector<fastjet::PseudoJet> jetsSK = sorted_by_pt(csSK.inclusive_jets());
+    jetCollection jetCollectionSK(sorted_by_pt(csSK.inclusive_jets()));
 
     //std::cout << "njets CS: " << jetsCS.size() << " SK: " << jetsSK.size() << std::endl;
     
@@ -114,53 +114,45 @@ int main ()
     //---------------------------------------------------------------------------
     
     //SoftDrop grooming classic for CS jets
-    softDropGroomer sdgCS(0.1,0.,R);
-    sdgCS.setInputJets(jetsCS);
-    std::vector<fastjet::PseudoJet> jetsCSSD = sdgCS.doGrooming();
-    std::vector<double> zgCSSD = sdgCS.getZgs();
-    std::vector<int> ndropCSSD = sdgCS.getNDroppedBranches();
+    softDropGroomer sdgCS(0.1, 0.0, R);
+    jetCollection jetCollectionCSSD(sdgCS.doGrooming(jetCollectionCS.getJet()));
+    jetCollectionCSSD.addVector("zgCSSD",    sdgCS.getZgs());
+    jetCollectionCSSD.addVector("ndropCSSD", sdgCS.getNDroppedBranches());
 
     //SoftDrop emission counting for CS jets
     softDropCounter sdcCS(0.1, 0.0, 0.4, 0.1);
-    sdcCS.run(jetsCS);
-    std::vector<double> nCSSD = sdcCS.calculateNSD(0.0);
-    std::vector<double> zCSSD = sdcCS.calculateNSD(1.0);
+    sdcCS.run(jetCollectionCS.getJet());
+    jetCollectionCS.addVector("nCSSD", sdcCS.calculateNSD(0.0));
+    jetCollectionCS.addVector("zCSSD", sdcCS.calculateNSD(1.0));
 
     //SoftDrop grooming classic for signal jets
-    softDropGroomer sdgSig(0.1,0.,R);
-    sdgSig.setInputJets(jetsSig);
-    std::vector<fastjet::PseudoJet> jetsSigSD = sdgSig.doGrooming();
-    std::vector<double> zgSigSD = sdgSig.getZgs();
-    std::vector<int> ndropSigSD = sdgSig.getNDroppedBranches();
+    softDropGroomer sdgSig(0.1, 0., R);
+    jetCollection jetCollectionSigSD(sdgSig.doGrooming(jetCollectionSig.getJet()));
+    jetCollectionSigSD.addVector("zgSigSD",    sdgSig.getZgs());
+    jetCollectionSigSD.addVector("ndropSigSD", sdgSig.getNDroppedBranches());
 
     //SoftDrop emission counting for signal jets
     softDropCounter sdcSig(0.1, 0.0, 0.4, 0.1);
-    sdcSig.run(jetsSig);
-    std::vector<double> nSigSD = sdcSig.calculateNSD(0.0);
-    std::vector<double> zSigSD = sdcSig.calculateNSD(1.0);
+    sdcSig.run(jetCollectionSig.getJet());
+    jetCollectionSig.addVector("nSigSD", sdcSig.calculateNSD(0.0));
+    jetCollectionSig.addVector("zSigSD", sdcSig.calculateNSD(1.0));
 
     //match the CS jets to signal jets
     jetMatcher jmCS(R);
-    jmCS.setBaseJets(jetsCS);
-    jmCS.setTagJets(jetsSig);
+    jmCS.setBaseJets(jetCollectionCS);
+    jmCS.setTagJets(jetCollectionSig);
     jmCS.matchJets();
-    std::vector<fastjet::PseudoJet> jetsCSMatch = jmCS.getBaseJetsOrderedToTag();
-    
-    //reorder groomed observables for CS jets to gen jet order using CS jet matching indices
-    //Note: it will break down if your grooming procedure throws away jets. In that case run matching for your collection
-    std::vector<fastjet::PseudoJet> jetsCSSDMatch = jmCS.reorderedToTag(jetsCSSD);
-    std::vector<double> zgCSSDMatch = jmCS.reorderedToTag(zgCSSD);
-    std::vector<int> ndropCSSDMatch = jmCS.reorderedToTag(ndropCSSD);
 
-    std::vector<double> nCSSDMatch = jmCS.reorderedToTag(nCSSD);
-    std::vector<double> zCSSDMatch = jmCS.reorderedToTag(zCSSD);
+    jmCS.reorderedToTag(jetCollectionCS);
+    jmCS.reorderedToTag(jetCollectionCSSD);
 
     //match the SK jets to signal jets
     jetMatcher jmSK(R);
-    jmSK.setBaseJets(jetsSK);
-    jmSK.setTagJets(jetsSig);
+    jmSK.setBaseJets(jetCollectionSK);
+    jmSK.setTagJets(jetCollectionSig);
     jmSK.matchJets();
-    std::vector<fastjet::PseudoJet> jetsSKMatch = jmSK.getBaseJetsOrderedToTag();
+    
+    jmSK.reorderedToTag(jetCollectionSK);
 
     //std::cout << "nCS: " << jetsCS.size() << " nCSSD: " << jetsCSSD.size() << " nCSSD: " << nCSSD.size() << std::endl;
 
@@ -169,23 +161,17 @@ int main ()
     //---------------------------------------------------------------------------
     
     //Give variable we want to write out to treeWriter.
-    //Only vectors of the types 'double', 'int', and 'fastjet::PseudoJet' are supported
-    trw.addJetCollection("sigJet",jetsSig);
-    trw.addJetCollection("csJet",jetsCSMatch);
-    trw.addJetCollection("sigJetSD",jetsSigSD);
-    trw.addDoubleCollection("zgSigSD",zgSigSD);
-    trw.addIntCollection("ndropSigSD",ndropSigSD);
-    trw.addDoubleCollection("nSigSD",nSigSD);
-    trw.addDoubleCollection("zSigSD",zSigSD);
-    trw.addJetCollection("csJetSD",jetsCSSDMatch);
-    trw.addDoubleCollection("zgCSSD",zgCSSDMatch);
-    trw.addIntCollection("ndropCSSD",ndropCSSDMatch);
-    trw.addDoubleCollection("nCSSD",nCSSDMatch);
-    trw.addDoubleCollection("zCSSD",zCSSDMatch);
-    trw.addDoubleCollection("csRho",rho);
-    trw.addDoubleCollection("csRhom",rhom);
-    trw.addJetCollection("skJet",jetsSKMatch);
-    trw.addDoubleCollection("skPtThreshold",skPtThreshold);
+    //Only vectors of the types 'jetCollection', and 'double', 'int', 'fastjet::PseudoJet' are supported
+
+    trw.addJetCollection("sigJet",   jetCollectionSig);
+    trw.addJetCollection("csJet",    jetCollectionCS);
+    trw.addJetCollection("sigJetSD", jetCollectionSigSD);
+    trw.addJetCollection("csJetSD",  jetCollectionCSSD);
+    trw.addJetCollection("skJet",    jetCollectionSK);
+
+    trw.addDoubleCollection("csRho",         rho);
+    trw.addDoubleCollection("csRhom",        rhom);
+    trw.addDoubleCollection("skPtThreshold", skPtThreshold);
     
     trw.fillTree();
     

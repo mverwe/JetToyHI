@@ -9,12 +9,12 @@
 
 #include "fastjet/PseudoJet.hh"
 
-using namespace std;
+#include "jetCollection.hh"
 
 //---------------------------------------------------------------
 // Description
 // This class matches two collections of jets using bijective algorithm
-// Author: M. Verweij
+// Author: M. Verweij, Y. Chen
 //---------------------------------------------------------------
 
 class jetMatcher {
@@ -36,13 +36,15 @@ class jetMatcher {
 
   void setBaseJets(std::vector<fastjet::PseudoJet> v) { fjBase_  = v; }
   void setTagJets(std::vector<fastjet::PseudoJet> v)  { fjTag_   = v; }
+  void setBaseJets(jetCollection c)                   { fjBase_  = c.getJet(); }
+  void setTagJets(jetCollection c)                    { fjTag_   = c.getJet(); }
   void setMaxDist(double d)                           { maxDist_ = d; }
 
   std::vector<int> getBaseMatchIds() const { return fjBaseMatchIds_; }
   std::vector<int> getTagMatchIds()  const { return fjTagMatchIds_; }
  
-  void matchJets() {
-
+  void matchJets()
+  {
     int nJets1 = (int)fjBase_.size();
     int nJets2 = (int)fjTag_.size();
 
@@ -177,6 +179,34 @@ class jetMatcher {
     }
     return vecReordered;
   }
+
+  //-------------------------------------------------------------------------------
+  void reorderedToBase(jetCollection &c)
+  {
+     c.p_ = reorderedToBase(c.p_);
+
+     std::vector<std::string> doubleKeys = c.getListOfKeysDouble();
+     for(std::string tag: doubleKeys)
+        c.addVector(tag, reorderedToBase(c.getVectorDouble(tag)));
+
+     std::vector<std::string> intKeys = c.getListOfKeysInt();
+     for(std::string tag: intKeys)
+        c.addVector(tag, reorderedToBase(c.getVectorInt(tag)));
+  };
+  
+  //-------------------------------------------------------------------------------
+  void reorderedToTag(jetCollection &c)
+  {
+     c.p_ = reorderedToTag(c.p_);
+
+     std::vector<std::string> doubleKeys = c.getListOfKeysDouble();
+     for(std::string tag: doubleKeys)
+        c.addVector(tag, reorderedToTag(c.getVectorDouble(tag)));
+
+     std::vector<std::string> intKeys = c.getListOfKeysInt();
+     for(std::string tag: intKeys)
+        c.addVector(tag, reorderedToTag(c.getVectorInt(tag)));
+  };
   
   //-------------------------------------------------------------------------------
   std::vector<double> reorderedToBase(std::vector<double> v) {
