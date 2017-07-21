@@ -20,7 +20,8 @@ using namespace std;
 
 //---------------------------------------------------------------
 // Description
-// This class runs the jet-by-jet constituent subtraction
+// This class runs random cones on a event
+// and stores the random cones without subtraction in a PseudoJet vector
 // Author: M. Verweij
 //---------------------------------------------------------------
 
