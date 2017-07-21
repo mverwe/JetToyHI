@@ -25,8 +25,8 @@ private :
   unsigned int tune_;
 
 public :
-  pythiaEvent(double pthat = 120., unsigned int tune = 14) :
-    pthat_(pthat), tune_(tune)
+  pythiaEvent(double pthat = 120., unsigned int tune = 14, double etaMin = -3., double etaMax = 3.) :
+    pthat_(pthat), tune_(tune), etaMin_(etaMin), etaMax_(etaMax)
   {
     
     // Generator. LHC process and output selection. Initialization.
@@ -52,7 +52,8 @@ public :
 
     for (int i = 0; i < pythia.event.size(); ++i) {
       if (pythia.event[i].isFinal()) {
-        particles.push_back(fastjet::PseudoJet(pythia.event[i].px(),pythia.event[i].py(),pythia.event[i].pz(),pythia.event[i].e()));
+        if(pythia.event[i].eta()>etaMin_ && pythia.event[i].eta()<etaMax_)
+          particles.push_back(fastjet::PseudoJet(pythia.event[i].px(),pythia.event[i].py(),pythia.event[i].pz(),pythia.event[i].e()));
       }
     }
 
