@@ -22,8 +22,8 @@
 // Authors: Y. Chen, M. Verweij
 //---------------------------------------------------------------
 
-class treeWriter {
-
+class treeWriter
+{
  private :
   TTree* treeOut_;
   const char *treeName_;
@@ -31,67 +31,123 @@ class treeWriter {
   std::map<std::string,std::vector<double>  > doubleMaps_;
       
  public :
-  treeWriter(const char *treeName = "treeOut") :
-    treeName_(treeName)
-  {
-    treeOut_ = new TTree(treeName_,"JetToyHI tree");
-  }
+  treeWriter(const char *treeName = "treeOut");
+  TTree *getTree() const;
+  void setTreeName(const char *c);
+  void fillTree();
+  void addCollection(std::string name, const jetCollection &c);
+  void addCollection(std::string name, const std::vector<fastjet::PseudoJet> &v);
+  void addCollection(std::string name, const std::vector<double> &v);
+  void addCollection(std::string name, const std::vector<int> &v);
+  void addJetCollection(std::string name, const jetCollection &c);
+  void addJetCollection(std::string name, const std::vector<fastjet::PseudoJet> v);
+  void addDoubleCollection(std::string name, const std::vector<double> v);
+  void addIntCollection(std::string name, const std::vector<int> v);
+  void bookBranchDoubleVec(std::string name);
+  void bookBranchIntVec(std::string name);
+};
 
-  TTree *getTree() const {return treeOut_;};
+treeWriter::treeWriter(const char *treeName)
+   : treeName_(treeName)
+{
+   treeOut_ = new TTree(treeName_,"JetToyHI tree");
+}
 
-  void setTreeName(const char *c) {treeName_ = c; treeOut_->SetName(c);}
+TTree *treeWriter::getTree() const
+{
+   return treeOut_;
+}
 
-  void fillTree() {treeOut_->Fill();}
+void treeWriter::setTreeName(const char *c)
+{
+   treeName_ = c;
+   treeOut_->SetName(c);
+}
 
-  void addJetCollection(std::string name, jetCollection &c)
-  {
-     addJetCollection(name, c.getJet());
+void treeWriter::fillTree()
+{
+   treeOut_->Fill();
+}
 
-     std::vector<std::string> doubleKeys = c.getListOfKeysDouble();
-     for(std::string tag: doubleKeys)
-        addDoubleCollection(tag, c.getVectorDouble(tag));
+void treeWriter::addCollection(std::string name, const jetCollection &c)
+{
+   addJetCollection(name, c);
+}
 
-     std::vector<std::string> intKeys = c.getListOfKeysInt();
-     for(std::string tag: intKeys)
-        addIntCollection(tag, c.getVectorInt(tag));
-  }
+void treeWriter::addCollection(std::string name, const std::vector<fastjet::PseudoJet> &v)
+{
+   addJetCollection(name, v);
+}
 
-  void addJetCollection(std::string name, std::vector<fastjet::PseudoJet> v) {
+void treeWriter::addCollection(std::string name, const std::vector<double> &v)
+{
+   addDoubleCollection(name, v);
+}
 
-    //we are storing the pt, eta, phi and mass of the jets
-    std::vector<double> pt;    pt.reserve(v.size());
-    std::vector<double> eta;   eta.reserve(v.size());
-    std::vector<double> phi;   phi.reserve(v.size());
-    std::vector<double> m;     m.reserve(v.size());
-    for( fastjet::PseudoJet jet : v ) {
+void treeWriter::addCollection(std::string name, const std::vector<int> &v)
+{
+   addIntCollection(name, v);
+}
+
+void treeWriter::addJetCollection(std::string name, const jetCollection &c)
+{
+   addJetCollection(name, c.getJet());
+
+   std::vector<std::string> doubleKeys = c.getListOfKeysDouble();
+   for(std::string tag: doubleKeys)
+      addDoubleCollection(tag, c.getVectorDouble(tag));
+
+   std::vector<std::string> intKeys = c.getListOfKeysInt();
+   for(std::string tag: intKeys)
+      addIntCollection(tag, c.getVectorInt(tag));
+}
+
+void treeWriter::addJetCollection(std::string name, const std::vector<fastjet::PseudoJet> v)
+{
+   //we are storing the pt, eta, phi and mass of the jets
+   std::vector<double> pt;    pt.reserve(v.size());
+   std::vector<double> eta;   eta.reserve(v.size());
+   std::vector<double> phi;   phi.reserve(v.size());
+   std::vector<double> m;     m.reserve(v.size());
+
+   for(const fastjet::PseudoJet jet: v)
+   {
       pt.push_back(jet.pt());
       eta.push_back(jet.eta());
       phi.push_back(jet.phi());
       m.push_back(jet.m());
-    }
-    addDoubleCollection(name+"Pt",pt);
-    addDoubleCollection(name+"Eta",eta);
-    addDoubleCollection(name+"Phi",phi);
-    addDoubleCollection(name+"M",m);
-  }
+   }
 
-  void addDoubleCollection(std::string name, std::vector<double> v) {
-    doubleMaps_[name] = v;
-    bookBranchDoubleVec(name);
-  }
+   addDoubleCollection(name + "Pt",  pt);
+   addDoubleCollection(name + "Eta", eta);
+   addDoubleCollection(name + "Phi", phi);
+   addDoubleCollection(name + "M",   m);
+}
 
-  void addIntCollection(std::string name, std::vector<int> v) {
-    intMaps_[name] = v;
-    bookBranchIntVec(name);
-  }
+void treeWriter::addDoubleCollection(std::string name, const std::vector<double> v)
+{
+   doubleMaps_[name] = v;
+   bookBranchDoubleVec(name);
+}
 
-  void bookBranchDoubleVec(std::string name) {
-    if(!treeOut_->GetBranch(name.c_str())) treeOut_->Branch(name.c_str(),&doubleMaps_[name]);
-  }
+void treeWriter::addIntCollection(std::string name, const std::vector<int> v)
+{
+   intMaps_[name] = v;
+   bookBranchIntVec(name);
+}
 
-  void bookBranchIntVec(std::string name) {
-    if(!treeOut_->GetBranch(name.c_str())) treeOut_->Branch(name.c_str(),&intMaps_[name]);
-  }
+void treeWriter::bookBranchDoubleVec(std::string name)
+{
+   if(!treeOut_->GetBranch(name.c_str()))
+      treeOut_->Branch(name.c_str(),&doubleMaps_[name]);
+}
 
-};
+void treeWriter::bookBranchIntVec(std::string name)
+{
+   if(!treeOut_->GetBranch(name.c_str()))
+      treeOut_->Branch(name.c_str(),&intMaps_[name]);
+}
+
+
+
 #endif

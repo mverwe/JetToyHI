@@ -14,20 +14,21 @@
 
 class jetCollection
 {
-public:
+private:
    std::vector<fastjet::PseudoJet> p_;
    std::map<std::string, std::vector<double>> doublemap_;
    std::map<std::string, std::vector<int>> intmap_;
 public:
    jetCollection(const std::vector<fastjet::PseudoJet> &p);
    ~jetCollection();
+   void setJet(const std::vector<fastjet::PseudoJet> &v);
    std::vector<fastjet::PseudoJet> getJet() const;
    std::vector<double> getVectorDouble(string tag) const;
    std::vector<int> getVectorInt(string tag) const;
    void addVector(string tag, std::vector<double> v);
    void addVector(string tag, std::vector<int> v);
-   std::vector<std::string> getListOfKeysDouble();
-   std::vector<std::string> getListOfKeysInt();
+   std::vector<std::string> getListOfKeysDouble() const;
+   std::vector<std::string> getListOfKeysInt() const;
 };
 
 jetCollection::jetCollection(const std::vector<fastjet::PseudoJet> &p)
@@ -37,6 +38,11 @@ jetCollection::jetCollection(const std::vector<fastjet::PseudoJet> &p)
 
 jetCollection::~jetCollection()
 {
+}
+   
+void jetCollection::setJet(const std::vector<fastjet::PseudoJet> &v)
+{
+   p_ = v;
 }
    
 std::vector<fastjet::PseudoJet> jetCollection::getJet() const
@@ -72,18 +78,18 @@ void jetCollection::addVector(string tag, std::vector<int> v)
    intmap_[tag] = v;
 }
 
-std::vector<std::string> jetCollection::getListOfKeysDouble()
+std::vector<std::string> jetCollection::getListOfKeysDouble() const
 {
    std::vector<std::string> Result;
-   for(std::map<std::string, std::vector<double>>::iterator iter = doublemap_.begin(); iter != doublemap_.end(); iter++)
+   for(std::map<std::string, std::vector<double>>::const_iterator iter = doublemap_.begin(); iter != doublemap_.end(); iter++)
       Result.push_back(iter->first);
    return Result;
 }
 
-std::vector<std::string> jetCollection::getListOfKeysInt()
+std::vector<std::string> jetCollection::getListOfKeysInt() const
 {
    std::vector<std::string> Result;
-   for(std::map<std::string, std::vector<int>>::iterator iter = intmap_.begin(); iter != intmap_.end(); iter++)
+   for(std::map<std::string, std::vector<int>>::const_iterator iter = intmap_.begin(); iter != intmap_.end(); iter++)
       Result.push_back(iter->first);
    return Result;
 }
