@@ -85,7 +85,7 @@ void softDropCounter::run(const std::vector<fastjet::PseudoJet> &v)
 
 void softDropCounter::run()
 {
-   int N = fjInputs_.size();
+   //int N = fjInputs_.size();
 
    for(fastjet::PseudoJet &jet: fjInputs_)
    {

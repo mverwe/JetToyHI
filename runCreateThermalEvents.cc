@@ -30,7 +30,7 @@ int main ()
   ClusterSequence::set_fastjet_banner_stream(NULL);
   
   // Number of events, generated and listed ones.
-  unsigned int nEvent    = 10000;
+  unsigned int nEvent    = 10;
 
   //event generators
   unsigned int mult = 12000;
@@ -42,7 +42,7 @@ int main ()
 
   //output text file
   ofstream fout;
-  const char *dir = "/eos/user/m/mverweij/JetWorkshop2017/samples/";
+  const char *dir = getenv("PWD");//"/eos/user/m/mverweij/JetWorkshop2017/samples/";
   TString outFileName = Form("%s/ThermalEventsMult%dPtAv%.2f.pu14",dir,mult,ptAve);
   
   fout.open(outFileName.Data());

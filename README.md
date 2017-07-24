@@ -38,10 +38,11 @@ Next steps
 git clone git@github.com:mverwe/JetToyHI.git
 cd JetToyHI
 . setup.sh
+echo $FASTJET > .fastjet
 ```
 
-Now first adjust the Makefile so that it points to your fastjet installation
 ```
+scripts/mkcxx.pl -a test -f -s -1 -r -8
 make
 ./runtest
 ```
