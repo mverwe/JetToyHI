@@ -9,6 +9,8 @@
 
 #include "Pythia8/Pythia.h"
 
+#include "extraInfo.hh"
+
 //using namespace std;
 
 //---------------------------------------------------------------
@@ -55,6 +57,7 @@ public :
     for (int i = 0; i < pythia.event.size(); ++i) {
       if (pythia.event[i].isFinal()) {
         fastjet::PseudoJet p(pythia.event[i].px(),pythia.event[i].py(),pythia.event[i].pz(),pythia.event[i].e());
+        p.set_user_info(new extraInfo(pythia.event[i].id(), 0)); 
         if(p.rap()>rapMin_ && p.rap()<rapMax_)
           particles.push_back(p);
       }

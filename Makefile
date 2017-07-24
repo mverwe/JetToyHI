@@ -31,15 +31,18 @@ COMMONSRC =
 F77SRC = 
 COMMONOBJ = 
 
-PROGSRC = runCreateThermalEvents.cc runtest.cc
-PROGOBJ = runCreateThermalEvents.o runtest.o
+PROGSRC = runCreatePythiaEvents.cc runCreateThermalEvents.cc runtest.cc
+PROGOBJ = runCreatePythiaEvents.o runCreateThermalEvents.o runtest.o
 
 INCLUDE += 
 LIBRARIES += 
 
 
-all:  runCreateThermalEvents runtest libtest.a
+all:  runCreatePythiaEvents runCreateThermalEvents runtest libtest.a
 
+
+runCreatePythiaEvents: runCreatePythiaEvents.o  $(COMMONOBJ)
+	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
 
 runCreateThermalEvents: runCreateThermalEvents.o  $(COMMONOBJ)
 	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
@@ -59,7 +62,7 @@ clean:
 	rm -vf $(COMMONOBJ) $(PROGOBJ)
 
 realclean: clean
-	rm -vf  runCreateThermalEvents runtest libtest.a
+	rm -vf  runCreatePythiaEvents runCreateThermalEvents runtest libtest.a
 
 .cc.o:         $<
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
@@ -77,10 +80,12 @@ depend:
 	makedepend  $(LCLINCLUDE) -Y --   -- $(COMMONSRC) $(PROGSRC)
 # DO NOT DELETE
 
+runCreatePythiaEvents.o: include/ProgressBar.h include/pythiaEvent.hh
+runCreatePythiaEvents.o: include/extraInfo.hh
 runCreateThermalEvents.o: include/ProgressBar.h include/thermalEvent.hh
 runtest.o: include/ProgressBar.h include/jetCollection.hh
 runtest.o: include/thermalEvent.hh include/pythiaEvent.hh
-runtest.o: include/csSubtractor.hh include/skSubtractor.hh
-runtest.o: include/softDropGroomer.hh include/jetCollection.hh
-runtest.o: include/softDropCounter.hh include/treeWriter.hh
-runtest.o: include/jetMatcher.hh include/randomCones.hh
+runtest.o: include/extraInfo.hh include/csSubtractor.hh
+runtest.o: include/skSubtractor.hh include/softDropGroomer.hh
+runtest.o: include/jetCollection.hh include/softDropCounter.hh
+runtest.o: include/treeWriter.hh include/jetMatcher.hh include/randomCones.hh

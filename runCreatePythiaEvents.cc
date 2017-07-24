@@ -10,16 +10,8 @@
 
 #include "include/ProgressBar.h"
 
-// #include "include/jetCollection.hh"
-#include "include/thermalEvent.hh"
-// #include "include/pythiaEvent.hh"
-// #include "include/csSubtractor.hh"
-// #include "include/skSubtractor.hh"
-// #include "include/softDropGroomer.hh"
-// #include "include/softDropCounter.hh"
-// #include "include/treeWriter.hh"
-// #include "include/jetMatcher.hh"
-// #include "include/randomCones.hh"
+#include "include/pythiaEvent.hh"
+#include "include/extraInfo.hh"
 
 using namespace std;
 using namespace fastjet;
@@ -32,10 +24,10 @@ int main ()
   // Number of events, generated and listed ones.
   unsigned int nEvent    = 2;
 
-  //event generators
-  unsigned int mult = 12000;
-  double       ptAve = 0.7;
-  thermalEvent thrm(mult,ptAve, -3.0, 3.0);
+  //event generator settings
+  double       ptHat = 120.;
+  unsigned int tune  = 14;
+  pythiaEvent pyt(ptHat, tune, -3.0, 3.0);
 
   ProgressBar Bar(cout, nEvent);
   Bar.SetStyle(-1);
@@ -43,7 +35,7 @@ int main ()
   //output text file
   ofstream fout;
   const char *dir = getenv("PWD");//"/eos/user/m/mverweij/JetWorkshop2017/samples/";
-  TString outFileName = Form("%s/ThermalEventsMult%dPtAv%.2f.pu14",dir,mult,ptAve);
+  TString outFileName = Form("%s/PythiaEventsTune%dPtHat%.0f.pu14",dir,tune,ptHat);
   
   fout.open(outFileName.Data());
   
@@ -60,12 +52,14 @@ int main ()
     //---------------------------------------------------------------------------
 
     fout << "# event " << ie << "\n";
-    
-    //create thermal event
-    std::vector<fastjet::PseudoJet> particlesBkg = thrm.createThermalEvent();
 
-    for(fastjet::PseudoJet p : particlesBkg) {
-      fout << p.pt() << " " << p.eta() << " " << p.phi() << " " << p.m() << " " << 211 << " " << 1 << "\n"; 
+    //create pythia event
+    std::vector<fastjet::PseudoJet> particlesSig = pyt.createPythiaEvent();
+   
+    for(fastjet::PseudoJet p : particlesSig) {
+      const int & pdgid = p.user_info<extraInfo>().pdg_id();
+      const int & vtx   = p.user_info<extraInfo>().vertex_number();
+      fout << p.pt() << " " << p.eta() << " " << p.phi() << " " << p.m() << " " << pdgid << " " << vtx << "\n"; 
     }
     fout << "end\n";
   }
