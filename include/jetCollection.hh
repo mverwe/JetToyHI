@@ -6,6 +6,8 @@
 
 #include "fastjet/PseudoJet.hh"
 
+using namespace std;
+
 //---------------------------------------------------------------
 // Description
 // This class contains jet momentum and associated quantities for the whole event

@@ -1,12 +1,11 @@
 #include <iostream>
-using namespace std;
+#include <chrono>
 
 #include "TFile.h"
 #include "TTree.h"
 
 #include "fastjet/PseudoJet.hh"
 #include "fastjet/ClusterSequenceArea.hh"
-using namespace fastjet;
 
 #include "include/ProgressBar.h"
 
@@ -21,13 +20,18 @@ using namespace fastjet;
 #include "include/jetMatcher.hh"
 #include "include/randomCones.hh"
 
+using namespace std;
+using namespace fastjet;
+
 int main ()
 {
+  auto start_time = std::chrono::steady_clock::now();
+  
   // Uncomment to silence fastjet banner
   ClusterSequence::set_fastjet_banner_stream(NULL);
 
   // Number of events, generated and listed ones.
-  unsigned int nEvent    = 10;
+  unsigned int nEvent    = 10000;
 
   //to write info to root tree
   treeWriter trw("jetTree");
@@ -95,7 +99,8 @@ int main ()
     
     //run constituent subtraction on hybrid/embedded/merged event
     csSubtractor csSub(R, 1., -1, 0.005,ghostRapMax,jetRapMax);
-    csSub.setInputParticles(particlesMerged);
+    //csSub.setInputParticles(particlesMerged);
+    csSub.setInputJets(jetCollectionMerged.getJet());
     jetCollection jetCollectionCS(csSub.doSubtraction());
         
     std::vector<double> rho;    rho.push_back(csSub.getRho());
@@ -204,4 +209,9 @@ int main ()
   trOut->Write();
   fout->Write();
   fout->Close();
+
+  double time_in_seconds = std::chrono::duration_cast<std::chrono::milliseconds>
+    (std::chrono::steady_clock::now() - start_time).count() / 1000.0;
+  std::cout << "runtest: " << time_in_seconds << std::endl;
+  
 }

@@ -33,3 +33,8 @@
 
 # specific for this project
 .fastjet
+runtest
+runFromFile
+runCreatePythiaEvents
+runCreateThermalEvents
+Makefile

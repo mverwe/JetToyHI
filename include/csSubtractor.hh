@@ -32,6 +32,7 @@ private :
   double rho_;
   double rhom_;
   std::vector<fastjet::PseudoJet> fjInputs_;
+  std::vector<fastjet::PseudoJet> fjJetInputs_;
 
   contrib::ConstituentSubtractor subtractor_;
 
@@ -58,22 +59,33 @@ public :
   void setGhostArea(double a) { ghostArea_ = a; }
 
   void setInputParticles(std::vector<fastjet::PseudoJet> v) { fjInputs_ = v; }
+  void setInputJets(std::vector<fastjet::PseudoJet> v)      { fjJetInputs_ = v; }
 
   double getRho()  const { return rho_; }
   double getRhoM() const { return rhom_; }
   
   std::vector<fastjet::PseudoJet> doSubtraction() {
 
-    // do the clustering with ghosts and get the jets
-    //----------------------------------------------------------
-    fastjet::JetDefinition jet_def(antikt_algorithm, jetRParam_);
+    if(fjJetInputs_.size()==0 && fjInputs_.size()) {
+      throw "You didn't give me input jets or particles. You should give me one of the two";
+      return std::vector<fastjet::PseudoJet>();
+    }
+      
     fastjet::GhostedAreaSpec ghost_spec(ghostRapMax_, 1, ghostArea_);
-    fastjet::AreaDefinition area_def = fastjet::AreaDefinition(fastjet::active_area_explicit_ghosts,ghost_spec);
     
-    fastjet::ClusterSequenceArea cs(fjInputs_, jet_def, area_def);
-    fastjet::Selector jet_selector = SelectorAbsRapMax(jetRapMax_);
-    std::vector<fastjet::PseudoJet> jets = fastjet::sorted_by_pt(jet_selector(cs.inclusive_jets()));
+    std::vector<fastjet::PseudoJet> jets = fjJetInputs_;
+    if(jets.size()==0) {
     
+      // do the clustering with ghosts and get the jets
+      //----------------------------------------------------------
+      fastjet::JetDefinition jet_def(antikt_algorithm, jetRParam_);
+      fastjet::AreaDefinition area_def = fastjet::AreaDefinition(fastjet::active_area_explicit_ghosts,ghost_spec);
+      
+      fastjet::ClusterSequenceArea cs(fjInputs_, jet_def, area_def);
+      fastjet::Selector jet_selector = SelectorAbsRapMax(jetRapMax_);
+      jets = fastjet::sorted_by_pt(jet_selector(cs.inclusive_jets()));
+    }
+      
     // create what we need for the background estimation
     //----------------------------------------------------------
     fastjet::JetDefinition jet_def_bkgd(fastjet::kt_algorithm, 0.4);

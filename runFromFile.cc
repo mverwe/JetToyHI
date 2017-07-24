@@ -1,4 +1,5 @@
 #include <iostream>
+#include <chrono>
 
 #include "TFile.h"
 #include "TTree.h"
@@ -27,6 +28,8 @@ using namespace fastjet;
 
 int main (int argc, char ** argv) {
 
+  auto start_time = std::chrono::steady_clock::now();
+  
   CmdLine cmdline(argc,argv);
   // inputs read from command line
   int nEvent = cmdline.value<int>("-nev",1);  // first argument: command line option; second argument: default value
@@ -73,23 +76,8 @@ int main (int argc, char ** argv) {
     std::vector<fastjet::PseudoJet> particlesBkg, particlesSig;
     //particlesBkg = particlesMerged;
     //particlesSig = particlesMerged;
-    SelectorIsHard().sift(particlesMerged, particlesSig, particlesBkg); // this sifts the full event into two vectors
-    // of PseudoJet, one for the hard event, one for the underlying event
+    SelectorIsHard().sift(particlesMerged, particlesSig, particlesBkg); // this sifts the full event into two vectors of PseudoJet, one for the hard event, one for the underlying event
     
-    //std::cout << " nBkg: " << particlesBkg.size() << " nSig: " << particlesSig.size() << " nMerged: " << particlesMerged.size() << std::endl;
-    
-    //for(fastjet::PseudoJet part : particlesSig) {
-    //  Printf("sig particles: %f %f %f %f",part.pt(),part.eta(),part.phi(),part.m());
-    //}
-
-    //    int count = 0;
-    // for(fastjet::PseudoJet part : particlesBkg) {
-    //   Printf("bkg particles: %f %f %f %f",part.pt(),part.eta(),part.phi(),part.m());
-    //   //count++;
-    // }
-    //    Printf("found %d bkg particles",count);
-
-
     //---------------------------------------------------------------------------
     //   jet clustering
     //---------------------------------------------------------------------------
@@ -108,24 +96,27 @@ int main (int argc, char ** argv) {
     //   background subtraction
     //---------------------------------------------------------------------------
     
-    //run constituent subtraction on hybrid/embedded/merged event
+    //run constituent subtraction on mixed (hard+UE) event
     csSubtractor csSub(R, 1., -1, 0.005,ghostRapMax,jetRapMax);
-    csSub.setInputParticles(particlesMerged);
+    //csSub.setInputParticles(particlesMerged);
+    csSub.setInputJets(jetCollectionMerged.getJet());
     jetCollection jetCollectionCS(csSub.doSubtraction());
-        
+
+    //Background densities used by constituent subtraction
     std::vector<double> rho;    rho.push_back(csSub.getRho());
     std::vector<double> rhom;   rhom.push_back(csSub.getRhoM());
 
+    //Uncomment if youw ant to study random cones
     // randomCones rc(4,R,2.3,rho[0]);
     // rc.setInputParticles(particlesMerged);
     // jetCollection jetCollectionRC(rc.run());
 
-    //run soft killer on hybrid/embedded/mixed event
+    //run soft killer on mixed event
     skSubtractor skSub(0.4, 3.0);
     skSub.setInputParticles(particlesMerged);
     std::vector<fastjet::PseudoJet> skEvent = skSub.doSubtraction();
     std::vector<double> skPtThreshold;
-    skPtThreshold.push_back(skSub.getPtThreshold());
+    skPtThreshold.push_back(skSub.getPtThreshold()); //SoftKiller pT threshold
 
     fastjet::ClusterSequenceArea csSK(skEvent, jet_def, area_def);
     jetCollection jetCollectionSK(sorted_by_pt(jet_selector(csSK.inclusive_jets())));
@@ -136,13 +127,13 @@ int main (int argc, char ** argv) {
     //   Groom the jets
     //---------------------------------------------------------------------------
     
-    //SoftDrop grooming classic for CS jets
+    //SoftDrop grooming classic for CS jets (zcut=0.1, beta=0)
     softDropGroomer sdgCS(0.1, 0.0, R);
     jetCollection jetCollectionCSSD(sdgCS.doGrooming(jetCollectionCS));
     jetCollectionCSSD.addVector("zgCSSD",    sdgCS.getZgs());
     jetCollectionCSSD.addVector("ndropCSSD", sdgCS.getNDroppedBranches());
 
-    //SoftDrop grooming classic for signal jets
+    //SoftDrop grooming classic for signal jets (zcut=0.1, beta=0)
     softDropGroomer sdgSig(0.1, 0.0, R);
     jetCollection jetCollectionSigSD(sdgSig.doGrooming(jetCollectionSig));
     jetCollectionSigSD.addVector("zgSigSD",    sdgSig.getZgs());
@@ -208,4 +199,7 @@ int main (int argc, char ** argv) {
   fout->Write();
   fout->Close();
 
+  double time_in_seconds = std::chrono::duration_cast<std::chrono::milliseconds>
+    (std::chrono::steady_clock::now() - start_time).count() / 1000.0;
+  std::cout << "runFromFile: " << time_in_seconds << std::endl;
 }
