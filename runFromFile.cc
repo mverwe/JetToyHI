@@ -76,7 +76,7 @@ int main (int argc, char ** argv) {
     SelectorIsHard().sift(particlesMerged, particlesSig, particlesBkg); // this sifts the full event into two vectors
     // of PseudoJet, one for the hard event, one for the underlying event
     
-    std::cout << " nBkg: " << particlesBkg.size() << " nSig: " << particlesSig.size() << " nMerged: " << particlesMerged.size() << std::endl;
+    //std::cout << " nBkg: " << particlesBkg.size() << " nSig: " << particlesSig.size() << " nMerged: " << particlesMerged.size() << std::endl;
     
     //for(fastjet::PseudoJet part : particlesSig) {
     //  Printf("sig particles: %f %f %f %f",part.pt(),part.eta(),part.phi(),part.m());
