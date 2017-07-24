@@ -13,20 +13,29 @@
 #include "include/pythiaEvent.hh"
 #include "include/extraInfo.hh"
 
+#include "PU14/CmdLine.hh"
+
 using namespace std;
 using namespace fastjet;
 
-int main ()
+int main (int argc, char ** argv)
 {
   // Uncomment to silence fastjet banner
   ClusterSequence::set_fastjet_banner_stream(NULL);
-  
+ 
+  CmdLine cmdline(argc,argv);
+  // inputs read from command line
+  unsigned int nEvent = cmdline.value<unsigned int>("-nev",1);  // first argument: command line option; second argument: default value
+ 
   // Number of events, generated and listed ones.
-  unsigned int nEvent    = 100;
+  //unsigned int nEvent    = 10000;
 
   //event generator settings
-  double       ptHat = 120.;
-  unsigned int tune  = 14;
+  double       ptHat = cmdline.value<double>("-pthat",120);//120.;
+  unsigned int tune  = cmdline.value<int>("-tune",14);
+
+  std::cout << "generating " << nEvent << " events with pthat = " << ptHat << " and tune = " << tune << std::endl;  
+
   pythiaEvent pyt(ptHat, tune, -3.0, 3.0);
 
   ProgressBar Bar(cout, nEvent);

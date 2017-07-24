@@ -21,20 +21,28 @@
 // #include "include/jetMatcher.hh"
 // #include "include/randomCones.hh"
 
+#include "PU14/CmdLine.hh"
+
 using namespace std;
 using namespace fastjet;
 
-int main ()
+int main (int argc, char ** argv)
 {
   // Uncomment to silence fastjet banner
   ClusterSequence::set_fastjet_banner_stream(NULL);
-  
-  // Number of events, generated and listed ones.
-  unsigned int nEvent    = 100;
 
-  //event generators
-  unsigned int mult = 12000;
-  double       ptAve = 0.7;
+  CmdLine cmdline(argc,argv);
+  // inputs read from command line
+  unsigned int nEvent = cmdline.value<unsigned int>("-nev",1);  // first argument: command line option; second argument: default value
+  
+  //event generator settings
+  double       ptAve = cmdline.value<double>("-ptAve",0.7);
+  unsigned int mult  = cmdline.value<unsigned int>("-mult",12000);
+
+  std::cout << "generating " << nEvent << " events with ptAve = " << ptAve << " and multiplicity = " << mult << std::endl;
+  
+  //unsigned int mult = 12000;
+  //double       ptAve = 0.7;
   thermalEvent thrm(mult,ptAve, -3.0, 3.0);
 
   ProgressBar Bar(cout, nEvent);

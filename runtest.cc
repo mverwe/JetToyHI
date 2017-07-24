@@ -7,6 +7,8 @@
 #include "fastjet/PseudoJet.hh"
 #include "fastjet/ClusterSequenceArea.hh"
 
+#include "PU14/CmdLine.hh"
+
 #include "include/ProgressBar.h"
 
 #include "include/jetCollection.hh"
@@ -23,15 +25,20 @@
 using namespace std;
 using namespace fastjet;
 
-int main ()
+//to run do ./runtest -nev 100 #or whatever other number of events you want
+int main (int argc, char ** argv)
 {
   auto start_time = std::chrono::steady_clock::now();
+
+  CmdLine cmdline(argc,argv);
+  // inputs read from command line
+  unsigned int nEvent = cmdline.value<unsigned int>("-nev",10);  // first argument: command line option; second argument: default value
   
   // Uncomment to silence fastjet banner
   ClusterSequence::set_fastjet_banner_stream(NULL);
 
-  // Number of events, generated and listed ones.
-  unsigned int nEvent    = 10000;
+  // // Number of events, generated and listed ones.
+  // unsigned int nEvent    = 10000;
 
   //to write info to root tree
   treeWriter trw("jetTree");
@@ -46,7 +53,7 @@ int main ()
   double ghost_area          = 0.005;
   int    active_area_repeats = 1;
   fastjet::GhostedAreaSpec ghost_spec(ghostRapMax, active_area_repeats, ghost_area);
-  fastjet::AreaDefinition area_def = fastjet::AreaDefinition(fastjet::active_area,ghost_spec);
+  fastjet::AreaDefinition area_def = fastjet::AreaDefinition(fastjet::active_area_explicit_ghosts,ghost_spec);
   fastjet::JetDefinition jet_def(antikt_algorithm, R);
 
   double jetRapMax = 3.0;
