@@ -22,7 +22,7 @@ int main ()
   ClusterSequence::set_fastjet_banner_stream(NULL);
   
   // Number of events, generated and listed ones.
-  unsigned int nEvent    = 2;
+  unsigned int nEvent    = 100;
 
   //event generator settings
   double       ptHat = 120.;
@@ -59,7 +59,8 @@ int main ()
     for(fastjet::PseudoJet p : particlesSig) {
       const int & pdgid = p.user_info<extraInfo>().pdg_id();
       const int & vtx   = p.user_info<extraInfo>().vertex_number();
-      fout << p.pt() << " " << p.eta() << " " << p.phi() << " " << p.m() << " " << pdgid << " " << vtx << "\n"; 
+      fout << p.px() << " " << p.py() << " " << p.pz() << " " << p.m() << " " << pdgid << " " << vtx << "\n";
+      //fout << p.pt() << " " << p.rap() << " " << p.phi() << " " << p.m() << " " << pdgid << " " << vtx << "\n"; 
     }
     fout << "end\n";
   }

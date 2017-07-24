@@ -30,7 +30,7 @@ int main ()
   ClusterSequence::set_fastjet_banner_stream(NULL);
   
   // Number of events, generated and listed ones.
-  unsigned int nEvent    = 2;
+  unsigned int nEvent    = 100;
 
   //event generators
   unsigned int mult = 12000;
@@ -65,7 +65,8 @@ int main ()
     std::vector<fastjet::PseudoJet> particlesBkg = thrm.createThermalEvent();
 
     for(fastjet::PseudoJet p : particlesBkg) {
-      fout << p.pt() << " " << p.eta() << " " << p.phi() << " " << p.m() << " " << 211 << " " << 1 << "\n"; 
+      fout << p.px() << " " << p.py() << " " << p.pz() << " " << p.m() << " " << 211 << " " << 1 << "\n";
+      //fout << p.pt() << " " << p.rap() << " " << p.phi() << " " << p.m() << " " << 211 << " " << 1 << "\n"; 
     }
     fout << "end\n";
   }
