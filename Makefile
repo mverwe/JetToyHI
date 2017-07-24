@@ -1,5 +1,5 @@
 SOURCES=runtest.cc
-DEPS=thermalEvent.hh pythiaEvent.hh csSubtractor.hh skSubtractor.hh softDropGroomer.hh treeWriter.hh jetMatcher.hh randomCones.hh
+DEPS=include/thermalEvent.hh include/pythiaEvent.hh include/csSubtractor.hh include/skSubtractor.hh include/softDropGroomer.hh include/treeWriter.hh include/jetMatcher.hh include/randomCones.hh
 EXECUTABLE=runtest
 OBJECTS=$(SOURCES:.cpp=.o)
 FASTJET=/afs/cern.ch/user/m/mverweij/work/soft/toy/fastjet-install

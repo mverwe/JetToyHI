@@ -8,18 +8,18 @@ using namespace std;
 #include "fastjet/ClusterSequenceArea.hh"
 using namespace fastjet;
 
-#include "ProgressBar.h"
+#include "include/ProgressBar.h"
 
-#include "jetCollection.hh"
-#include "thermalEvent.hh"
-#include "pythiaEvent.hh"
-#include "csSubtractor.hh"
-#include "skSubtractor.hh"
-#include "softDropGroomer.hh"
-#include "softDropCounter.hh"
-#include "treeWriter.hh"
-#include "jetMatcher.hh"
-#include "randomCones.hh"
+#include "include/jetCollection.hh"
+#include "include/thermalEvent.hh"
+#include "include/pythiaEvent.hh"
+#include "include/csSubtractor.hh"
+#include "include/skSubtractor.hh"
+#include "include/softDropGroomer.hh"
+#include "include/softDropCounter.hh"
+#include "include/treeWriter.hh"
+#include "include/jetMatcher.hh"
+#include "include/randomCones.hh"
 
 int main ()
 {
@@ -27,7 +27,7 @@ int main ()
   ClusterSequence::set_fastjet_banner_stream(NULL);
 
   // Number of events, generated and listed ones.
-  unsigned int nEvent    = 100;
+  unsigned int nEvent    = 10;
 
   //to write info to root tree
   treeWriter trw("jetTree");
