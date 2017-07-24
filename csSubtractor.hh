@@ -23,6 +23,7 @@ using namespace std;
 class csSubtractor {
 
 private :
+  double jetRParam_;
   double alpha_;
   double rParam_;
   double ghostArea_;
@@ -36,7 +37,8 @@ private :
 
   
 public :
-  csSubtractor(double alpha = 1., double rParam = -1., double ghostArea = 0.005, double ghostRapMax = 3.0, double jetRapMax = 3.0) :
+  csSubtractor(double rJet = 0.4, double alpha = 1., double rParam = -1., double ghostArea = 0.005, double ghostRapMax = 3.0, double jetRapMax = 3.0) :
+    jetRParam_(rJet),
     alpha_(alpha),
     rParam_(rParam),
     ghostArea_(ghostArea),
@@ -64,7 +66,7 @@ public :
 
     // do the clustering with ghosts and get the jets
     //----------------------------------------------------------
-    fastjet::JetDefinition jet_def(antikt_algorithm, rParam_);
+    fastjet::JetDefinition jet_def(antikt_algorithm, jetRParam_);
     fastjet::GhostedAreaSpec ghost_spec(ghostRapMax_, 1, ghostArea_);
     fastjet::AreaDefinition area_def = fastjet::AreaDefinition(fastjet::active_area_explicit_ghosts,ghost_spec);
     
@@ -83,24 +85,13 @@ public :
     rho_ = bkgd_estimator.rho();
     rhom_ = bkgd_estimator.rho_m();
 
-    /*
-    cout << "Background estimation:" << endl;
-    cout << "  " << bkgd_estimator.description() << endl << endl;;
-    cout << "  Giving, for the full event" << endl;
-    cout << "    rho     = " << bkgd_estimator.rho()   << endl;
-    cout << "    sigma   = " << bkgd_estimator.sigma() << endl;
-#if FASTJET_VERSION_NUMBER >= 30100
-    cout << "    rho_m   = " << bkgd_estimator.rho_m()   << endl;
-    cout << "    sigma_m = " << bkgd_estimator.sigma_m() << endl;
-#endif
-    cout << endl;
-    */
     subtractor_.set_background_estimator(&bkgd_estimator);
     subtractor_.set_common_bge_for_rho_and_rhom(true);
-
+    
     std::vector<fastjet::PseudoJet> csjets;
     csjets.reserve(jets.size());
     for(fastjet::PseudoJet& jet : jets) {
+
       fastjet::PseudoJet subtracted_jet = subtractor_(jet);
       std::vector<fastjet::PseudoJet> particles, ghosts;
       fastjet::SelectorIsPureGhost().sift(subtracted_jet.constituents(), ghosts, particles);

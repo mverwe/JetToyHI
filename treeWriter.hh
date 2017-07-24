@@ -109,6 +109,7 @@ void treeWriter::addJetCollection(std::string name, const std::vector<fastjet::P
    std::vector<double> eta;   eta.reserve(v.size());
    std::vector<double> phi;   phi.reserve(v.size());
    std::vector<double> m;     m.reserve(v.size());
+   std::vector<double> area;    area.reserve(v.size());
 
    for(const fastjet::PseudoJet jet: v)
    {
@@ -116,12 +117,15 @@ void treeWriter::addJetCollection(std::string name, const std::vector<fastjet::P
       eta.push_back(jet.eta());
       phi.push_back(jet.phi());
       m.push_back(jet.m());
+      if(jet.has_area()) area.push_back(jet.area());
+      else area.push_back(-1.);
    }
 
    addDoubleCollection(name + "Pt",  pt);
    addDoubleCollection(name + "Eta", eta);
    addDoubleCollection(name + "Phi", phi);
    addDoubleCollection(name + "M",   m);
+   addDoubleCollection(name + "Area",   area);
 }
 
 void treeWriter::addDoubleCollection(std::string name, const std::vector<double> v)

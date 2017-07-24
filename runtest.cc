@@ -27,7 +27,7 @@ int main ()
   ClusterSequence::set_fastjet_banner_stream(NULL);
 
   // Number of events, generated and listed ones.
-  unsigned int nEvent    = 1000;
+  unsigned int nEvent    = 100;
 
   //to write info to root tree
   treeWriter trw("jetTree");
@@ -94,10 +94,10 @@ int main ()
     //---------------------------------------------------------------------------
     
     //run constituent subtraction on hybrid/embedded/merged event
-    csSubtractor csSub(1., -1, 0.005,ghostRapMax,jetRapMax);
+    csSubtractor csSub(R, 1., -1, 0.005,ghostRapMax,jetRapMax);
     csSub.setInputParticles(particlesMerged);
     jetCollection jetCollectionCS(csSub.doSubtraction());
-
+        
     std::vector<double> rho;    rho.push_back(csSub.getRho());
     std::vector<double> rhom;   rhom.push_back(csSub.getRhoM());
 
@@ -183,12 +183,13 @@ int main ()
     trw.addCollection("csJetSD",       jetCollectionCSSD);
     trw.addCollection("skJet",         jetCollectionSK);
     //trw.addCollection("randomCones",   jetCollectionRC);
-    trw.addCollection("unsubJet",      jetCollectionMerged);
 
     trw.addCollection("csRho",         rho);
     trw.addCollection("csRhom",        rhom);
     trw.addCollection("skPtThreshold", skPtThreshold);
-    
+
+    trw.addCollection("unsubJet",      jetCollectionMerged);
+        
     trw.fillTree();
 
   }//event loop
