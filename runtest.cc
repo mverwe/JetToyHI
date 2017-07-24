@@ -106,8 +106,8 @@ int main (int argc, char ** argv)
     
     //run constituent subtraction on hybrid/embedded/merged event
     csSubtractor csSub(R, 1., -1, 0.005,ghostRapMax,jetRapMax);
-    //csSub.setInputParticles(particlesMerged);
-    csSub.setInputJets(jetCollectionMerged.getJet());
+    csSub.setInputParticles(particlesMerged);
+    //csSub.setInputJets(jetCollectionMerged.getJet());
     jetCollection jetCollectionCS(csSub.doSubtraction());
         
     std::vector<double> rho;    rho.push_back(csSub.getRho());

@@ -52,3 +52,11 @@ scripts/mkcxx.pl -f -s -1 -r -8 '-IPU14' -l '-LPU14 -lPU14 -lz'
 make
 ./runFromFile -hard samples/PythiaEventsTune14PtHat120.pu14 -pileup samples/ThermalEventsMult12000PtAv0.70.pu14 -upu 1 -nev 2
 ```
+
+## Contribute
+* If you want to contribute to this code you need to have a github account. Go here to do so: https://github.com/join.
+* Fork the original repository. Go to: https://github.com/mverwe/JetToyHI and click 'Fork' in the upper right corner.
+* Instead of cloning the original repository as shown above, clone your own.
+* Do a pull request once you have finished your developements.
+
+

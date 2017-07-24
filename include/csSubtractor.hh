@@ -66,15 +66,15 @@ public :
   
   std::vector<fastjet::PseudoJet> doSubtraction() {
 
-    if(fjJetInputs_.size()==0 && fjInputs_.size()) {
-      throw "You didn't give me input jets or particles. You should give me one of the two";
-      return std::vector<fastjet::PseudoJet>();
-    }
+    //if(fjJetInputs_.size()==0 && fjInputs_.size()) {
+    //  throw "You didn't give me input jets or particles. You should give me one of the two";
+    //  return std::vector<fastjet::PseudoJet>();
+    //}
       
     fastjet::GhostedAreaSpec ghost_spec(ghostRapMax_, 1, ghostArea_);
     
     std::vector<fastjet::PseudoJet> jets = fjJetInputs_;
-    if(jets.size()==0) {
+    //if(jets.size()==0) {
     
       // do the clustering with ghosts and get the jets
       //----------------------------------------------------------
@@ -84,7 +84,7 @@ public :
       fastjet::ClusterSequenceArea cs(fjInputs_, jet_def, area_def);
       fastjet::Selector jet_selector = SelectorAbsRapMax(jetRapMax_);
       jets = fastjet::sorted_by_pt(jet_selector(cs.inclusive_jets()));
-    }
+    //}
       
     // create what we need for the background estimation
     //----------------------------------------------------------
