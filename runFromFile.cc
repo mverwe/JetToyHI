@@ -18,7 +18,6 @@
 #include "include/csSubtractor.hh"
 #include "include/skSubtractor.hh"
 #include "include/softDropGroomer.hh"
-#include "include/softDropCounter.hh"
 #include "include/treeWriter.hh"
 #include "include/jetMatcher.hh"
 #include "include/randomCones.hh"
@@ -143,23 +142,11 @@ int main (int argc, char ** argv) {
     jetCollectionCSSD.addVector("zgCSSD",    sdgCS.getZgs());
     jetCollectionCSSD.addVector("ndropCSSD", sdgCS.getNDroppedBranches());
 
-    //SoftDrop emission counting for CS jets
-    softDropCounter sdcCS(0.1, 0.0, 0.4, 0.1);
-    sdcCS.run(jetCollectionCS);
-    jetCollectionCS.addVector("nCSSD", sdcCS.calculateNSD(0.0));
-    jetCollectionCS.addVector("zCSSD", sdcCS.calculateNSD(1.0));
-
     //SoftDrop grooming classic for signal jets
     softDropGroomer sdgSig(0.1, 0.0, R);
     jetCollection jetCollectionSigSD(sdgSig.doGrooming(jetCollectionSig));
     jetCollectionSigSD.addVector("zgSigSD",    sdgSig.getZgs());
     jetCollectionSigSD.addVector("ndropSigSD", sdgSig.getNDroppedBranches());
-
-    //SoftDrop emission counting for signal jets
-    softDropCounter sdcSig(0.1, 0.0, 0.4, 0.1);
-    sdcSig.run(jetCollectionSig);
-    jetCollectionSig.addVector("nSigSD", sdcSig.calculateNSD(0.0));
-    jetCollectionSig.addVector("zSigSD", sdcSig.calculateNSD(1.0));
 
     //match the CS jets to signal jets
     jetMatcher jmCS(R);
