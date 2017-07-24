@@ -23,6 +23,13 @@
 # emacs and other backups
 *~
 *.bak
+*.swp
 
 # mac things
 .DS_Store
+
+#root files
+*.root
+
+# specific for this project
+.fastjet
