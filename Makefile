@@ -81,19 +81,22 @@ depend:
 
 runCreatePythiaEvents.o: include/ProgressBar.h include/pythiaEvent.hh
 runCreatePythiaEvents.o: include/extraInfo.hh include/extraInfo.hh
+runCreatePythiaEvents.o: PU14/CmdLine.hh
 runCreateThermalEvents.o: include/ProgressBar.h include/thermalEvent.hh
+runCreateThermalEvents.o: PU14/CmdLine.hh
 runFromFile.o: include/ProgressBar.h PU14/EventMixer.hh PU14/CmdLine.hh
 runFromFile.o: PU14/EventSource.hh PU14/GSLRandom.hh PU14/CmdLine.hh
 runFromFile.o: PU14/PU14.hh PU14/HepPID/ParticleIDMethods.hh
 runFromFile.o: include/jetCollection.hh include/thermalEvent.hh
 runFromFile.o: include/pythiaEvent.hh include/extraInfo.hh
-runFromFile.o: include/csSubtractor.hh include/skSubtractor.hh
-runFromFile.o: include/softDropGroomer.hh include/jetCollection.hh
-runFromFile.o: include/softDropCounter.hh include/treeWriter.hh
+runFromFile.o: include/csSubtractor.hh include/csSubtractorFullEvent.hh
+runFromFile.o: include/skSubtractor.hh include/softDropGroomer.hh
+runFromFile.o: include/jetCollection.hh include/treeWriter.hh
 runFromFile.o: include/jetMatcher.hh include/randomCones.hh
-runtest.o: include/ProgressBar.h include/jetCollection.hh
+runtest.o: PU14/CmdLine.hh include/ProgressBar.h include/jetCollection.hh
 runtest.o: include/thermalEvent.hh include/pythiaEvent.hh
 runtest.o: include/extraInfo.hh include/csSubtractor.hh
-runtest.o: include/skSubtractor.hh include/softDropGroomer.hh
-runtest.o: include/jetCollection.hh include/softDropCounter.hh
-runtest.o: include/treeWriter.hh include/jetMatcher.hh include/randomCones.hh
+runtest.o: include/csSubtractorFullEvent.hh include/skSubtractor.hh
+runtest.o: include/softDropGroomer.hh include/jetCollection.hh
+runtest.o: include/softDropCounter.hh include/treeWriter.hh
+runtest.o: include/jetMatcher.hh include/randomCones.hh

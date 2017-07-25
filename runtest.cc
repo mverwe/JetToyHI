@@ -15,6 +15,7 @@
 #include "include/thermalEvent.hh"
 #include "include/pythiaEvent.hh"
 #include "include/csSubtractor.hh"
+#include "include/csSubtractorFullEvent.hh"
 #include "include/skSubtractor.hh"
 #include "include/softDropGroomer.hh"
 #include "include/softDropCounter.hh"
@@ -134,28 +135,60 @@ int main (int argc, char ** argv)
     //---------------------------------------------------------------------------
     
     //SoftDrop grooming classic for CS jets
-    softDropGroomer sdgCS(0.1, 0.0, R);
+    softDropGroomer sdgCS(0.1, 0.0, R);   //zcut=0.1 beta=0
     jetCollection jetCollectionCSSD(sdgCS.doGrooming(jetCollectionCS));
-    jetCollectionCSSD.addVector("zgCSSD",    sdgCS.getZgs());
-    jetCollectionCSSD.addVector("ndropCSSD", sdgCS.getNDroppedBranches());
+    jetCollectionCSSD.addVector("csJetSDZg",    sdgCS.getZgs());
+    jetCollectionCSSD.addVector("csJetSDNdrop", sdgCS.getNDroppedBranches());
+
 
     //SoftDrop emission counting for CS jets
-    softDropCounter sdcCS(0.1, 0.0, 0.4, 0.1);
+    softDropCounter sdcCS(0.1, 0.0, 0.4, 0.1);  //zcut=0.1 beta=0 rcut=0.1
     sdcCS.run(jetCollectionCS);
-    jetCollectionCS.addVector("nCSSD", sdcCS.calculateNSD(0.0));
-    jetCollectionCS.addVector("zCSSD", sdcCS.calculateNSD(1.0));
+    jetCollectionCS.addVector("csJetnSD", sdcCS.calculateNSD(0.0));
+    jetCollectionCS.addVector("csJetzSD", sdcCS.calculateNSD(1.0));
+    
+    softDropCounter sdcCS2(0.007, -1.0, 0.4, 0.1); //zcut=0.007 beta=-1  rcut=0.1
+    sdcCS2.run(jetCollectionCS);
+    jetCollectionCS.addVector("csJetnSD_v2", sdcCS2.calculateNSD(0.0));
+    jetCollectionCS.addVector("csJetzSD_v2", sdcCS2.calculateNSD(1.0));
 
+    softDropCounter sdcCS5(0.05, -0.845, 0.4, 0.1); //zcut=0.05 beta=-0.845  rcut=0.1
+    sdcCS5.run(jetCollectionCS);
+    jetCollectionCS.addVector("csJetnSD_v5", sdcCS5.calculateNSD(0.0));
+    jetCollectionCS.addVector("csJetzSD_v5", sdcCS5.calculateNSD(1.0));
+
+    softDropCounter sdcCS7(0.05, -0.544, 0.4, 0.1); //zcut=0.05 beta=-0.544  rcut=0.1
+    sdcCS7.run(jetCollectionCS);
+    jetCollectionCS.addVector("csJetnSD_v7", sdcCS7.calculateNSD(0.0));
+    jetCollectionCS.addVector("csJetzSD_v7", sdcCS7.calculateNSD(1.0));
+    
     //SoftDrop grooming classic for signal jets
-    softDropGroomer sdgSig(0.1, 0.0, R);
+    softDropGroomer sdgSig(0.1, 0.0, R);   //zcut=0.1 beta=0
     jetCollection jetCollectionSigSD(sdgSig.doGrooming(jetCollectionSig));
-    jetCollectionSigSD.addVector("zgSigSD",    sdgSig.getZgs());
-    jetCollectionSigSD.addVector("ndropSigSD", sdgSig.getNDroppedBranches());
+    jetCollectionSigSD.addVector("sigJetSDZg",    sdgSig.getZgs());
+    jetCollectionSigSD.addVector("sigJetSDNdrop", sdgSig.getNDroppedBranches());
 
+    
     //SoftDrop emission counting for signal jets
-    softDropCounter sdcSig(0.1, 0.0, 0.4, 0.1);
+    softDropCounter sdcSig(0.1, 0.0, 0.4, 0.1); //zcut=0.1 beta=0 rcut=0.1
     sdcSig.run(jetCollectionSig);
-    jetCollectionSig.addVector("nSigSD", sdcSig.calculateNSD(0.0));
-    jetCollectionSig.addVector("zSigSD", sdcSig.calculateNSD(1.0));
+    jetCollectionSig.addVector("sigJetnSD", sdcSig.calculateNSD(0.0));
+    jetCollectionSig.addVector("sigJetzSD", sdcSig.calculateNSD(1.0));
+
+    softDropCounter sdcSig2(0.007, -1.0, 0.4, 0.1); //zcut=0.007 beta=-1  rcut=0.1
+    sdcSig2.run(jetCollectionSig);
+    jetCollectionSig.addVector("sigJetnSD_v2", sdcSig2.calculateNSD(0.0));
+    jetCollectionSig.addVector("sigJetzSD_v2", sdcSig2.calculateNSD(1.0));
+
+    softDropCounter sdcSig5(0.05, -0.845, 0.4, 0.1); //zcut=0.05 beta=-0.845  rcut=0.1
+    sdcSig5.run(jetCollectionSig);
+    jetCollectionSig.addVector("sigJetnSD_v5", sdcSig5.calculateNSD(0.0));
+    jetCollectionSig.addVector("sigJetzSD_v5", sdcSig5.calculateNSD(1.0));
+
+    softDropCounter sdcSig7(0.05, -0.544, 0.4, 0.1); //zcut=0.05 beta=-0.544  rcut=0.1
+    sdcSig7.run(jetCollectionSig);
+    jetCollectionSig.addVector("sigJetnSD_v7", sdcSig7.calculateNSD(0.0));
+    jetCollectionSig.addVector("sigJetzSD_v7", sdcSig7.calculateNSD(1.0));
 
     //match the CS jets to signal jets
     jetMatcher jmCS(R);

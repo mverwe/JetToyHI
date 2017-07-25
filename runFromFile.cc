@@ -17,6 +17,7 @@
 #include "include/thermalEvent.hh"
 #include "include/pythiaEvent.hh"
 #include "include/csSubtractor.hh"
+#include "include/csSubtractorFullEvent.hh"
 #include "include/skSubtractor.hh"
 #include "include/softDropGroomer.hh"
 #include "include/treeWriter.hh"
@@ -74,8 +75,6 @@ int main (int argc, char ** argv) {
 
     // cluster hard event only
     std::vector<fastjet::PseudoJet> particlesBkg, particlesSig;
-    //particlesBkg = particlesMerged;
-    //particlesSig = particlesMerged;
     SelectorIsHard().sift(particlesMerged, particlesSig, particlesBkg); // this sifts the full event into two vectors of PseudoJet, one for the hard event, one for the underlying event
     
     //---------------------------------------------------------------------------
@@ -96,15 +95,25 @@ int main (int argc, char ** argv) {
     //   background subtraction
     //---------------------------------------------------------------------------
     
-    //run constituent subtraction on mixed (hard+UE) event
+    //run jet-by-jet constituent subtraction on mixed (hard+UE) event
     csSubtractor csSub(R, 1., -1, 0.005,ghostRapMax,jetRapMax);
-    //csSub.setInputParticles(particlesMerged);
-    csSub.setInputJets(jetCollectionMerged.getJet());
+    csSub.setInputParticles(particlesMerged);
     jetCollection jetCollectionCS(csSub.doSubtraction());
 
     //Background densities used by constituent subtraction
     std::vector<double> rho;    rho.push_back(csSub.getRho());
     std::vector<double> rhom;   rhom.push_back(csSub.getRhoM());
+
+    //run full event constituent subtraction on mixed (hard+UE) event
+    csSubtractorFullEvent csSubGlobal(1., R, 0.005,ghostRapMax);
+    csSubGlobal.setRho(rho[0]);
+    csSubGlobal.setRhom(rhom[0]);
+    csSubGlobal.setInputParticles(particlesMerged);
+    std::vector<fastjet::PseudoJet> csEvent = csSubGlobal.doSubtraction();
+
+    //cluster jets from constituent subtracted event
+    fastjet::ClusterSequenceArea csGlobal(csEvent, jet_def, area_def);
+    jetCollection jetCollectionCSGlobal(sorted_by_pt(jet_selector(csGlobal.inclusive_jets())));
 
     //Uncomment if youw ant to study random cones
     // randomCones rc(4,R,2.3,rho[0]);
@@ -118,10 +127,11 @@ int main (int argc, char ** argv) {
     std::vector<double> skPtThreshold;
     skPtThreshold.push_back(skSub.getPtThreshold()); //SoftKiller pT threshold
 
+    //cluster jets for soft killed event
     fastjet::ClusterSequenceArea csSK(skEvent, jet_def, area_def);
     jetCollection jetCollectionSK(sorted_by_pt(jet_selector(csSK.inclusive_jets())));
 
-    //std::cout << "njets CS: " << jetsCS.size() << " SK: " << jetsSK.size() << std::endl;
+    //std::cout << "njets CS: " << jetCollectionCS.getJet().size() << " SK: " << jetCollectionSK.getJet().size() << " CSglobal: " << jetCollectionCSGlobal.getJet().size() << std::endl;
     
     //---------------------------------------------------------------------------
     //   Groom the jets
@@ -156,6 +166,14 @@ int main (int argc, char ** argv) {
     
     jmSK.reorderedToTag(jetCollectionSK);
 
+    //match the jets from full-event CS subtraction to signal jets
+    jetMatcher jmCSGlobal(R);
+    jmCSGlobal.setBaseJets(jetCollectionCSGlobal);
+    jmCSGlobal.setTagJets(jetCollectionSig);
+    jmCSGlobal.matchJets();
+    
+    jmCSGlobal.reorderedToTag(jetCollectionCSGlobal);
+    
     //match the unsubtracted jets to signal jets
     jetMatcher jmUnSub(R);
     jmUnSub.setBaseJets(jetCollectionMerged);
@@ -176,6 +194,7 @@ int main (int argc, char ** argv) {
     trw.addCollection("sigJetSD",      jetCollectionSigSD);
     trw.addCollection("csJetSD",       jetCollectionCSSD);
     trw.addCollection("skJet",         jetCollectionSK);
+    trw.addCollection("csGlobJet",     jetCollectionCSGlobal);
     //trw.addCollection("randomCones",   jetCollectionRC);
 
     trw.addCollection("csRho",         rho);
