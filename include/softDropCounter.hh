@@ -28,6 +28,7 @@ private :
 
    std::vector<fastjet::PseudoJet> fjInputs_;     // ungroomed jets
    std::vector<std::vector<double>> zgs_;         // all the zg's in the algorithm
+   std::vector<std::vector<double>> drs_;         // and the angles in the algorithm
 
 public :
    softDropCounter(double z = 0.1, double beta = 0.0, double r0 = 0.4, double rcut = 0.1);
@@ -39,7 +40,7 @@ public :
    void run(const jetCollection &c);
    void run(const std::vector<fastjet::PseudoJet> &v);
    void run();
-   std::vector<double> calculateNSD(double Kappa);
+   std::vector<double> calculateNSD(double Kappa, double AngleKappa = 0);
 };
 
 softDropCounter::softDropCounter(double z, double beta, double r0, double rcut)
@@ -92,6 +93,7 @@ void softDropCounter::run()
       if(jet.has_constituents() == false)
       {
          zgs_.push_back(vector<double>());
+         drs_.push_back(vector<double>());
          continue;
       }
 
@@ -105,6 +107,7 @@ void softDropCounter::run()
       if(tempJets.size() == 0)
       {
          zgs_.push_back(vector<double>());
+         drs_.push_back(vector<double>());
          continue;
       }
 
@@ -112,6 +115,7 @@ void softDropCounter::run()
       PseudoJet Part1, Part2;
 
       std::vector<double> z;
+      std::vector<double> dr;
 
       while(CurrentJet.has_parents(Part1, Part2))
       {
@@ -134,7 +138,10 @@ void softDropCounter::run()
          double Threshold = zcut_ * std::pow(DeltaR / r0_, beta_);
 
          if(zg >= Threshold)   // yay
+         {
             z.push_back(zg);
+            dr.push_back(DeltaR);
+         }
 
          if(PT1 > PT2)
             CurrentJet = Part1;
@@ -143,10 +150,11 @@ void softDropCounter::run()
       }
 
       zgs_.push_back(z);
+      drs_.push_back(dr);
    }
 }
 
-std::vector<double> softDropCounter::calculateNSD(double Kappa)
+std::vector<double> softDropCounter::calculateNSD(double Kappa, double AngleKappa)
 {
    std::vector<double> Result;
 
@@ -154,7 +162,7 @@ std::vector<double> softDropCounter::calculateNSD(double Kappa)
    {
       double Total = 0;
       for(int j = 0; j < (int)zgs_[i].size(); j++)
-         Total = Total + pow(zgs_[i][j], Kappa);
+         Total = Total + pow(zgs_[i][j], Kappa) * pow(drs_[i][j], AngleKappa);
       Result.push_back(Total);
    }
 
