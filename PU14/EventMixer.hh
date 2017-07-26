@@ -3,7 +3,6 @@
 
 #include "CmdLine.hh"
 #include "EventSource.hh"
-#include "GSLRandom.hh"
 
 //----------------------------------------------------------------------
 /// \class EventMixer
@@ -66,7 +65,7 @@ private:
   std::string _hard_name, _pileup_name;
   fastjet::SharedPtr<EventSource> _hard, _pileup;
   int _npu, _mupu, _upu;
-  GSLRandom _rng;
+  // GSLRandom _rng;
   double _chs_rescaling_factor;
   bool _massless;
 
