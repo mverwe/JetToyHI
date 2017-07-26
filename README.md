@@ -1,9 +1,15 @@
 # JetToyHI
 
+## Software
+
+Inside the `PU14` directory you can find code we borrowed from the Pileup2014 workshop that takes care of reading in the events and mixing background with signal events.
+Inside the `include` directory you can find a couple of classes performing background subtraction, grooming jets, and a jet-to-jet matching algorithm.
+Follow the installation instructions below to run an example program.
+
 ## Install on lxplus
 
 First install fastjet and the contrib package (you only have to do this once)
-```
+```sh
 source /afs/cern.ch/sw/lcg/contrib/gcc/4.8/x86_64-slc6-gcc48-opt/setup.sh
 
 source /afs/cern.ch/sw/lcg/app/releases/ROOT/6.06.08/x86_64-slc6-gcc48-opt/root/bin/thisroot.sh
@@ -34,14 +40,14 @@ cd ..
 ```
 
 Next steps
-```
+```sh
 git clone git@github.com:mverwe/JetToyHI.git
 cd JetToyHI
 . setup.sh
 echo $FASTJET > .fastjet
 ```
 
-```
+```sh
 cd PU14
 echo $FASTJET > .fastjet
 ./mkmk
@@ -60,4 +66,9 @@ make
 * After committing your changes to your own branch, push them to your own fork. Don't know how to do this, ask your colleages or use google which might bring you here https://services.github.com/on-demand/downloads/github-git-cheat-sheet/
 * Do a pull request once you have finished your developements.
 
+## Samples
+Event samples can be found on the jet quenching CERNBOX:
+* From lxplus: /eos/project/j/jetquenching/JetWorkshop2017/samples
+* Webbrowser: https://cernbox.cern.ch/index.php/s/w2xgYEEkCWzDELR
 
+You will find samples from various generators. For underlying event we have: 'thermal' which is independent particle production using a Boltzmann distribution with a fixed multiplicity and mean p~T~ (indicated in the file names). For the hard signal we have pythia8 events with various p~T,hat~ settings. *JEWEL is being produced as well*

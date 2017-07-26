@@ -45,7 +45,8 @@ int main (int argc, char ** argv)
   treeWriter trw("jetTree");
 
   //event generators
-  thermalEvent thrm(12000, 0.7, -3.0, 3.0);
+  unsigned int mult = 12000;
+  thermalEvent thrm(mult, 0.7, -3.0, 3.0);
   pythiaEvent pyt(120., 14, -3.0, 3.0);
 
   //Jet definition
