@@ -59,7 +59,7 @@ EventMixer::EventMixer(CmdLine * cmdline) : _cmdline(cmdline) {
   }
 
   // initialise a possible random number generator
-  _rng.set(_cmdline->value<unsigned long int>("-seed", 1));
+  // _rng.set(_cmdline->value<unsigned long int>("-seed", 1));
 }
 
 //----------------------------------------------------------------------
@@ -76,13 +76,14 @@ bool EventMixer::next_event() {
     // allow for random
     // Uniform case:
     if (_upu > 0) {
-      //_npu = 1 + int(_upu*(1.0*rand()/RAND_MAX));
-      _npu = 1+_rng.uniform_int(_upu);
+      _npu = 1 + int(_upu*(1.0*rand()/RAND_MAX));
+      // _npu = 1+_rng.uniform_int(_upu);
       if (_npu > _upu) _npu = _upu; // for the case of equality with RAND_MAX
     }
     // Poisson-distributed
     if (_mupu>0){
-      _npu = _rng.poisson(_mupu); 
+      // _npu = _rng.poisson(_mupu); 
+      _npu = _mupu;
     }      
     for (int i = 1; i <= _npu; i++) {
       if (! _pileup->append_next_event(_particles,i)) return false;
