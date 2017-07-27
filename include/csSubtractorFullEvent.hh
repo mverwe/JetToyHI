@@ -13,6 +13,7 @@
 #include "fastjet/contrib/ConstituentSubtractor.hh"
 
 using namespace std;
+using namespace fastjet;
 
 //---------------------------------------------------------------
 // Description

@@ -45,8 +45,16 @@ int main (int argc, char ** argv)
   treeWriter trw("jetTree");
 
   //event generators
-  unsigned int mult = 12000;
-  thermalEvent thrm(mult, 0.7, -3.0, 3.0);
+  int centBin = cmdline.value<int>("-ncent",0);  // first argument: command line option; second argument: default value
+
+  if(centBin>3) {
+    std::cout << "provided centBin too large (centBin=" << centBin << ")" << std::endl;
+    return -1;
+  }
+  
+  unsigned int mult[4] = {7000,4500,1700,100};
+  double meanpt[4] = {1.2,1.0,0.9,0.85}; //for central: 1.2. peripheral: 1.
+  thermalEvent thrm(mult[centBin], meanpt[centBin], -3.0, 3.0, 0.5);
   pythiaEvent pyt(120., 14, -3.0, 3.0);
 
   //Jet definition

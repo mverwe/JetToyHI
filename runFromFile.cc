@@ -14,8 +14,6 @@
 #include "PU14/PU14.hh"
 
 #include "include/jetCollection.hh"
-#include "include/thermalEvent.hh"
-#include "include/pythiaEvent.hh"
 #include "include/csSubtractor.hh"
 #include "include/csSubtractorFullEvent.hh"
 #include "include/skSubtractor.hh"
