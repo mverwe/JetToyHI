@@ -13,6 +13,7 @@
 #include "fastjet/contrib/SoftKiller.hh"
 
 using namespace std;
+using namespace fastjet;
 
 //---------------------------------------------------------------
 // Description
