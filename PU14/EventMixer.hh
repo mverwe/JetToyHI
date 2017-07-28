@@ -38,6 +38,11 @@ public:
   /// that was read in
   const std::vector<fastjet::PseudoJet> & particles() const {return _particles;}
 
+  /// returns the current event weight
+  double weight() {return _hard_event_weight * _pu_event_weight;}
+  double pu_weight() {return _pu_event_weight;}
+  double hard_weight() {return _hard_event_weight;}
+
   /// returns the number of pileup events generated in the last mixed event 
   int npu() const {return _npu;}
 
@@ -67,6 +72,7 @@ private:
   bool _massless;
 
   std::vector<fastjet::PseudoJet> _particles;
+  double _hard_event_weight, _pu_event_weight;
 };
 
 #endif  // __EVENTMIXER_HH__

@@ -30,13 +30,14 @@ void EventSource::open_stream(const std::string & filename) {
 
 //----------------------------------------------------------------------
 bool EventSource::append_next_event(std::vector<fastjet::PseudoJet> & particles,
-                                    int vertex_number) {
+                                    double &event_weight, int vertex_number) {
   PseudoJet particle;
   string line;
   double px, py, pz, m, E;
   int pdgid;
 
   unsigned original_size = particles.size();
+  event_weight = 1;
 
   // read in particles
   while (getline(*_stream, line)) {
@@ -46,6 +47,18 @@ bool EventSource::append_next_event(std::vector<fastjet::PseudoJet> & particles,
     // if the line says "end" then assume we've found the end of the
     // event (try to make the check as efficient as possible).
     if (line[0] == 'e' && line.substr(0,3) == "end") break;
+
+    // if the line says "weight", we multiply current weight by the number that follows
+    if(line[0] == 'w' && line.substr(0, 6) == "weight")
+    {
+       string dummy;
+       double temp = 1;
+       FastIStringStream readline(line.c_str());
+       readline >> dummy >> temp;
+       if(temp > 0)
+          event_weight = event_weight * temp;
+       continue;
+    }
 
     // FastIStringStream is not a proper stream, but it's a lot faster
     // than standard istringstream.

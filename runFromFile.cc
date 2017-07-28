@@ -62,14 +62,19 @@ int main (int argc, char ** argv) {
   // loop over events
   int iev = 0;
   unsigned int entryDiv = (nEvent > 200) ? nEvent / 200 : 1;
-  while ( mixer.next_event() && iev < nEvent ) {
+  while ( mixer.next_event() && iev < nEvent )
+  {
     // increment event number    
     iev++;
 
     Bar.Update(iev);
     Bar.PrintWithMod(entryDiv);
 
-    std::vector<fastjet::PseudoJet> particlesMerged = mixer.particles() ;
+    std::vector<fastjet::PseudoJet> particlesMerged = mixer.particles();
+
+    std::vector<double> eventWeight;
+    eventWeight.push_back(mixer.hard_weight());
+    eventWeight.push_back(mixer.pu_weight());
 
     // cluster hard event only
     std::vector<fastjet::PseudoJet> particlesBkg, particlesSig;
@@ -198,6 +203,7 @@ int main (int argc, char ** argv) {
     trw.addCollection("csRho",         rho);
     trw.addCollection("csRhom",        rhom);
     trw.addCollection("skPtThreshold", skPtThreshold);
+    trw.addCollection("eventWeight",   eventWeight);
 
     trw.addCollection("unsubJet",      jetCollectionMerged);
         
