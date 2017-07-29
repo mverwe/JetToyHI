@@ -107,9 +107,6 @@ int main (int argc, char ** argv) {
     std::vector<double> rho;    rho.push_back(csSub.getRho());
     std::vector<double> rhom;   rhom.push_back(csSub.getRhoM());
 
-    if(rho[0] < 0)    rho[0] = 0;
-    if(rhom[0] < 0)   rhom[0] = 0;
-
     //run full event constituent subtraction on mixed (hard+UE) event
     csSubtractorFullEvent csSubGlobal(1., R, 0.005,ghostRapMax);
     csSubGlobal.setRho(rho[0]);

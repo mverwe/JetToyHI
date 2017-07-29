@@ -97,6 +97,9 @@ public :
 
     rho_ = bkgd_estimator.rho();
     rhom_ = bkgd_estimator.rho_m();
+    
+    if(rho_ < 0)    rho_ = 0;
+    if(rhom_ < 0)   rhom_ = 0;
 
     subtractor_.set_background_estimator(&bkgd_estimator);
     subtractor_.set_common_bge_for_rho_and_rhom(true);
