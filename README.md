@@ -58,6 +58,7 @@ scripts/mkcxx.pl -f -s -1 -r -8 '-IPU14' -l '-LPU14 -lPU14 -lz'
 make
 ./runFromFile -hard samples/PythiaEventsTune14PtHat120.pu14 -pileup samples/ThermalEventsMult12000PtAv0.70.pu14 -nev 10
 ```
+You will have produced a root file with a tree. In this tree properties of jets are stored in std::vector format and are all alligned to the signal jets. So you can for example plot `sigJetPt` vs `csJetPt` to get the response matrix for constituent-subtracted jets. 
 
 ## Contribute
 * If you want to contribute to this code you need to have a github account. Go here to do so: https://github.com/join.
