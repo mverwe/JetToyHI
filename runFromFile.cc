@@ -21,6 +21,7 @@
 #include "include/treeWriter.hh"
 #include "include/jetMatcher.hh"
 #include "include/randomCones.hh"
+#include "include/Angularity.hh"
 
 using namespace std;
 using namespace fastjet;
@@ -54,6 +55,9 @@ int main (int argc, char ** argv) {
   double jetRapMax = 3.0;
   fastjet::Selector jet_selector = SelectorAbsRapMax(jetRapMax);
 
+  Angularity width(1.,1.,R);
+  Angularity pTD(0.,2.,R);
+    
   ProgressBar Bar(cout, nEvent);
   Bar.SetStyle(-1);
 
@@ -94,6 +98,16 @@ int main (int argc, char ** argv) {
     fastjet::ClusterSequenceArea csSig(particlesSig, jet_def, area_def);
     jetCollection jetCollectionSig(sorted_by_pt(jet_selector(csSig.inclusive_jets(10.))));
 
+    //calculate some angularities
+    std::vector<double> widthSig; widthSig.reserve(jetCollectionSig.getJet().size());
+    std::vector<double> pTDSig;   pTDSig.reserve(jetCollectionSig.getJet().size());
+    for(fastjet::PseudoJet jet : jetCollectionSig.getJet()) {
+      widthSig.push_back(width.result(jet));
+      pTDSig.push_back(pTD.result(jet));
+    }
+    jetCollectionSig.addVector("widthSig", widthSig);
+    jetCollectionSig.addVector("pTDSig", pTDSig);
+
     //---------------------------------------------------------------------------
     //   background subtraction
     //---------------------------------------------------------------------------
@@ -106,6 +120,16 @@ int main (int argc, char ** argv) {
     //Background densities used by constituent subtraction
     std::vector<double> rho;    rho.push_back(csSub.getRho());
     std::vector<double> rhom;   rhom.push_back(csSub.getRhoM());
+
+    //calculate some angularities
+    std::vector<double> widthCS; widthCS.reserve(jetCollectionCS.getJet().size());
+    std::vector<double> pTDCS;   pTDCS.reserve(jetCollectionCS.getJet().size());
+    for(fastjet::PseudoJet jet : jetCollectionCS.getJet()) {
+      widthCS.push_back(width.result(jet));
+      pTDCS.push_back(pTD.result(jet));
+    }
+    jetCollectionCS.addVector("widthCS", widthCS);
+    jetCollectionCS.addVector("pTDCS", pTDCS);
 
     //run full event constituent subtraction on mixed (hard+UE) event
     csSubtractorFullEvent csSubGlobal(1., R, 0.005,ghostRapMax);
@@ -134,8 +158,6 @@ int main (int argc, char ** argv) {
     fastjet::ClusterSequenceArea csSK(skEvent, jet_def, area_def);
     jetCollection jetCollectionSK(sorted_by_pt(jet_selector(csSK.inclusive_jets())));
 
-    //std::cout << "njets CS: " << jetCollectionCS.getJet().size() << " SK: " << jetCollectionSK.getJet().size() << " CSglobal: " << jetCollectionCSGlobal.getJet().size() << std::endl;
-    
     //---------------------------------------------------------------------------
     //   Groom the jets
     //---------------------------------------------------------------------------
@@ -145,13 +167,15 @@ int main (int argc, char ** argv) {
     jetCollection jetCollectionCSSD(sdgCS.doGrooming(jetCollectionCS));
     jetCollectionCSSD.addVector("zgCSSD",    sdgCS.getZgs());
     jetCollectionCSSD.addVector("ndropCSSD", sdgCS.getNDroppedBranches());
+    jetCollectionCSSD.addVector("dr12CSSD",  sdgCS.getDR12());
 
     //SoftDrop grooming classic for signal jets (zcut=0.1, beta=0)
     softDropGroomer sdgSig(0.1, 0.0, R);
     jetCollection jetCollectionSigSD(sdgSig.doGrooming(jetCollectionSig));
     jetCollectionSigSD.addVector("zgSigSD",    sdgSig.getZgs());
     jetCollectionSigSD.addVector("ndropSigSD", sdgSig.getNDroppedBranches());
-
+    jetCollectionSigSD.addVector("dr12SigSD",  sdgSig.getDR12());
+    
     //match the CS jets to signal jets
     jetMatcher jmCS(R);
     jmCS.setBaseJets(jetCollectionCS);
