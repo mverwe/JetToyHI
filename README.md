@@ -50,12 +50,12 @@ Next steps
 git clone https://github.com/JetQuenchingTools/JetToyHI.git
 cd JetToyHI
 . setup.sh   #this step you will need to repeat next time you login
-echo $FASTJET > .fastjet
+echo $FASTJET/fastjet-config --prefix > .fastjet
 ```
 
 ```sh
 cd PU14
-echo $FASTJET > .fastjet
+echo $FASTJET/fastjet-config --prefix > .fastjet
 ./mkmk
 make
 cd ..
