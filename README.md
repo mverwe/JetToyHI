@@ -66,7 +66,7 @@ You will have produced a root file with a tree. In this tree properties of jets 
 
 ## Install on personal laptop
 
-If you are using mac or linux, the steps are relatively straightforward.  These are the things you need to install:
+If you are using mac or linux, the steps are relatively straightforward.  For windows machines I'm not sure what to do.  These are the things you need to install:
 
 * C++ compiler: on mac you could install xcode (found on App Store) to get the g++ compilers
 * Latest version of ROOT: follow instructions here https://root.cern.ch/downloading-root
