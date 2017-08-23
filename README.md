@@ -64,6 +64,38 @@ make
 ```
 You will have produced a root file with a tree. In this tree properties of jets are stored in std::vector format and are all alligned to the signal jets. So you can for example plot `sigJetPt` vs `csJetPt` to get the response matrix for constituent-subtracted jets. An example ROOT plotting macro which will draw the jet energy and mass scale can be found here: `plot/plotJetEnergyScale.C`.
 
+## Install on personal laptop (more computationally involved)
+
+If you are using mac or linux, the steps are relatively straightforward.  For windows machines I'm not sure what to do.  These are the things you need to install:
+
+* C++ compiler: on mac you could install xcode (found on App Store) to get the g++ compilers
+* Latest version of ROOT: follow instructions here https://root.cern.ch/downloading-root
+* Fastjet and contrib package: follow the steps in the above about the fastjet installation
+* Pythia 8: it can be found here - http://home.thep.lu.se/~torbjorn/Pythia.html
+
+Make sure that the root-config, pythia8-config and fastjet-config executables can be found in the $PATH environment variable.  Once the above is done, we can proceed with the compilation of the JetToyHI code:
+
+```sh
+git clone https://github.com/JetQuenchingTools/JetToyHI.git
+cd JetToyHI
+echo (FASTJET LOCATION) > .fastjet
+echo (PYTHIA8 LOCATION) > .pythia8
+```
+
+```sh
+cd PU14
+echo (FASTJET LOCATION) > .fastjet
+echo (PYTHIA8 LOCATION) > .pythia8
+./mkmk
+make
+cd ..
+
+scripts/mkcxx.pl -f -s -1 -r -8 '-IPU14' -l '-LPU14 -lPU14 -lz'
+make
+./runFromFile -hard samples/PythiaEventsTune14PtHat120.pu14 -pileup samples/ThermalEventsMult12000PtAv0.70.pu14 -nev 10
+```
+
+
 ## Contribute
 * If you want to contribute to this code you need to have a github account. Go here to do so: https://github.com/join.
 * Fork the original repository. Go to: https://github.com/JetQuenchingTools/JetToyHI and click 'Fork' in the upper right corner.
