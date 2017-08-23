@@ -73,19 +73,18 @@ If you are using mac or linux, the steps are relatively straightforward.  For wi
 * Fastjet and contrib package: follow the steps in the above about the fastjet installation
 * Pythia 8: it can be found here - http://home.thep.lu.se/~torbjorn/Pythia.html
 
-Once the above is done, we can proceed with the compilation of the JetToyHI code:
+Make sure that the root-config, pythia8-config and fastjet-config executables can be found in the $PATH environment variable.  Once the above is done, we can proceed with the compilation of the JetToyHI code:
 
 ```sh
 git clone https://github.com/JetQuenchingTools/JetToyHI.git
 cd JetToyHI
-. setup.sh   #this step you will need to repeat next time you login
-echo $FASTJET > .fastjet
+echo (FASTJET LOCATION) > .fastjet
 echo (PYTHIA8 LOCATION) > .pythia8
 ```
 
 ```sh
 cd PU14
-echo $FASTJET > .fastjet
+echo (FASTJET LOCATION) > .fastjet
 echo (PYTHIA8 LOCATION) > .pythia8
 ./mkmk
 make
