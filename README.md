@@ -10,6 +10,10 @@ Follow the installation instructions below to run an example program.
 
 First install fastjet and the contrib package (you only have to do this once)
 ```sh
+ssh -Y <username>@lxplus.cern.ch
+
+cd <dirInWhichYouWantToInstall>
+
 source /afs/cern.ch/sw/lcg/contrib/gcc/4.8/x86_64-slc6-gcc48-opt/setup.sh
 
 source /afs/cern.ch/sw/lcg/app/releases/ROOT/6.06.08/x86_64-slc6-gcc48-opt/root/bin/thisroot.sh
@@ -43,7 +47,7 @@ Next steps
 ```sh
 git clone https://github.com/JetQuenchingTools/JetToyHI.git
 cd JetToyHI
-. setup.sh
+. setup.sh   #this step you will need to repeat next time you login
 echo $FASTJET > .fastjet
 ```
 
@@ -72,4 +76,4 @@ Event samples can be found in the jet quenching CERNBOX:
 * From lxplus: /eos/project/j/jetquenching/JetWorkshop2017/samples
 * Webbrowser: https://cernbox.cern.ch/index.php/s/w2xgYEEkCWzDELR
 
-You will find samples from various event generators. For underlying event we have: 'thermal' which is independent particle production using a Boltzmann distribution with a fixed multiplicity and mean p<sub>T</sub> (indicated in the file names). For the hard signal we have pythia8 events with various p<sub>T,hat</sub> settings. *JEWEL is being produced as well*
+You will find samples from various event generators. For underlying event we have: 'thermal' which is independent particle production using a Boltzmann distribution with a fixed multiplicity and mean p<sub>T</sub> (indicated in the file names). For the hard signal we have PYTHIA8 and JEWEL events with various p<sub>T,hat</sub> settings.
