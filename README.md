@@ -64,7 +64,7 @@ make
 ```
 You will have produced a root file with a tree. In this tree properties of jets are stored in std::vector format and are all alligned to the signal jets. So you can for example plot `sigJetPt` vs `csJetPt` to get the response matrix for constituent-subtracted jets. An example ROOT plotting macro which will draw the jet energy and mass scale can be found here: `plot/plotJetEnergyScale.C`.
 
-## Install on personal laptop (more involved)
+## Install on personal laptop (more computationally involved)
 
 If you are using mac or linux, the steps are relatively straightforward.  For windows machines I'm not sure what to do.  These are the things you need to install:
 
