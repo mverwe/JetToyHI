@@ -40,7 +40,7 @@ public :
   void setInputJets(std::vector<fastjet::PseudoJet> v);
   std::vector<fastjet::PseudoJet> getGroomedJets() const;
   std::vector<double> getZgs() const;
-  std::vector<int> getNDroppedBranches() const;
+  std::vector<int> getNDroppedSubjets() const;
   std::vector<double> getDR12() const;
   std::vector<fastjet::PseudoJet> doGrooming(jetCollection &c);
   std::vector<fastjet::PseudoJet> doGrooming(std::vector<fastjet::PseudoJet> v);
@@ -82,7 +82,7 @@ std::vector<double> softDropGroomer::getZgs() const
    return zg_;
 }
 
-std::vector<int> softDropGroomer::getNDroppedBranches() const
+std::vector<int> softDropGroomer::getNDroppedSubjets() const
 {
    return drBranches_;
 }
