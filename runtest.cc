@@ -147,7 +147,7 @@ int main (int argc, char ** argv)
     softDropGroomer sdgCS(0.1, 0.0, R);   //zcut=0.1 beta=0
     jetCollection jetCollectionCSSD(sdgCS.doGrooming(jetCollectionCS));
     jetCollectionCSSD.addVector("csJetSDZg",    sdgCS.getZgs());
-    jetCollectionCSSD.addVector("csJetSDNdrop", sdgCS.getNDroppedBranches());
+    jetCollectionCSSD.addVector("csJetSDNdrop", sdgCS.getNDroppedSubjets());
 
 
     //SoftDrop emission counting for CS jets
@@ -175,7 +175,7 @@ int main (int argc, char ** argv)
     softDropGroomer sdgSig(0.1, 0.0, R);   //zcut=0.1 beta=0
     jetCollection jetCollectionSigSD(sdgSig.doGrooming(jetCollectionSig));
     jetCollectionSigSD.addVector("sigJetSDZg",    sdgSig.getZgs());
-    jetCollectionSigSD.addVector("sigJetSDNdrop", sdgSig.getNDroppedBranches());
+    jetCollectionSigSD.addVector("sigJetSDNdrop", sdgSig.getNDroppedSubjets());
 
     
     //SoftDrop emission counting for signal jets

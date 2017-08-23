@@ -165,16 +165,16 @@ int main (int argc, char ** argv) {
     //SoftDrop grooming classic for CS jets (zcut=0.1, beta=0)
     softDropGroomer sdgCS(0.1, 0.0, R);
     jetCollection jetCollectionCSSD(sdgCS.doGrooming(jetCollectionCS));
-    jetCollectionCSSD.addVector("zgCSSD",    sdgCS.getZgs());
-    jetCollectionCSSD.addVector("ndropCSSD", sdgCS.getNDroppedBranches());
-    jetCollectionCSSD.addVector("dr12CSSD",  sdgCS.getDR12());
+    jetCollectionCSSD.addVector("csJetSDzg",    sdgCS.getZgs());
+    jetCollectionCSSD.addVector("csJetSDndrop", sdgCS.getNDroppedSubjets());
+    jetCollectionCSSD.addVector("csJetSDdr12",  sdgCS.getDR12());
 
     //SoftDrop grooming classic for signal jets (zcut=0.1, beta=0)
     softDropGroomer sdgSig(0.1, 0.0, R);
     jetCollection jetCollectionSigSD(sdgSig.doGrooming(jetCollectionSig));
-    jetCollectionSigSD.addVector("zgSigSD",    sdgSig.getZgs());
-    jetCollectionSigSD.addVector("ndropSigSD", sdgSig.getNDroppedBranches());
-    jetCollectionSigSD.addVector("dr12SigSD",  sdgSig.getDR12());
+    jetCollectionSigSD.addVector("sigJetSDZg",    sdgSig.getZgs());
+    jetCollectionSigSD.addVector("sigJetSDndrop", sdgSig.getNDroppedSubjets());
+    jetCollectionSigSD.addVector("sigJetSDdr12",  sdgSig.getDR12());
     
     //match the CS jets to signal jets
     jetMatcher jmCS(R);
