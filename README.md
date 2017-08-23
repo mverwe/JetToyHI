@@ -8,6 +8,8 @@ Follow the installation instructions below to run an example program.
 
 ## Install on lxplus
 
+If you don't have an lxplus account, you can request one here: https://account.cern.ch/account/Externals/
+
 First install fastjet and the contrib package (you only have to do this once)
 ```sh
 ssh -Y <username>@lxplus.cern.ch
