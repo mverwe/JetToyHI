@@ -37,7 +37,7 @@ export FJ_CONTRIB_VER=1.026
 curl -Lo source.tar.gz http://fastjet.hepforge.org/contrib/downloads/fjcontrib-"$FJ_CONTRIB_VER".tar.gz
 tar xzf source.tar.gz
 cd fjcontrib-"$FJ_CONTRIB_VER"
-./configure --fastjet-config=$FASTJET/bin/fastjet-config --prefix=`fastjet-config --prefix`
+./configure --fastjet-config=$FASTJET/bin/fastjet-config --prefix=`$FASTJET/bin/fastjet-config --prefix`
 make 
 make install 
 make fragile-shared #make shared library
@@ -50,12 +50,12 @@ Next steps
 git clone https://github.com/JetQuenchingTools/JetToyHI.git
 cd JetToyHI
 . setup.sh   #this step you will need to repeat next time you login
-echo $FASTJET/bin/fastjet-config --prefix > .fastjet
+echo `$FASTJET/bin/fastjet-config --prefix` > .fastjet
 ```
 
 ```sh
 cd PU14
-echo $FASTJET/bin/fastjet-config --prefix > .fastjet
+echo `$FASTJET/bin/fastjet-config --prefix` > .fastjet
 ./mkmk
 make
 cd ..
