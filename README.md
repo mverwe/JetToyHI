@@ -30,14 +30,14 @@ cd fastjet-3.3.0/
 make
 make check
 make install
-FASTJET=$PWD
+FASTJET=$PWD/../fastjet-install
 cd ..
 
 export FJ_CONTRIB_VER=1.026 
 curl -Lo source.tar.gz http://fastjet.hepforge.org/contrib/downloads/fjcontrib-"$FJ_CONTRIB_VER".tar.gz
 tar xzf source.tar.gz
 cd fjcontrib-"$FJ_CONTRIB_VER"
-./configure --fastjet-config=$FASTJET/fastjet-config --prefix=`fastjet-config --prefix`
+./configure --fastjet-config=$FASTJET/bin/fastjet-config --prefix=`fastjet-config --prefix`
 make 
 make install 
 make fragile-shared #make shared library
