@@ -81,9 +81,20 @@ int main (int argc, char ** argv) {
     eventWeight.push_back(mixer.pu_weight());
 
     // cluster hard event only
+    std::vector<fastjet::PseudoJet> particlesDummy, particlesReal;
     std::vector<fastjet::PseudoJet> particlesBkg, particlesSig;
-    SelectorIsHard().sift(particlesMerged, particlesSig, particlesBkg); // this sifts the full event into two vectors of PseudoJet, one for the hard event, one for the underlying event
-    
+    SelectorVertexNumber(-1).sift(particlesMerged, particlesDummy, particlesReal);
+    SelectorVertexNumber(0).sift(particlesReal, particlesSig, particlesBkg);
+
+    for(int i = 0; i < (int)particlesDummy.size(); i++)
+    {
+       if(particlesDummy[i].perp() < 1e-5 && fabs(particlesDummy[i].pz()) > 2000)
+       {
+          particlesDummy.erase(particlesDummy.begin() + i);
+          i = i - 1;
+       }
+    }
+
     //---------------------------------------------------------------------------
     //   jet clustering
     //---------------------------------------------------------------------------
