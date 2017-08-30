@@ -22,6 +22,7 @@
 #include "include/jetMatcher.hh"
 #include "include/randomCones.hh"
 #include "include/Angularity.hh"
+#include "include/jewelMatcher.hh"
 
 using namespace std;
 using namespace fastjet;
@@ -108,6 +109,7 @@ int main (int argc, char ** argv) {
 
     fastjet::ClusterSequenceArea csSig(particlesSig, jet_def, area_def);
     jetCollection jetCollectionSig(sorted_by_pt(jet_selector(csSig.inclusive_jets(10.))));
+    jetCollection jetCollectionSigJewel(GetCorrectedJets(jetCollectionSig.getJet(), particlesDummy));
 
     //calculate some angularities
     std::vector<double> widthSig; widthSig.reserve(jetCollectionSig.getJet().size());
@@ -127,6 +129,7 @@ int main (int argc, char ** argv) {
     csSubtractor csSub(R, 1., -1, 0.005,ghostRapMax,jetRapMax);
     csSub.setInputParticles(particlesMerged);
     jetCollection jetCollectionCS(csSub.doSubtraction());
+    jetCollection jetCollectionCSJewel(GetCorrectedJets(jetCollectionCS.getJet(), particlesDummy));
 
     //Background densities used by constituent subtraction
     std::vector<double> rho;    rho.push_back(csSub.getRho());
@@ -195,6 +198,7 @@ int main (int argc, char ** argv) {
 
     jmCS.reorderedToTag(jetCollectionCS);
     jmCS.reorderedToTag(jetCollectionCSSD);
+    jmCS.reorderedToTag(jetCollectionCSJewel);
 
     //match the SK jets to signal jets
     jetMatcher jmSK(R);
@@ -228,7 +232,9 @@ int main (int argc, char ** argv) {
     //Only vectors of the types 'jetCollection', and 'double', 'int', 'fastjet::PseudoJet' are supported
 
     trw.addCollection("sigJet",        jetCollectionSig);
+    trw.addCollection("sigJetJewel",   jetCollectionSigJewel);
     trw.addCollection("csJet",         jetCollectionCS);
+    trw.addCollection("csJetJewel",    jetCollectionCSJewel);
     trw.addCollection("sigJetSD",      jetCollectionSigSD);
     trw.addCollection("csJetSD",       jetCollectionCSSD);
     trw.addCollection("skJet",         jetCollectionSK);
@@ -252,7 +258,7 @@ int main (int argc, char ** argv) {
 
   TTree *trOut = trw.getTree();
 
-  TFile *fout = new TFile("JetToyHIResultFromFile.root","RECREATE");
+  TFile *fout = new TFile(cmdline.value<string>("-output", "JetToyHIResultFromFile.root").c_str(), "RECREATE");
   trOut->Write();
   fout->Write();
   fout->Close();
