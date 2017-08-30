@@ -209,7 +209,7 @@ int main (int argc, char ** argv) {
     jmCS.reorderedToTag(jetCollectionCS);
     jmCS.reorderedToTag(jetCollectionCSSD);
     jmCS.reorderedToTag(jetCollectionCSJewel);
-    // jmCS.reorderedToTag(jetCollectionCSSDJewel);
+    jmCS.reorderedToTag(jetCollectionCSSDJewel);
 
     //match the SK jets to signal jets
     jetMatcher jmSK(R);
