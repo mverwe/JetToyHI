@@ -25,8 +25,6 @@ fastjet::PseudoJet GetCorrection(std::vector<fastjet::PseudoJet> Constituents, s
          if(p.squared_distance(j) > 1e-8)
             continue;
 
-         std::cout << "Yay" << std::endl;
-
          Correction = Correction + j;
          j.reset(0, 0, 0, 0);
       }
