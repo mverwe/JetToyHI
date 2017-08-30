@@ -152,7 +152,7 @@ class csSubtractor {
                for(fastjet::PseudoJet p : particles)
                   combinedparticles.push_back(fastjet::PseudoJet(p.px(), p.py(), p.pz(), p.E()));
                for(fastjet::PseudoJet p : jet.constituents())
-                  if(fabs(p.eta()) < 1e-5 && p.perp() < 1e-5)
+                  if(p.E() < 1e-5)
                      combinedparticles.push_back(fastjet::PseudoJet(p.px(), p.py(), p.pz(), p.E()));
          
                csjets.push_back(fastjet::PseudoJet(join(combinedparticles)));
