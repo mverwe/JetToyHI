@@ -34,7 +34,7 @@ bool EventSource::append_next_event(std::vector<fastjet::PseudoJet> & particles,
   PseudoJet particle;
   string line;
   double px, py, pz, m, E;
-  int pdgid;
+  int pdgid, vertex;
 
   unsigned original_size = particles.size();
   event_weight = 1;
@@ -63,7 +63,7 @@ bool EventSource::append_next_event(std::vector<fastjet::PseudoJet> & particles,
     // FastIStringStream is not a proper stream, but it's a lot faster
     // than standard istringstream.
     FastIStringStream readline(line.c_str());
-    readline >> px >> py >> pz >> m >> pdgid;
+    readline >> px >> py >> pz >> m >> pdgid >> vertex;
     assert(!readline.error());
     
     E = sqrt(px*px + py*py + pz*pz + m*m);
@@ -71,7 +71,7 @@ bool EventSource::append_next_event(std::vector<fastjet::PseudoJet> & particles,
 
     // now set the user info
     int barcode = particles.size();
-    particle.set_user_info(new PU14(pdgid, barcode, vertex_number));
+    particle.set_user_info(new PU14(pdgid, barcode, vertex));
 
     // and add the particle to our final output
     particles.push_back(particle);
