@@ -16,7 +16,7 @@
 //---------------------------------------------------------------
 // Description
 // This class runs SoftDrop grooming on a set of jets
-// Author: M. Verweij
+// Author: M. Verweij, Y. Chen
 //---------------------------------------------------------------
 
 class softDropGroomer {
