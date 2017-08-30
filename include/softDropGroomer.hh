@@ -32,6 +32,8 @@ private :
   std::vector<int>                drBranches_; //dropped branches
   std::vector<double>             dr12_;       //distance between the two subjets
   std::vector<std::vector<fastjet::PseudoJet>> constituents_;
+  std::vector<std::vector<fastjet::PseudoJet>> constituents1_;
+  std::vector<std::vector<fastjet::PseudoJet>> constituents2_;
 
 public :
   softDropGroomer(double zcut = 0.1, double beta = 0., double r0 = 0.4);
@@ -47,6 +49,8 @@ public :
   std::vector<fastjet::PseudoJet> doGrooming(std::vector<fastjet::PseudoJet> v);
   std::vector<fastjet::PseudoJet> doGrooming();
   std::vector<std::vector<fastjet::PseudoJet>> getConstituents() {return constituents_;}
+  std::vector<std::vector<fastjet::PseudoJet>> getConstituents1() {return constituents1_;}
+  std::vector<std::vector<fastjet::PseudoJet>> getConstituents2() {return constituents2_;}
 };
 
 softDropGroomer::softDropGroomer(double zcut, double beta, double r0)
@@ -112,12 +116,14 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGrooming()
    drBranches_.reserve(fjInputs_.size());
    dr12_.reserve(fjInputs_.size());
    constituents_.reserve(fjInputs_.size());
+   constituents1_.reserve(fjInputs_.size());
+   constituents2_.reserve(fjInputs_.size());
    
    for(fastjet::PseudoJet& jet : fjInputs_) {
       std::vector<fastjet::PseudoJet> particles, ghosts;
       fastjet::SelectorIsPureGhost().sift(jet.constituents(), ghosts, particles);
 
-      fastjet::JetDefinition jet_def(fastjet::cambridge_algorithm,999.);
+      fastjet::JetDefinition jet_def(fastjet::cambridge_algorithm, 999.);
       fastjet::ClusterSequence cs(particles, jet_def);
 
       std::vector<fastjet::PseudoJet> tempJets = fastjet::sorted_by_pt(cs.inclusive_jets());
@@ -125,7 +131,8 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGrooming()
          fjOutputs_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
          zg_.push_back(-1.);
          drBranches_.push_back(-1.);
-         constituents_.push_back(std::vector<fastjet::PseudoJet>());
+         constituents1_.push_back(std::vector<fastjet::PseudoJet>());
+         constituents2_.push_back(std::vector<fastjet::PseudoJet>());
          continue;
       }
 
@@ -137,12 +144,24 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGrooming()
          fjOutputs_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
          zg_.push_back(-1.);
          drBranches_.push_back(-1.);
-         constituents_.push_back(std::vector<fastjet::PseudoJet>());
+         constituents1_.push_back(std::vector<fastjet::PseudoJet>());
+         constituents2_.push_back(std::vector<fastjet::PseudoJet>());
          if(sd) { delete sd; sd = 0;}
          continue;
       }
       transformedJet = (*sd)(transformedJet);
 
+      fastjet::PseudoJet j1, j2;
+      if(transformedJet.has_parents(j1, j2) == true)
+      {
+         constituents1_.push_back(j1.constituents());
+         constituents2_.push_back(j2.constituents());
+      }
+      else
+      {
+         constituents1_.push_back(std::vector<fastjet::PseudoJet>());
+         constituents2_.push_back(std::vector<fastjet::PseudoJet>());
+      }
       constituents_.push_back(transformedJet.constituents());
 
       double zg = transformedJet.structure_of<fastjet::contrib::SoftDrop>().symmetry();
