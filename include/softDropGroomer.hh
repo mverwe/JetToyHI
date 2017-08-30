@@ -31,6 +31,7 @@ private :
   std::vector<double>             zg_;         //zg of groomed jets
   std::vector<int>                drBranches_; //dropped branches
   std::vector<double>             dr12_;       //distance between the two subjets
+  std::vector<std::vector<fastjet::PseudoJet>> constituents_;
 
 public :
   softDropGroomer(double zcut = 0.1, double beta = 0., double r0 = 0.4);
@@ -45,6 +46,7 @@ public :
   std::vector<fastjet::PseudoJet> doGrooming(jetCollection &c);
   std::vector<fastjet::PseudoJet> doGrooming(std::vector<fastjet::PseudoJet> v);
   std::vector<fastjet::PseudoJet> doGrooming();
+  std::vector<std::vector<fastjet::PseudoJet>> getConstituents() {return constituents_;}
 };
 
 softDropGroomer::softDropGroomer(double zcut, double beta, double r0)
@@ -109,6 +111,7 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGrooming()
    zg_.reserve(fjInputs_.size());
    drBranches_.reserve(fjInputs_.size());
    dr12_.reserve(fjInputs_.size());
+   constituents_.reserve(fjInputs_.size());
    
    for(fastjet::PseudoJet& jet : fjInputs_) {
       std::vector<fastjet::PseudoJet> particles, ghosts;
@@ -122,6 +125,7 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGrooming()
          fjOutputs_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
          zg_.push_back(-1.);
          drBranches_.push_back(-1.);
+         constituents_.push_back(std::vector<fastjet::PseudoJet>());
          continue;
       }
 
@@ -133,10 +137,13 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGrooming()
          fjOutputs_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
          zg_.push_back(-1.);
          drBranches_.push_back(-1.);
+         constituents_.push_back(std::vector<fastjet::PseudoJet>());
          if(sd) { delete sd; sd = 0;}
          continue;
       }
       transformedJet = (*sd)(transformedJet);
+
+      constituents_.push_back(transformedJet.constituents());
 
       double zg = transformedJet.structure_of<fastjet::contrib::SoftDrop>().symmetry();
       int ndrop = transformedJet.structure_of<fastjet::contrib::SoftDrop>().dropped_count();

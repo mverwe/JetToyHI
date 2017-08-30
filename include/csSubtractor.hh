@@ -12,13 +12,15 @@
 
 #include "fastjet/contrib/ConstituentSubtractor.hh"
 
+#include "../PU14/PU14.hh"
+
 using namespace std;
 using namespace fastjet;
 
 //---------------------------------------------------------------
 // Description
 // This class runs the jet-by-jet constituent subtraction
-// Author: M. Verweij
+// Author: M. Verweij, Y. Chen
 //---------------------------------------------------------------
 
 class csSubtractor {
@@ -34,6 +36,8 @@ class csSubtractor {
       double rhom_;
       std::vector<fastjet::PseudoJet> fjInputs_;
       std::vector<fastjet::PseudoJet> fjJetInputs_;
+      std::vector<std::vector<fastjet::PseudoJet>> Hard;
+      std::vector<std::vector<fastjet::PseudoJet>> Soft;
 
       contrib::ConstituentSubtractor subtractor_;
 
@@ -64,8 +68,13 @@ class csSubtractor {
 
       double getRho()  const { return rho_; }
       double getRhoM() const { return rhom_; }
+      std::vector<std::vector<fastjet::PseudoJet>> getHard() const { return Hard; }
+      std::vector<std::vector<fastjet::PseudoJet>> getSoft() const { return Soft; }
 
       std::vector<fastjet::PseudoJet> doSubtraction() {
+
+         Hard.clear();
+         Soft.clear();
 
          //if(fjJetInputs_.size()==0 && fjInputs_.size()) {
          //  throw "You didn't give me input jets or particles. You should give me one of the two";
@@ -111,6 +120,32 @@ class csSubtractor {
             fastjet::PseudoJet subtracted_jet = subtractor_(jet);
             std::vector<fastjet::PseudoJet> particles, ghosts;
             fastjet::SelectorIsPureGhost().sift(subtracted_jet.constituents(), ghosts, particles);
+
+            std::vector<fastjet::PseudoJet> A, B;
+            SelectorIsHard().sift(jet.constituents(), A, B);
+
+            std::vector<fastjet::PseudoJet> hard, soft;
+            for(fastjet::PseudoJet p : subtracted_jet.constituents())
+            {
+               double BestA = -1, BestB = -1;
+               for(fastjet::PseudoJet x : A)
+               {
+                  double DR2 = p.squared_distance(x);
+                  if(BestA < 0 || BestA > DR2)
+                     BestA = DR2;
+               }
+               for(fastjet::PseudoJet x : B)
+               {
+                  double DR2 = p.squared_distance(x);
+                  if(BestB < 0 || BestB > DR2)
+                     BestB = DR2;
+               }
+               if(BestA < BestB)
+                  hard.push_back(p);
+               else
+                  soft.push_back(p);
+            }
+
             if(particles.size() > 0)
             {
                std::vector<fastjet::PseudoJet> combinedparticles;
@@ -119,7 +154,10 @@ class csSubtractor {
                for(fastjet::PseudoJet p : jet.constituents())
                   if(fabs(p.eta()) < 1e-5 && p.perp() < 1e-5)
                      combinedparticles.push_back(fastjet::PseudoJet(p.px(), p.py(), p.pz(), p.E()));
+         
                csjets.push_back(fastjet::PseudoJet(join(combinedparticles)));
+               Hard.push_back(hard);
+               Soft.push_back(soft);
             }
          }
 
