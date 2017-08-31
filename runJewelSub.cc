@@ -89,13 +89,6 @@ int main (int argc, char ** argv) {
     SelectorVertexNumber(-1).sift(particlesMerged, particlesDummy, particlesReal);
     SelectorVertexNumber(0).sift(particlesReal, particlesSig, particlesBkg);
 
-    //SelectorVertexNumber(0).sift(particlesMerged, particlesDummy, particlesReal);
-    //SelectorVertexNumber(-1).sift(particlesReal, particlesSig, particlesBkg);
-
-    // for(fastjet::PseudoJet tmp : particlesMerged) {
-    //   if(tmp.user_info<PU14>().vertex_number() < 0)  std::cout << "vtx: " << tmp.user_info<PU14>().vertex_number() << std::endl;
-    // }
-    
     for(int i = 0; i < (int)particlesDummy.size(); i++)
     {
        if(particlesDummy[i].perp() < 1e-5 && fabs(particlesDummy[i].pz()) > 2000)
@@ -104,9 +97,6 @@ int main (int argc, char ** argv) {
           i = i - 1;
        }
     }
-    // std::cout << "n all: " << particlesMerged.size() << std::endl;
-    // std::cout << "n real: " << particlesReal.size() << std::endl;
-    // std::cout << "n dummies: " << particlesDummy.size() << std::endl;
 
     //---------------------------------------------------------------------------
     //   jet clustering
