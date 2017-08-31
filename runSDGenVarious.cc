@@ -102,43 +102,43 @@ int main (int argc, char ** argv) {
     softDropGroomer sdgSigBeta00Z01(0.1, 0.0, R);
     jetCollection jetCollectionSigSDBeta00Z01(sdgSigBeta00Z01.doGrooming(jetCollectionSig));
     jetCollectionSigSDBeta00Z01.addVector("zgSigSDBeta00Z01",    sdgSigBeta00Z01.getZgs());
-    jetCollectionSigSDBeta00Z01.addVector("ndropSigSDBeta00Z01", sdgSigBeta00Z01.getNDroppedBranches());
+    jetCollectionSigSDBeta00Z01.addVector("ndropSigSDBeta00Z01", sdgSigBeta00Z01.getNDroppedSubjets());
     jetCollectionSigSDBeta00Z01.addVector("dr12SigSDBeta00Z01",  sdgSigBeta00Z01.getDR12());
 
     softDropGroomer sdgSigBeta00Z02(0.2, 0.0, R);
     jetCollection jetCollectionSigSDBeta00Z02(sdgSigBeta00Z02.doGrooming(jetCollectionSig));
     jetCollectionSigSDBeta00Z02.addVector("zgSigSDBeta00Z02",    sdgSigBeta00Z02.getZgs());
-    jetCollectionSigSDBeta00Z02.addVector("ndropSigSDBeta00Z02", sdgSigBeta00Z02.getNDroppedBranches());
+    jetCollectionSigSDBeta00Z02.addVector("ndropSigSDBeta00Z02", sdgSigBeta00Z02.getNDroppedSubjets());
     jetCollectionSigSDBeta00Z02.addVector("dr12SigSDBeta00Z02",  sdgSigBeta00Z02.getDR12());
     
     softDropGroomer sdgSigBeta15Z05(0.5, 1.5, R);
     jetCollection jetCollectionSigSDBeta15Z05(sdgSigBeta15Z05.doGrooming(jetCollectionSig));
     jetCollectionSigSDBeta15Z05.addVector("zgSigSDBeta15Z05",    sdgSigBeta15Z05.getZgs());
-    jetCollectionSigSDBeta15Z05.addVector("ndropSigSDBeta15Z05", sdgSigBeta15Z05.getNDroppedBranches());
+    jetCollectionSigSDBeta15Z05.addVector("ndropSigSDBeta15Z05", sdgSigBeta15Z05.getNDroppedSubjets());
     jetCollectionSigSDBeta15Z05.addVector("dr12SigSDBeta15Z05",  sdgSigBeta15Z05.getDR12());
 
     softDropGroomer sdgSigBetam1Z01(0.1, -1., R);
     jetCollection jetCollectionSigSDBetam1Z01(sdgSigBetam1Z01.doGrooming(jetCollectionSig));
     jetCollectionSigSDBetam1Z01.addVector("zgSigSDBetam1Z01",    sdgSigBetam1Z01.getZgs());
-    jetCollectionSigSDBetam1Z01.addVector("ndropSigSDBetam1Z01", sdgSigBetam1Z01.getNDroppedBranches());
+    jetCollectionSigSDBetam1Z01.addVector("ndropSigSDBetam1Z01", sdgSigBetam1Z01.getNDroppedSubjets());
     jetCollectionSigSDBetam1Z01.addVector("dr12SigSDBetam1Z01",  sdgSigBetam1Z01.getDR12());
 
     softDropGroomer sdgSigBetam1Z02(0.2, -1., R);
     jetCollection jetCollectionSigSDBetam1Z02(sdgSigBetam1Z02.doGrooming(jetCollectionSig));
     jetCollectionSigSDBetam1Z02.addVector("zgSigSDBetam1Z02",    sdgSigBetam1Z02.getZgs());
-    jetCollectionSigSDBetam1Z02.addVector("ndropSigSDBetam1Z02", sdgSigBetam1Z02.getNDroppedBranches());
+    jetCollectionSigSDBetam1Z02.addVector("ndropSigSDBetam1Z02", sdgSigBetam1Z02.getNDroppedSubjets());
     jetCollectionSigSDBetam1Z02.addVector("dr12SigSDBetam1Z02",  sdgSigBetam1Z02.getDR12());
 
     softDropGroomer sdgSigBetam2Z01(0.1, -2., R);
     jetCollection jetCollectionSigSDBetam2Z01(sdgSigBetam2Z01.doGrooming(jetCollectionSig));
     jetCollectionSigSDBetam2Z01.addVector("zgSigSDBetam2Z01",    sdgSigBetam2Z01.getZgs());
-    jetCollectionSigSDBetam2Z01.addVector("ndropSigSDBetam2Z01", sdgSigBetam2Z01.getNDroppedBranches());
+    jetCollectionSigSDBetam2Z01.addVector("ndropSigSDBetam2Z01", sdgSigBetam2Z01.getNDroppedSubjets());
     jetCollectionSigSDBetam2Z01.addVector("dr12SigSDBetam2Z01",  sdgSigBetam2Z01.getDR12());
 
     softDropGroomer sdgSigBetam2Z005(0.05, -2., R);
     jetCollection jetCollectionSigSDBetam2Z005(sdgSigBetam2Z005.doGrooming(jetCollectionSig));
     jetCollectionSigSDBetam2Z005.addVector("zgSigSDBetam2Z005",    sdgSigBetam2Z005.getZgs());
-    jetCollectionSigSDBetam2Z005.addVector("ndropSigSDBetam2Z005", sdgSigBetam2Z005.getNDroppedBranches());
+    jetCollectionSigSDBetam2Z005.addVector("ndropSigSDBetam2Z005", sdgSigBetam2Z005.getNDroppedSubjets());
     jetCollectionSigSDBetam2Z005.addVector("dr12SigSDBetam2Z005",  sdgSigBetam2Z005.getDR12());
 
     //---------------------------------------------------------------------------

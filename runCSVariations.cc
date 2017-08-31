@@ -127,7 +127,7 @@ int main (int argc, char ** argv) {
     softDropGroomer sdgSig(0.1, 0.0, R);
     jetCollection jetCollectionSigSD(sdgSig.doGrooming(jetCollectionSig));
     jetCollectionSigSD.addVector("zgSigSD",    sdgSig.getZgs());
-    jetCollectionSigSD.addVector("ndropSigSD", sdgSig.getNDroppedBranches());
+    jetCollectionSigSD.addVector("ndropSigSD", sdgSig.getNDroppedSubjets());
     jetCollectionSigSD.addVector("dr12SigSD",  sdgSig.getDR12());
 
     //SoftDrop grooming classic for CS jets (zcut=0.1, beta=0)
@@ -137,7 +137,7 @@ int main (int argc, char ** argv) {
       softDropGroomer sdgCS(0.1, 0.0, R);
       jetCollection jetCollectionCSSD(sdgCS.doGrooming(jetCollectionCSs[ics]));
       jetCollectionCSSD.addVector(Form("csJetSD_%dzg",ics),    sdgCS.getZgs());
-      jetCollectionCSSD.addVector(Form("csJetSD_%dndrop",ics), sdgCS.getNDroppedBranches());
+      jetCollectionCSSD.addVector(Form("csJetSD_%dndrop",ics), sdgCS.getNDroppedSubjets());
       jetCollectionCSSD.addVector(Form("csJetSD_%ddr12",ics),  sdgCS.getDR12());
 
       jetCollectionCSSDs.push_back(jetCollectionCSSD);
