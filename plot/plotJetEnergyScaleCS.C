@@ -49,8 +49,8 @@ void plotJetEnergyScaleCS(TString str = "JetToyHIResult.root") {
   TCanvas *c1 = new TCanvas("c1","c1",450,400);
   gPad->SetLogy();
   tr->SetLineColor(1);
-  tr->Draw("csJetPt/sigJetPt>>hCSJetResponsePt(100,0.,2.)","sigJetPt>120. && abs(sigJetEta)<2.3");
-  hResponsePt[0] = dynamic_cast<TH1*>(gDirectory->Get("hCSJetResponsePt"));
+  //tr->Draw("csJetPt/sigJetPt>>hCSJetResponsePt(100,0.,2.)","sigJetPt>120. && abs(sigJetEta)<2.3");
+  //hResponsePt[0] = dynamic_cast<TH1*>(gDirectory->Get("hCSJetResponsePt"));
 
   for(int i = 0; i<ncs; ++i) {
     tr->Draw(Form("csJet_%dPt/sigJetPt>>hCS%dJetResponsePt(100,0.,2.)",i,i),"sigJetPt>120. && abs(sigJetEta)<2.3","same");
@@ -84,10 +84,10 @@ void plotJetEnergyScaleCS(TString str = "JetToyHIResult.root") {
   //----------------------------------------------------------------
   TCanvas *c4 = new TCanvas("c4","c4",450,400);
   gPad->SetLogy();
-  tr->Draw("csJetM/sigJetM>>hCSJetResponseM(100,0.,5.)","sigJetPt>120. && abs(sigJetEta)<2.3");
-  hResponseM[0] = dynamic_cast<TH1*>(gDirectory->Get("hCSJetResponseM"));
+  //tr->Draw("csJetM/sigJetM>>hCSJetResponseM(100,0.,5.)","sigJetPt>120. && abs(sigJetEta)<2.3");
+  //hResponseM[0] = dynamic_cast<TH1*>(gDirectory->Get("hCSJetResponseM"));
 
-  for(int i =0; i<nsk; ++i) {
+  for(int i =0; i<ncs; ++i) {
     tr->Draw(Form("csJet_%dM/sigJetM>>hCS%dJetResponseM(100,0.,2.)",i,i),"sigJetPt>120. && abs(sigJetEta)<2.3","same");
     hResponseM[i] = dynamic_cast<TH1*>(gDirectory->Get(Form("hCS%dJetResponseM",i)));
   }

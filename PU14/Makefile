@@ -65,7 +65,7 @@ depend:
 # DO NOT DELETE
 
 CmdLine.o: CmdLine.hh
-EventMixer.o: EventMixer.hh CmdLine.hh EventSource.hh GSLRandom.hh PU14.hh
+EventMixer.o: EventMixer.hh CmdLine.hh EventSource.hh PU14.hh
 EventMixer.o: HepPID/ParticleIDMethods.hh helpers.hh
 EventSource.o: EventSource.hh FastIStringStream.hh PU14.hh
 EventSource.o: HepPID/ParticleIDMethods.hh zfstream.h
