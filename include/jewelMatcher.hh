@@ -21,22 +21,24 @@ fastjet::PseudoJet GetCorrection(std::vector<fastjet::PseudoJet> Constituents, s
 {
    fastjet::PseudoJet Correction;
 
-   //std::cout << "n constitiuents: " << Constituents.size() << std::endl; 
    for(fastjet::PseudoJet p : Constituents)
    {
+   
+
      if(p.E() > 0.01)   // definitely not a dummy - this should speed things up a lot
        continue;
 
       for(fastjet::PseudoJet j : ThermalParticles)
       {
-        if(p.squared_distance(j) > 1e-5) //1e-8)
-          continue;
-        
-        Correction = Correction + j;
-        j.reset(0, 0, 0, 0);
+         double deltaR = std::sqrt((p.eta() -  j.eta())*(p.eta() - j.eta()) + (p.delta_phi_to(j))*(p.delta_phi_to(j)));
+         
+         if(deltaR > 1e-5) //1e-8)
+            continue;
+
+         Correction = Correction + j;
+         j.reset(0, 0, 0, 0);
       }
    }
-   //std::cout << "correction pt: " << Correction.perp() << " eta: " << Correction.rap() << " phi: " << Correction.phi() << " mass: " << Correction.m() << std::endl;
    return Correction;
 }
 
