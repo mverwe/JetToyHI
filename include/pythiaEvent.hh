@@ -27,10 +27,11 @@ private :
   unsigned int tune_;
   double rapMin_;
   double rapMax_;
+  bool   partonLevel_;
 
 public :
-  pythiaEvent(double pthat = 120., unsigned int tune = 14, double rapMin = -3., double rapMax = 3.) :
-    pthat_(pthat), tune_(tune), rapMin_(rapMin), rapMax_(rapMax)
+  pythiaEvent(double pthat = 120., unsigned int tune = 14, double rapMin = -3., double rapMax = 3., bool partonLevel = false) :
+    pthat_(pthat), tune_(tune), rapMin_(rapMin), rapMax_(rapMax), partonLevel_(partonLevel)
   {
     
     // Generator. LHC process and output selection. Initialization.
@@ -44,6 +45,10 @@ public :
     pythia.readString(Form("Tune:pp = %d",tune_));
     pythia.readString("Random:setSeed = on");
     pythia.readString("Random:seed = 0");
+    if(partonLevel_) {
+      pythia.readString("HadronLevel:all = off");
+    }
+    
     pythia.init();
 
   }
