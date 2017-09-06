@@ -246,7 +246,7 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGroomingWithJewelSub(std::vec
         zg = -1.;
 
         double deltaRsq = Part1.squared_distance(Part2);
-        double cut = zcut_ * std::pow(deltaRsq / r0_*r0_, 0.5*beta_);
+        double cut = zcut_ * std::pow(deltaRsq / r0_/r0_, 0.5*beta_);
 
         sj1 = GetCorrectedJet(Part1,particlesDummy);
         sj2 = GetCorrectedJet(Part2,particlesDummy);
