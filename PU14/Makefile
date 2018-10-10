@@ -14,10 +14,8 @@ LDFLAGS += -std=c++11
 FJCONFIG = /afs/cern.ch/user/m/mverweij/work/soft/toy/fastjet-install/bin/fastjet-config
 INCLUDE += `$(FJCONFIG) --cxxflags`
 LIBRARIES  += `$(FJCONFIG) --libs --plugins` -lfastjetcontribfragile
-LIBRARIES += -lgsl -lgslcblas -lm
-
-INCLUDE += -I/usr/include
-
+LIBRARIES += 
+INCLUDE += 
 INCLUDE += $(LCLINCLUDE)
 
 COMMONSRC = CmdLine.cc EventMixer.cc EventSource.cc helpers.cc ParticleIDMethods.cc ParticleName.cc PU14.cc Version.cc zfstream.cc
@@ -62,17 +60,3 @@ realclean: clean
 
 depend:
 	makedepend  $(LCLINCLUDE) -Y --   -- $(COMMONSRC) $(PROGSRC)
-# DO NOT DELETE
-
-CmdLine.o: CmdLine.hh
-EventMixer.o: EventMixer.hh CmdLine.hh EventSource.hh PU14.hh
-EventMixer.o: HepPID/ParticleIDMethods.hh helpers.hh
-EventSource.o: EventSource.hh FastIStringStream.hh PU14.hh
-EventSource.o: HepPID/ParticleIDMethods.hh zfstream.h
-helpers.o: helpers.hh
-ParticleIDMethods.o: HepPID/ParticleIDMethods.hh HepPID/ParticleName.hh
-ParticleName.o: HepPID/ParticleName.hh HepPID/ParticleIDMethods.hh
-ParticleName.o: HepPID/Version.hh
-PU14.o: PU14.hh HepPID/ParticleIDMethods.hh
-Version.o: HepPID/Version.hh
-zfstream.o: zfstream.h
