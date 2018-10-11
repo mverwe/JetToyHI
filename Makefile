@@ -11,15 +11,17 @@ FFLAGS = -Wall -O2
 CXXFLAGS += -std=c++11
 LDFLAGS += -std=c++11
 
-FJCONFIG = /afs/cern.ch/user/m/mverweij/work/soft/toy/fastjet-install/bin/fastjet-config
+FJCONFIG = /Users/mverweij/soft/fastjet330-install/bin/fastjet-config
 INCLUDE += `$(FJCONFIG) --cxxflags`
 LIBRARIES  += `$(FJCONFIG) --libs --plugins` -lfastjetcontribfragile
 
-PYTHIA8LOCATION = /afs/cern.ch/sw/lcg/external/MCGenerators_lcgcmt67c/pythia8/226/x86_64-slc6-gcc48-opt
+PYTHIA8LOCATION = /Users/mverweij/soft/pythia8235
 INCLUDE += -I$(PYTHIA8LOCATION)/include
 LIBRARIES  += -L$(PYTHIA8LOCATION)/lib -lpythia8
-LIBRARIES += 
-INCLUDE += 
+LIBRARIES += -L/usr/local/Cellar/gsl/2.5/lib -lgsl -lgslcblas
+
+INCLUDE += -I/usr/local/Cellar/gsl/2.5/include
+
 
 INCLUDE += `root-config --cflags`
 LIBRARIES  += `root-config --glibs`
@@ -99,3 +101,88 @@ realclean: clean
 
 depend:
 	makedepend  $(LCLINCLUDE) -Y --   -- $(COMMONSRC) $(PROGSRC)
+# DO NOT DELETE
+
+runConversionQPYTHIA.o: include/ProgressBar.h include/pythiaEvent.hh
+runConversionQPYTHIA.o: include/extraInfo.hh include/extraInfo.hh
+runConversionQPYTHIA.o: PU14/CmdLine.hh
+runCreatePythiaEvents.o: include/ProgressBar.h include/pythiaEvent.hh
+runCreatePythiaEvents.o: include/extraInfo.hh include/extraInfo.hh
+runCreatePythiaEvents.o: PU14/CmdLine.hh
+runCreatePythiaEventsPartonLevel.o: include/ProgressBar.h
+runCreatePythiaEventsPartonLevel.o: include/pythiaEvent.hh
+runCreatePythiaEventsPartonLevel.o: include/extraInfo.hh include/extraInfo.hh
+runCreatePythiaEventsPartonLevel.o: PU14/CmdLine.hh
+runCreateThermalEvents.o: include/ProgressBar.h include/thermalEvent.hh
+runCreateThermalEvents.o: include/extraInfo.hh PU14/CmdLine.hh
+runCSVariations.o: include/ProgressBar.h PU14/EventMixer.hh PU14/CmdLine.hh
+runCSVariations.o: PU14/EventSource.hh PU14/CmdLine.hh PU14/PU14.hh
+runCSVariations.o: PU14/HepPID/ParticleIDMethods.hh include/jetCollection.hh
+runCSVariations.o: include/csSubtractor.hh PU14/PU14.hh
+runCSVariations.o: include/csSubtractorFullEvent.hh include/skSubtractor.hh
+runCSVariations.o: include/softDropGroomer.hh include/jetCollection.hh
+runCSVariations.o: include/jewelMatcher.hh include/treeWriter.hh
+runCSVariations.o: include/jetMatcher.hh include/randomCones.hh
+runCSVariations.o: include/Angularity.hh
+runFromFile.o: include/ProgressBar.h PU14/EventMixer.hh PU14/CmdLine.hh
+runFromFile.o: PU14/EventSource.hh PU14/CmdLine.hh PU14/PU14.hh
+runFromFile.o: PU14/HepPID/ParticleIDMethods.hh include/jetCollection.hh
+runFromFile.o: include/csSubtractor.hh PU14/PU14.hh
+runFromFile.o: include/csSubtractorFullEvent.hh include/skSubtractor.hh
+runFromFile.o: include/softDropGroomer.hh include/jetCollection.hh
+runFromFile.o: include/jewelMatcher.hh include/treeWriter.hh
+runFromFile.o: include/jetMatcher.hh include/randomCones.hh
+runFromFile.o: include/Angularity.hh include/jewelMatcher.hh
+runJetPerformance.o: include/ProgressBar.h PU14/EventMixer.hh PU14/CmdLine.hh
+runJetPerformance.o: PU14/EventSource.hh PU14/CmdLine.hh PU14/PU14.hh
+runJetPerformance.o: PU14/HepPID/ParticleIDMethods.hh
+runJetPerformance.o: include/jetCollection.hh include/csSubtractor.hh
+runJetPerformance.o: PU14/PU14.hh include/csSubtractorFullEvent.hh
+runJetPerformance.o: include/skSubtractor.hh include/softDropGroomer.hh
+runJetPerformance.o: include/jetCollection.hh include/jewelMatcher.hh
+runJetPerformance.o: include/treeWriter.hh include/jetMatcher.hh
+runJetPerformance.o: include/randomCones.hh include/Angularity.hh
+runJewelSub.o: include/ProgressBar.h PU14/EventMixer.hh PU14/CmdLine.hh
+runJewelSub.o: PU14/EventSource.hh PU14/CmdLine.hh PU14/PU14.hh
+runJewelSub.o: PU14/HepPID/ParticleIDMethods.hh include/jetCollection.hh
+runJewelSub.o: include/csSubtractor.hh PU14/PU14.hh
+runJewelSub.o: include/csSubtractorFullEvent.hh include/skSubtractor.hh
+runJewelSub.o: include/softDropGroomer.hh include/jetCollection.hh
+runJewelSub.o: include/jewelMatcher.hh include/treeWriter.hh
+runJewelSub.o: include/jetMatcher.hh include/randomCones.hh
+runJewelSub.o: include/Angularity.hh include/jewelMatcher.hh
+runSDGenVarious.o: include/ProgressBar.h PU14/EventMixer.hh PU14/CmdLine.hh
+runSDGenVarious.o: PU14/EventSource.hh PU14/CmdLine.hh PU14/PU14.hh
+runSDGenVarious.o: PU14/HepPID/ParticleIDMethods.hh include/jetCollection.hh
+runSDGenVarious.o: include/csSubtractor.hh PU14/PU14.hh
+runSDGenVarious.o: include/csSubtractorFullEvent.hh include/skSubtractor.hh
+runSDGenVarious.o: include/softDropGroomer.hh include/jetCollection.hh
+runSDGenVarious.o: include/jewelMatcher.hh include/treeWriter.hh
+runSDGenVarious.o: include/jetMatcher.hh include/randomCones.hh
+runSDGenVarious.o: include/Angularity.hh
+runSDGenVariousJewelSub.o: include/ProgressBar.h PU14/EventMixer.hh
+runSDGenVariousJewelSub.o: PU14/CmdLine.hh PU14/EventSource.hh
+runSDGenVariousJewelSub.o: PU14/CmdLine.hh PU14/PU14.hh
+runSDGenVariousJewelSub.o: PU14/HepPID/ParticleIDMethods.hh
+runSDGenVariousJewelSub.o: include/jetCollection.hh include/csSubtractor.hh
+runSDGenVariousJewelSub.o: PU14/PU14.hh include/csSubtractorFullEvent.hh
+runSDGenVariousJewelSub.o: include/skSubtractor.hh include/softDropGroomer.hh
+runSDGenVariousJewelSub.o: include/jetCollection.hh include/jewelMatcher.hh
+runSDGenVariousJewelSub.o: include/treeWriter.hh include/jetMatcher.hh
+runSDGenVariousJewelSub.o: include/randomCones.hh include/Angularity.hh
+runSDGenVariousJewelSub.o: include/jewelMatcher.hh
+runSharedLayerSubtraction.o: include/ProgressBar.h PU14/EventMixer.hh
+runSharedLayerSubtraction.o: PU14/CmdLine.hh PU14/EventSource.hh
+runSharedLayerSubtraction.o: PU14/CmdLine.hh PU14/PU14.hh
+runSharedLayerSubtraction.o: PU14/HepPID/ParticleIDMethods.hh
+runSharedLayerSubtraction.o: include/jetCollection.hh
+runSharedLayerSubtraction.o: include/sharedLayerSubtractor.hh PU14/PU14.hh
+runSharedLayerSubtraction.o: include/Angularity.hh include/treeWriter.hh
+runSharedLayerSubtraction.o: include/jetCollection.hh include/jetMatcher.hh
+runtest.o: PU14/CmdLine.hh include/ProgressBar.h include/jetCollection.hh
+runtest.o: include/thermalEvent.hh include/extraInfo.hh
+runtest.o: include/pythiaEvent.hh include/csSubtractor.hh PU14/PU14.hh
+runtest.o: include/csSubtractorFullEvent.hh include/skSubtractor.hh
+runtest.o: include/softDropGroomer.hh include/jetCollection.hh
+runtest.o: include/jewelMatcher.hh include/softDropCounter.hh
+runtest.o: include/treeWriter.hh include/jetMatcher.hh include/randomCones.hh
