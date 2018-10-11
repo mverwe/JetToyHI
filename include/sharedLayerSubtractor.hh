@@ -39,6 +39,8 @@ private :
   double pTDbkg_;
   double pTDbkgSigma_;
   
+  Angularity pTD_;
+  
   std::vector<fastjet::PseudoJet> fjInputs_;
   std::vector<fastjet::PseudoJet> fjJetInputs_;
 
@@ -62,7 +64,7 @@ public :
     nInitCond_(nInitCond),
     nTopInit_(nTopInit)
   {
-
+    pTD_ = Angularity(0.,2.,0.4);
   }
 
   void setGhostArea(double a) { ghostArea_ = a; }
@@ -125,12 +127,9 @@ public :
 
     //UE metric
     //----------------------------------------------------------
-    //Angularity width(1.,1.,0.4);
-    Angularity pTD(0.,2.,0.4);
-
     std::vector<double> pTD_bkgd;
     for(fastjet::PseudoJet& jet : bkgd_jets) {
-      pTD_bkgd.push_back(pTD.result(jet));
+      pTD_bkgd.push_back(pTD_.result(jet));
     }
     std::nth_element(pTD_bkgd.begin(), pTD_bkgd.begin() + pTD_bkgd.size()/2, pTD_bkgd.end());
     double med_pTD = pTD_bkgd[pTD_bkgd.size()/2];
@@ -147,8 +146,6 @@ public :
     pTDbkg_ = med_pTD;
     pTDbkgSigma_ = rms_pTD;
 
-    //std::cout << "med_pTD: " << med_pTD << "  rms_pTD: " << rms_pTD << std::endl;
-    
     std::mt19937 rndSeed(rd_()); //rnd number generator seed
            
     std::vector<fastjet::PseudoJet> subtracted_jets;
@@ -156,9 +153,6 @@ public :
     int ijet = -1;
     for(fastjet::PseudoJet& jet : jets) {
       ++ijet;
-      //if(ijet>1) continue; //TEMP,DEBUG
-      // std::cout << "start jet loop. entry: " << ijet << "/" << jets.size() << " pt: " << jet.pt() << " eta: " << jet.eta() << std::endl;
-
       if(jet.is_pure_ghost()) continue;
       
       //get ghosts and true particles (ghosts are distributed uniformly which we will use to create initial conditions)
@@ -185,7 +179,7 @@ public :
 
         //make copy of particles so that a particle is not repeated inside the same initial condition
         std::vector<fastjet::PseudoJet> particlesNotUsed = particles;
-        
+             
         double maxPtCurrent = 0.;
         while(maxPtCurrent<maxPt && particlesNotUsed.size()>0) {
 
@@ -193,50 +187,29 @@ public :
           int ighost = int(std::floor(distUni(rndSeed))); 
         
           //find closest particle to ghost
-          double dR2 = 1000.;
-          fastjet::PseudoJet partSel;
-          int ipSel = -1;
-          for(int ip = 0; ip<(int)particlesNotUsed.size(); ++ip) {
-            fastjet::PseudoJet part = particlesNotUsed[ip];
-            double dR2Cur = ghosts[ighost].squared_distance(part);
-            if(dR2Cur < dR2) {
-              dR2 = dR2Cur;
-              partSel = part;
-              ipSel = ip;
-            }
+          int ipSel = findClosestParticle(particlesNotUsed, ighost, ghosts);
+          if(ipSel<0) {
+            std::cout << "WARNING: no closest particle found. " << particlesNotUsed.size() << " available" << std::endl;
+            std::cout << "sometimes fastjet spits out impossible ghost positions which might be the cause" << std::endl;
+            std::cout << "ghost eta: " << ghosts[ighost].eta() << " phi: " << ghosts[ighost].phi() << std::endl;
+            std::cout << "will just skip and use another ghost" << std::endl;
+            continue; //this shouldn't happen
           }
-          if(ipSel<0) continue; //this shouldn't happen
+          fastjet::PseudoJet partSel = particlesNotUsed[ipSel];
           initCondition.push_back(partSel.user_index());
           maxPtCurrent+=partSel.pt();
           particlesNotUsed.erase(particlesNotUsed.begin()+ipSel);
           //std::cout << "Added new particle with pt = " << partSel.pt() << " to init condition. total pt now " << maxPtCurrent << "/" << maxPt << std::endl;
         }
-        collInitCond.push_back(initCondition);
+        if(maxPtCurrent>maxPt) collInitCond.push_back(initCondition); //avoid putting in a initial condition for which not enough particles were available anymore to get to the required pT. Might be an issue for sparse events.
       }//initial conditions loop
-     
+         
       //----------------------------------------------------------
       //Now we have the requested number of random initial condition
       
       //Next step: calc chi2 for each initial condition
       //----------------------------------------------------------
-      std::vector<double> chi2s;
-      for(int ii = 0; ii<nInitCond_; ++ii) {
-        std::vector<int> indices = collInitCond[ii];
-        double chi2 = 1e6;
-        if(indices.size()>0) { 
-          std::vector<fastjet::PseudoJet> combinedparticles;
-          for(int ic = 0; ic<(int)indices.size(); ++ic) {
-            combinedparticles.push_back(particles[indices[ic]]);
-          }
-          fastjet::PseudoJet currInitJet = fastjet::PseudoJet(join(combinedparticles));
-          //std::cout << "get pTD from ID" << std::endl;
-          double ptDCur = pTD.result(currInitJet);
-          chi2 = fabs(ptDCur-med_pTD)*(fabs(ptDCur-med_pTD))/rms_pTD/rms_pTD;
-        }
-        chi2s.push_back(chi2);
-        //std::cout << "chi2 of initial condition " << ii << " is " << chi2 << " with " <<  combinedparticles.size() << " particles" << std::endl;
-      }
-      
+      std::vector<double> chi2s = calculateChi2s(collInitCond, particles, med_pTD, rms_pTD);
       
       //sort the chi2s keeping track of indices
       //----------------------------------------------------------
@@ -252,13 +225,11 @@ public :
       //Next step: figure out how often each particle is shared in nTopInit_ initial conditions
       //----------------------------------------------------------
       std::vector<int> share_idx(particles.size(),0);
-      for(int it = 0; it<nTopInit_; ++it) {
+      for(int it = 0; it<std::min(nTopInit_,collInitCond.size()); ++it) {
         int chi2Index = idx[it];
         std::vector<int> indices = collInitCond[chi2Index];
         for(int ic = 0; ic<(int)indices.size(); ++ic) {
           share_idx[particles[indices[ic]].user_index()]++;
-          //std::cout << "indices[ic] = " << indices[ic] << "  user_index = " << particles[indices[ic]].user_index() << std::endl;
-          //std::cout << "share_idx current: " << share_idx[particles[indices[ic]].user_index()] << std::endl;
         }
       }
       
@@ -278,7 +249,6 @@ public :
       std::vector<fastjet::PseudoJet> bkgd_particles;
       fjJetParticles_.clear();            
       for(auto userIndex : ish) {
-        //std::cout << "userIndex: " << userIndex << " nshared: " << share_idx[userIndex] << std::endl;
         fastjet::PseudoJet part = particles[userIndex]; 
         if(curPtFinalUE<maxPtFinalUE) { //assign as bkgd particle
           curPtFinalUE+=part.pt();
@@ -299,6 +269,46 @@ public :
     //std::cout << "\n n subtracted jets: " << subtracted_jets.size() << std::endl;
     return subtracted_jets;
   }
+
+  int findClosestParticle(std::vector<fastjet::PseudoJet> particlesNotUsed, int ighost, std::vector<fastjet::PseudoJet> ghosts) {
+    //find closest particle to ghost
+
+    double dR2 = 1000.;
+    fastjet::PseudoJet partSel;
+    int ipSel = -1;
+    for(int ip = 0; ip<(int)particlesNotUsed.size(); ++ip) {
+      fastjet::PseudoJet part = particlesNotUsed[ip];
+      double dR2Cur = ghosts[ighost].squared_distance(part);
+      if(dR2Cur < dR2) {
+        dR2 = dR2Cur;
+        partSel = part;
+        ipSel = ip;
+      }
+    }
+    return ipSel;
+  }
+
+  std::vector<double> calculateChi2s(std::vector<std::vector<int> > collInitCond, std::vector<fastjet::PseudoJet> particles, double med_pTD, double rms_pTD) {
+    // calc chi2 for each initial condition
+
+    std::vector<double> chi2s;
+    for(int ii = 0; ii<collInitCond.size(); ++ii) {
+      std::vector<int> indices = collInitCond[ii];
+      double chi2 = 1e6;
+      if(indices.size()>0) { 
+        std::vector<fastjet::PseudoJet> combinedparticles;
+        for(int ic = 0; ic<(int)indices.size(); ++ic) {
+          combinedparticles.push_back(particles[indices[ic]]);
+        }
+        fastjet::PseudoJet currInitJet = fastjet::PseudoJet(join(combinedparticles));
+        double ptDCur = pTD_.result(currInitJet);
+        chi2 = fabs(ptDCur-med_pTD)*(fabs(ptDCur-med_pTD))/rms_pTD/rms_pTD;
+      }
+      chi2s.push_back(chi2);
+    }
+    return chi2s;
+  }
+  
 };
 
 #endif
