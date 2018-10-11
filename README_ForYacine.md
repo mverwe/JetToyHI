@@ -16,6 +16,7 @@ cd pythia8235
 ./configure
 make
 PYTHIA=$PWD
+cd ..
 ```
 
 ## Install fastjet
