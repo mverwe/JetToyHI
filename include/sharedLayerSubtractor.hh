@@ -154,7 +154,6 @@ public :
     for(fastjet::PseudoJet& jet : jets) {
       ++ijet;
       if(jet.is_pure_ghost()) continue;
-
       //std::cout << "start jet loop. entry: " << ijet << "/" << jets.size() << " pt: " << jet.pt() << " eta: " << jet.eta() << std::endl;
       
       //get ghosts and true particles (ghosts are distributed uniformly which we will use to create initial conditions)
