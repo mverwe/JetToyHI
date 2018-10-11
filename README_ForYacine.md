@@ -4,11 +4,11 @@
 cd <dirInWhichYouWantToInstall>
 ```
 
-##Install ROOT
+## Install ROOT
 The easiast is to just grep a precompiled version from the root website (take ROOT6)
 * https://root.cern.ch/content/release-61404
 
-##Install PYTHIA8
+## Install PYTHIA8
 ```sh
 wget http://home.thep.lu.se/~torbjorn/pythia8/pythia8235.tgz
 tar xvfz pythia8235.tgz
@@ -18,7 +18,7 @@ make
 PYTHIA=$PWD
 ```
 
-##Install fastjet
+## Install fastjet
 
 curl -O http://fastjet.fr/repo/fastjet-3.3.0.tar.gz 
 tar zxvf fastjet-3.3.0.tar.gz
@@ -43,7 +43,7 @@ make fragile-shared-install
 cd ..
 ```
 
-##Jet workshop software
+## Jet workshop software
 ```sh
 git clone https://github.com/mverwe/JetToyHI.git
 cd JetToyHI
