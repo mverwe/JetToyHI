@@ -74,7 +74,7 @@ Now you are done installing software. Let's generate 10 pythia events and run a 
 
 You will have produced a root file with a tree. In this tree properties of jets are stored in std::vector format. To check what is inside do:
 ```
-root -b
+root -l
 TBrowser b
 ```
 Click on `jetTree` and play around.
