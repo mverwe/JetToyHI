@@ -108,7 +108,8 @@ make
 ## Samples
 Event samples can be found in the jet quenching CERNBOX:
 * From lxplus: /eos/project/j/jetquenching/JetWorkshop2017/samples
-* Webbrowser: https://cernbox.cern.ch/index.php/s/w2xgYEEkCWzDELR
+* Webbrowser: https://cernbox.cern.ch/index.php/s/JKvuTJMD0qCz6dJ
+* Mount eos on a laptop or local desktop: https://cern.service-now.com/service-portal/article.do?n=KB0003493 
 
 You will find samples from various event generators. For underlying event we have: 'thermal' which is independent particle production using a Boltzmann distribution with a fixed multiplicity and mean p<sub>T</sub> (indicated in the file names). For the hard signal we have PYTHIA8 and JEWEL events with various p<sub>T,hat</sub> settings.
 
