@@ -20,6 +20,7 @@ PYTHIA=$PWD
 
 ## Install fastjet
 
+```sh
 curl -O http://fastjet.fr/repo/fastjet-3.3.0.tar.gz 
 tar zxvf fastjet-3.3.0.tar.gz
 cd fastjet-3.3.0/
