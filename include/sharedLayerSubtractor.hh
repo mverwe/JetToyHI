@@ -154,6 +154,8 @@ public :
     for(fastjet::PseudoJet& jet : jets) {
       ++ijet;
       if(jet.is_pure_ghost()) continue;
+
+      //std::cout << "start jet loop. entry: " << ijet << "/" << jets.size() << " pt: " << jet.pt() << " eta: " << jet.eta() << std::endl;
       
       //get ghosts and true particles (ghosts are distributed uniformly which we will use to create initial conditions)
       //----------------------------------------------------------
@@ -189,10 +191,10 @@ public :
           //find closest particle to ghost
           int ipSel = findClosestParticle(particlesNotUsed, ighost, ghosts);
           if(ipSel<0) {
-            std::cout << "WARNING: no closest particle found. " << particlesNotUsed.size() << " available" << std::endl;
-            std::cout << "sometimes fastjet spits out impossible ghost positions which might be the cause" << std::endl;
-            std::cout << "ghost eta: " << ghosts[ighost].eta() << " phi: " << ghosts[ighost].phi() << std::endl;
-            std::cout << "will just skip and use another ghost" << std::endl;
+            // std::cout << "WARNING: no closest particle found. " << particlesNotUsed.size() << " available" << std::endl;
+            // std::cout << "sometimes fastjet spits out impossible ghost positions which might be the cause" << std::endl;
+            // std::cout << "ghost eta: " << ghosts[ighost].eta() << " phi: " << ghosts[ighost].phi() << std::endl;
+            // std::cout << "will just skip and use another ghost" << std::endl;
             continue; //this shouldn't happen
           }
           fastjet::PseudoJet partSel = particlesNotUsed[ipSel];
@@ -225,7 +227,7 @@ public :
       //Next step: figure out how often each particle is shared in nTopInit_ initial conditions
       //----------------------------------------------------------
       std::vector<int> share_idx(particles.size(),0);
-      for(int it = 0; it<std::min(nTopInit_,collInitCond.size()); ++it) {
+      for(int it = 0; it<std::min(nTopInit_,(int)collInitCond.size()); ++it) {
         int chi2Index = idx[it];
         std::vector<int> indices = collInitCond[chi2Index];
         for(int ic = 0; ic<(int)indices.size(); ++ic) {
@@ -266,7 +268,7 @@ public :
       }
     }//jet loop
 
-    //std::cout << "\n n subtracted jets: " << subtracted_jets.size() << std::endl;
+    std::cout << "\n n subtracted jets: " << subtracted_jets.size() << std::endl;
     return subtracted_jets;
   }
 
