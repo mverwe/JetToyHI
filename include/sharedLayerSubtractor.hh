@@ -52,7 +52,7 @@ private :
     
 public :
   sharedLayerSubtractor(double rJet = 0.4,
-                        double ghostArea = 0.005,
+                        double ghostArea = 0.001,
                         double ghostRapMax = 3.0,
                         double jetRapMax = 3.0,
                         int nInitCond = 100,
@@ -154,6 +154,7 @@ public :
     for(fastjet::PseudoJet& jet : jets) {
       ++ijet;
       if(jet.is_pure_ghost()) continue;
+      //      if(ijet>0) continue;
       //std::cout << "start jet loop. entry: " << ijet << "/" << jets.size() << " pt: " << jet.pt() << " eta: " << jet.eta() << std::endl;
       
       //get ghosts and true particles (ghosts are distributed uniformly which we will use to create initial conditions)
@@ -166,13 +167,19 @@ public :
       for(int i = 0; i<(int)particles.size(); ++i) {
         particles[i].set_user_index(i);
       }
+
+      // create map of ghost and closest particle
+      std::vector<std::vector<int>> closestPartToGhost;
+      for(int ighost = 0; ighost<ghosts.size(); ++ighost) {
+        std::vector<int> ipSel = findClosestParticles(particles, ighost, ghosts, 5);
+        closestPartToGhost.push_back(ipSel);
+      }
       
       // create requested number of initial conditions
       //----------------------------------------------------------
       std::vector<std::vector<int>> collInitCond;
       for(int ii = 0; ii<nInitCond_; ++ii) {
-
-        std::uniform_int_distribution<> distUni(0,ghosts.size()); //uniform distribution of ghosts in vector
+        std::uniform_int_distribution<> distUni(0,ghosts.size()-1); //uniform distribution of ghosts in vector
         std::vector<int> initCondition;                           //list of particles in initial condition
 
         //get random maxPt for this initial condition
@@ -180,29 +187,35 @@ public :
 
         //make copy of particles so that a particle is not repeated inside the same initial condition
         std::vector<fastjet::PseudoJet> particlesNotUsed = particles;
-             
-        double maxPtCurrent = 0.;
-        while(maxPtCurrent<maxPt && particlesNotUsed.size()>0) {
 
-          //pick random ghost
-          int ighost = int(std::floor(distUni(rndSeed))); 
+        std::vector<std::vector<int>> closestPartToGhostNotUsed = closestPartToGhost;
         
-          //find closest particle to ghost
-          int ipSel = findClosestParticle(particlesNotUsed, ighost, ghosts);
-          if(ipSel<0) {
-            // std::cout << "WARNING: no closest particle found. " << particlesNotUsed.size() << " available" << std::endl;
-            // std::cout << "sometimes fastjet spits out impossible ghost positions which might be the cause" << std::endl;
-            // std::cout << "ghost eta: " << ghosts[ighost].eta() << " phi: " << ghosts[ighost].phi() << std::endl;
-            // std::cout << "will just skip and use another ghost" << std::endl;
-            continue; //this shouldn't happen
-          }
-          fastjet::PseudoJet partSel = particlesNotUsed[ipSel];
+        double maxPtCurrent = 0.;
+        std::vector<int> avail(closestPartToGhost.size());
+        std::fill(avail.begin(),avail.end(),1);
+        while(maxPtCurrent<maxPt && std::accumulate(avail.begin(),avail.end(),0)>0 ) {
+          //std::cout << "avail: " << std::accumulate(avail.begin(),avail.end(),0) << std::endl;
+          
+          //pick random ghost
+          int ighost = int(std::floor(distUni(rndSeed)));
+          if(ighost>=ghosts.size()) continue;
+
+          int ipSel = -1;
+          if(closestPartToGhostNotUsed[ighost].size()>0) {
+            ipSel = closestPartToGhostNotUsed[ighost][0];
+            if(closestPartToGhostNotUsed[ighost].size()<2) avail[ighost] = 0;
+            closestPartToGhostNotUsed[ighost].erase(closestPartToGhostNotUsed[ighost].begin()+0);
+          } else
+            continue;
+          
+          fastjet::PseudoJet partSel = particles[ipSel];
           initCondition.push_back(partSel.user_index());
           maxPtCurrent+=partSel.pt();
-          particlesNotUsed.erase(particlesNotUsed.begin()+ipSel);
           //std::cout << "Added new particle with pt = " << partSel.pt() << " to init condition. total pt now " << maxPtCurrent << "/" << maxPt << std::endl;
         }
-        if(maxPtCurrent>maxPt) collInitCond.push_back(initCondition); //avoid putting in a initial condition for which not enough particles were available anymore to get to the required pT. Might be an issue for sparse events.
+        if(maxPtCurrent>maxPt) {
+          collInitCond.push_back(initCondition); //avoid putting in a initial condition for which not enough particles were available anymore to get to the required pT. Might be an issue for sparse events.
+        }
       }//initial conditions loop
          
       //----------------------------------------------------------
@@ -288,6 +301,44 @@ public :
     }
     return ipSel;
   }
+
+  std::vector<int> findClosestParticles(std::vector<fastjet::PseudoJet> particles, int ighost, std::vector<fastjet::PseudoJet> ghosts, int nClosest = 5) {
+    //find closest particle to ghost
+
+    std::vector<double> dR2(nClosest);
+    std::fill(dR2.begin(), dR2.end(), 1000.);
+
+    fastjet::PseudoJet partSel;
+    std::vector<int> ipSel(nClosest);
+    std::fill(ipSel.begin(), ipSel.end(), -1);
+    
+    for(int ip = 0; ip<(int)particles.size(); ++ip) {
+      fastjet::PseudoJet part = particles[ip];
+      double dR2Cur = ghosts[ighost].squared_distance(part);
+      for(int i = 0; i<nClosest; ++i) {
+        if(dR2Cur < dR2[i]) {
+          dR2[i] = dR2Cur;
+          ipSel[i] = ip;
+        }
+      }
+    }
+
+    //sort top nClosest from smallest to largest distance
+    std::vector<size_t> idx(dR2.size());
+    iota(idx.begin(), idx.end(), 0);
+
+    // sort indexes based on comparing values in v
+    std::sort(idx.begin(), idx.end(),
+              [&dR2](size_t i1, size_t i2) {return dR2[i1] < dR2[i2];});
+
+    std::vector<int> ipSelSorted(nClosest);
+    for(int i = 0; i<nClosest; ++i) {
+      ipSelSorted[i] = ipSel[idx[i]];
+    }
+    
+    return ipSelSorted;
+  }
+
 
   std::vector<double> calculateChi2s(std::vector<std::vector<int> > collInitCond, std::vector<fastjet::PseudoJet> particles, double med_pTD, double rms_pTD) {
     // calc chi2 for each initial condition

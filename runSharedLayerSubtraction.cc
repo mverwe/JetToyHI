@@ -24,6 +24,8 @@ using namespace fastjet;
 
 // ./runSharedLayerSubtraction -hard  /eos/project/j/jetquenching/JetWorkshop2017/samples/pythia8/dijet120/PythiaEventsTune14PtHat120_0.pu14 -pileup  /eos/project/j/jetquenching/JetWorkshop2017/samples/thermal/Mult7000/ThermalEventsMult7000PtAv1.20_0.pu14 -nev 10
 
+// MV local: ./runSharedLayerSubtraction -hard /Users/mverweij/mnt/eos/project/j/jetquenching/JetWorkshop2017/samples/pythia8/dijet120/PythiaEventsTune14PtHat120_0.pu14 -pileup /Users/mverweij/mnt/eos/project/j/jetquenching/JetWorkshop2017/samples/thermal/Mult7000/ThermalEventsMult7000PtAv1.20_0.pu14 -nev 10
+
 int main (int argc, char ** argv) {
 
   auto start_time = std::chrono::steady_clock::now();
@@ -99,7 +101,7 @@ int main (int argc, char ** argv) {
     //---------------------------------------------------------------------------
     
     //run jet-by-jet constituent subtraction on mixed (hard+UE) event
-    sharedLayerSubtractor sharedLayerSub(R,0.005,ghostRapMax,jetRapMax);
+    sharedLayerSubtractor sharedLayerSub(R,0.003,ghostRapMax,jetRapMax);
     sharedLayerSub.setInputParticles(particlesMerged);
     jetCollection jetCollectionSL(sharedLayerSub.doSubtraction());
 
