@@ -170,7 +170,7 @@ public :
 
       // create map of ghost and closest particle
       std::vector<std::vector<int>> closestPartToGhost;
-      for(int ighost = 0; ighost<ghosts.size(); ++ighost) {
+      for(unsigned int ighost = 0; ighost<ghosts.size(); ++ighost) {
         std::vector<int> ipSel = findClosestParticles(particles, ighost, ghosts, 5);
         closestPartToGhost.push_back(ipSel);
       }
@@ -198,7 +198,7 @@ public :
           
           //pick random ghost
           int ighost = int(std::floor(distUni(rndSeed)));
-          if(ighost>=ghosts.size()) continue;
+          if(ighost>=(int)ghosts.size()) continue;
 
           int ipSel = -1;
           if(closestPartToGhostNotUsed[ighost].size()>0) {
@@ -302,7 +302,7 @@ public :
     return ipSel;
   }
 
-  std::vector<int> findClosestParticles(std::vector<fastjet::PseudoJet> particles, int ighost, std::vector<fastjet::PseudoJet> ghosts, int nClosest = 5) {
+  std::vector<int> findClosestParticles(std::vector<fastjet::PseudoJet> particles, unsigned int ighost, std::vector<fastjet::PseudoJet> ghosts, int nClosest = 5) {
     //find closest particle to ghost
 
     std::vector<double> dR2(nClosest);
@@ -344,7 +344,7 @@ public :
     // calc chi2 for each initial condition
 
     std::vector<double> chi2s;
-    for(int ii = 0; ii<collInitCond.size(); ++ii) {
+    for(unsigned int ii = 0; ii<collInitCond.size(); ++ii) {
       std::vector<int> indices = collInitCond[ii];
       double chi2 = 1e6;
       if(indices.size()>0) { 
