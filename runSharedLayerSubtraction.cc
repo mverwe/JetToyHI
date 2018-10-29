@@ -41,6 +41,8 @@ int main (int argc, char ** argv) {
   ClusterSequence::set_fastjet_banner_stream(NULL);
 
   //to write info to root tree
+  TFile *fout = new TFile("JetToyHIResultSharedLayers.root","RECREATE");
+  fout->cd();
   treeWriter trw("jetTree");
 
   //Jet definition
@@ -55,8 +57,10 @@ int main (int argc, char ** argv) {
   double jetRapMax = 3.0;
   fastjet::Selector jet_selector = SelectorAbsRapMax(jetRapMax);
 
-  //Angularity width(1.,1.,R);
-  //Angularity pTD(0.,2.,R);
+  Angularity ang_pTD(0.,2.,R);
+  Angularity ang_widthSq(0.5,1.,R);
+  Angularity ang_width(1.,1.,R);
+  Angularity ang_mass(2.,1.,R);
     
   ProgressBar Bar(cout, nEvent);
   Bar.SetStyle(-1);
@@ -92,9 +96,41 @@ int main (int argc, char ** argv) {
     fastjet::ClusterSequenceArea csSig(particlesSig, jet_def, area_def);
     jetCollection jetCollectionSig(sorted_by_pt(jet_selector(csSig.inclusive_jets(10.))));
 
+    //calculate some angularities
+    vector<double> pTDSig;     pTDSig.reserve(jetCollectionSig.getJet().size());
+    vector<double> widthSqSig; widthSqSig.reserve(jetCollectionSig.getJet().size());
+    vector<double> widthSig;   widthSig.reserve(jetCollectionSig.getJet().size());
+    vector<double> massSig;   massSig.reserve(jetCollectionSig.getJet().size());
+    for(PseudoJet jet : jetCollectionSig.getJet()) {
+      pTDSig.push_back(ang_pTD.result(jet));
+      widthSqSig.push_back(ang_widthSq.result(jet));
+      widthSig.push_back(ang_width.result(jet));
+      massSig.push_back(ang_mass.result(jet));
+    }
+    jetCollectionSig.addVector("pTDSig", pTDSig);
+    jetCollectionSig.addVector("widthSqSig", widthSqSig);
+    jetCollectionSig.addVector("widthSig", widthSig);
+    jetCollectionSig.addVector("massSig", massSig);
+    
     // run the clustering, extract the unsubtracted jets
     ClusterSequenceArea csMerged(particlesMerged, jet_def, area_def);
     jetCollection jetCollectionMerged(sorted_by_pt(jet_selector(csMerged.inclusive_jets())));
+
+    //calculate some angularities
+    vector<double> pTDMerged;     pTDMerged.reserve(jetCollectionMerged.getJet().size());
+    vector<double> widthSqMerged; widthSqMerged.reserve(jetCollectionMerged.getJet().size());
+    vector<double> widthMerged;   widthMerged.reserve(jetCollectionMerged.getJet().size());
+    vector<double> massMerged;   massMerged.reserve(jetCollectionMerged.getJet().size());
+    for(PseudoJet jet : jetCollectionMerged.getJet()) {
+      pTDMerged.push_back(ang_pTD.result(jet));
+      widthSqMerged.push_back(ang_widthSq.result(jet));
+      widthMerged.push_back(ang_width.result(jet));
+      massMerged.push_back(ang_mass.result(jet));
+    }
+    jetCollectionMerged.addVector("pTDMerged", pTDMerged);
+    jetCollectionMerged.addVector("widthSqMerged", widthSqMerged);
+    jetCollectionMerged.addVector("widthMerged", widthMerged);
+    jetCollectionMerged.addVector("massMerged", massMerged);
     
     //---------------------------------------------------------------------------
     //   background subtraction
@@ -104,6 +140,24 @@ int main (int argc, char ** argv) {
     sharedLayerSubtractor sharedLayerSub(R,0.003,ghostRapMax,jetRapMax);
     sharedLayerSub.setInputParticles(particlesMerged);
     jetCollection jetCollectionSL(sharedLayerSub.doSubtraction());
+    std::vector<std::vector<double>> chi2s = sharedLayerSub.getChi2s();
+    std::vector<std::vector<int>> nshared = sharedLayerSub.getNShared();
+
+    //calculate some angularities
+    vector<double> pTDSL;     pTDSL.reserve(jetCollectionSL.getJet().size());
+    vector<double> widthSqSL; widthSqSL.reserve(jetCollectionSL.getJet().size());
+    vector<double> widthSL;   widthSL.reserve(jetCollectionSL.getJet().size());
+    vector<double> massSL;   massSL.reserve(jetCollectionSL.getJet().size());
+    for(PseudoJet jet : jetCollectionSL.getJet()) {
+      pTDSL.push_back(ang_pTD.result(jet));
+      widthSqSL.push_back(ang_widthSq.result(jet));
+      widthSL.push_back(ang_width.result(jet));
+      massSL.push_back(ang_mass.result(jet));
+    }
+    jetCollectionSL.addVector("pTDSL", pTDSL);
+    jetCollectionSL.addVector("widthSqSL", widthSqSL);
+    jetCollectionSL.addVector("widthSL", widthSL);
+    jetCollectionSL.addVector("massSL", massSL);
 
     std::vector<double> rho;
     rho.push_back(sharedLayerSub.getRho());
@@ -132,7 +186,7 @@ int main (int argc, char ** argv) {
 
 
     //---------------------------------------------------------------------------
-    //   write tree
+    //   fill tree
     //---------------------------------------------------------------------------
     
     //Give variable we want to write out to treeWriter.
@@ -148,9 +202,18 @@ int main (int argc, char ** argv) {
     trw.addCollection("pTDBkgSigma",   pTDBkgSigma);
 
     trw.addCollection("unsubJet",      jetCollectionMerged, true);
+
+    //trw.addCollection("chi2s",         chi2s);
+    //trw.addCollection("nshared",       nshared);
     
     trw.addCollection("eventWeight",   eventWeight);
-        
+    
+    TTree *treeOut = trw.getTree();
+    if(!treeOut->GetBranch("slChi2s"))
+      treeOut->Branch("slChi2s",&chi2s);
+    //if(!treeOut->GetBranch("slNShared"))     //no ROOT dictionary for vector<vector<int>> available. grmpf
+    //  treeOut->Branch("slNShared",&nshared);
+    
     trw.fillTree();
 
   }//event loop
@@ -159,10 +222,12 @@ int main (int argc, char ** argv) {
   Bar.Print();
   Bar.PrintLine();
 
+  //  TFile *fout = new TFile("JetToyHIResultSharedLayers.root","RECREATE");
+  fout->cd();
+  
   TTree *trOut = trw.getTree();
-
-  TFile *fout = new TFile("JetToyHIResultSharedLayers.root","RECREATE");
   trOut->Write();
+  
   fout->Write();
   fout->Close();
 

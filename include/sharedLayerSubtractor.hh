@@ -46,9 +46,14 @@ private :
 
   std::vector<fastjet::PseudoJet> fjJetParticles_;
 
+  std::vector<std::vector<double>> fChi2s_;
+  std::vector<std::vector<int>> fShare_;
+  
   std::random_device rd_;
   int nInitCond_;
   int nTopInit_;
+
+  fastjet::ClusterSequenceArea *csJetSub;
     
 public :
   sharedLayerSubtractor(double rJet = 0.4,
@@ -77,6 +82,15 @@ public :
 
   double getPTDBkg() const { return pTDbkg_; }
   double getPTDBkgSigma() const { return pTDbkgSigma_; }
+
+  std::vector<std::vector<double>> getChi2s() const { return fChi2s_; }
+  std::vector<std::vector<int>>    getNShared() const { return fShare_; }
+
+  void clearMemory() {
+    fChi2s_.clear();
+    fShare_.clear();
+    if(csJetSub) delete csJetSub;
+  }
 
   std::vector<fastjet::PseudoJet> doSubtraction() {
 
@@ -147,7 +161,7 @@ public :
     pTDbkgSigma_ = rms_pTD;
 
     std::mt19937 rndSeed(rd_()); //rnd number generator seed
-           
+    
     std::vector<fastjet::PseudoJet> subtracted_jets;
     subtracted_jets.reserve(jets.size());
     int ijet = -1;
@@ -224,6 +238,7 @@ public :
       //Next step: calc chi2 for each initial condition
       //----------------------------------------------------------
       std::vector<double> chi2s = calculateChi2s(collInitCond, particles, med_pTD, rms_pTD);
+      fChi2s_.push_back(chi2s);
       
       //sort the chi2s keeping track of indices
       //----------------------------------------------------------
@@ -246,6 +261,7 @@ public :
           share_idx[particles[indices[ic]].user_index()]++;
         }
       }
+      fShare_.push_back(share_idx);
       
       //sort according to how often a particle is shared
       //----------------------------------------------------------
@@ -273,10 +289,12 @@ public :
       }
 
       if(fjJetParticles_.size()>0) {
-        fastjet::ClusterSequenceArea *csSub = new fastjet::ClusterSequenceArea(fjJetParticles_, jet_defSub, area_def);
-        std::vector<fastjet::PseudoJet> jetSub = fastjet::sorted_by_pt(csSub->inclusive_jets());
+        //fastjet::ClusterSequenceArea *csJetSub = new fastjet::ClusterSequenceArea(fjJetParticles_, jet_defSub, area_def);
+        csJetSub = new fastjet::ClusterSequenceArea(fjJetParticles_, jet_defSub, area_def);
+        std::vector<fastjet::PseudoJet> jetSub = fastjet::sorted_by_pt(csJetSub->inclusive_jets());
         if(jetSub[0].pt()>0.) subtracted_jets.push_back(jetSub[0]);
-        if(subtracted_jets.size()>0 && subtracted_jets.size()<2) csSub->delete_self_when_unused();
+        //if(subtracted_jets.size()>0 && subtracted_jets.size()<2)
+        csJetSub->delete_self_when_unused();
       }
     }//jet loop
 
