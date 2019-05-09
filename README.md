@@ -76,7 +76,7 @@ make fragile-shared #make shared library
 make fragile-shared-install
 cd ..
 ```
-
+In /JetTotHI/, change the PYTHIA8LOCATION to your own pythia8 installation
 Next steps
 ```sh
 git clone https://github.com/JetQuenchingTools/JetToyHI.git
