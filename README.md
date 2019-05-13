@@ -38,7 +38,7 @@ make
 ./runFromFile -hard samples/PythiaEventsTune14PtHat120.pu14 -pileup samples/ThermalEventsMult12000PtAv0.70.pu14 -nev 10
 ```
 
-## Install on lxplus (obsolete)
+## Install on lxplus (in the process of making up-to-date)
 
 If you don't have an lxplus account, you can request one here: https://account.cern.ch/account/Externals/
 
@@ -48,9 +48,9 @@ ssh -Y <username>@lxplus.cern.ch
 
 cd <dirInWhichYouWantToInstall>
 
-source /afs/cern.ch/sw/lcg/contrib/gcc/4.8/x86_64-slc6-gcc48-opt/setup.sh
+source /cvmfs/sft.cern.ch/lcg/external/gcc/4.8.1/x86_64-slc6-gcc48-opt/setup.sh
 
-source /afs/cern.ch/sw/lcg/app/releases/ROOT/6.06.08/x86_64-slc6-gcc48-opt/root/bin/thisroot.sh
+source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.06.08/x86_64-slc6-gcc48-opt/root/bin/thisroot.sh
 
 #Install fastjet (you just have to do this once)
 
