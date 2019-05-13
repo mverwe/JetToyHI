@@ -207,7 +207,7 @@ if (defined($options{"r"})) {
   push(@info, "root");
   $makefile.="
 INCLUDE += `root-config --cflags`
-LIBRARIES  += `root-config --libs`
+LIBRARIES  += `root-config --glibs`
 ";
 }
 

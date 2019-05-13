@@ -18,13 +18,13 @@ public:
   {}
 
   /// compute the function
-  virtual double result(const PseudoJet &jet) const {
+  virtual double result(const fastjet::PseudoJet &jet) const {
     // check the jet is appropriate for computation
     if (!jet.has_constituents()) {
       Printf("Angularities can only be applied on jets for which the constituents are known.");
       return -999.;
     }
-    vector<PseudoJet> constits = jet.constituents();
+    vector<fastjet::PseudoJet> constits = jet.constituents();
     double ang = 0.;
     for(fastjet::PseudoJet p : constits) {
       ang += std::pow(p.pt()/jet.pt(),_kappa)*std::pow(jet.delta_R(p)/_R0,_beta); //use scalar pT for jet?
