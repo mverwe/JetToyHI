@@ -29,6 +29,14 @@ using namespace fastjet;
 
 // ./runCSVariations -hard  /eos/project/j/jetquenching/JetWorkshop2017/samples/pythia8/dijet120/PythiaEventsTune14PtHat120_0.pu14 -pileup  /eos/project/j/jetquenching/JetWorkshop2017/samples/thermal/Mult7000/ThermalEventsMult7000PtAv1.20_0.pu14 -nev 10
 
+void FillPtHistogramm(jetCollection jColl, TH1D* hPt){
+  vector<fastjet::PseudoJet> jSig=jColl.getJet();
+  for(int ijet=0;ijet<jSig.size();ijet++){
+     fastjet::PseudoJet jet=jSig[ijet];
+     hPt->Fill(jet.pt());
+  }
+}
+
 int main (int argc, char ** argv) {
 
   auto start_time = std::chrono::steady_clock::now();
@@ -50,6 +58,13 @@ int main (int argc, char ** argv) {
   treeWriter trw4("recursiveTreeToySig");
   treeWriter trw5("recursiveTreeToyEmb");
   treeWriter trw6("injectedTree");
+
+  TH1D* hJetSigPt=new TH1D("hJetSigPt","hJetSigPt",600,0,300);
+  TH1D* hJetEmbPt=new TH1D("hJetEmbPt","hJetEmbPt",600,0,300);
+  TH1D* hJetToySigPt=new TH1D("hJetToySigPt","hJetToySigPt",600,0,300);
+  TH1D* hJetToyEmbPt=new TH1D("hJetToyEmbPt","hJetToyEmbPt",600,0,300);
+  TH1D* hJetInjectedPt=new TH1D("hJetInjectedPt","hJetInjectedPt",600,0,300);
+
 
   //Jet definition
   double R                   = 0.4;
@@ -242,6 +257,16 @@ int main (int argc, char ** argv) {
     }
 
     //---------------------------------------------------------------------------
+    //Generate jet-pt histograms
+    //
+
+    FillPtHistogramm(jetCollectionSigSD_Recur,hJetSigPt);
+    FillPtHistogramm(jetCollectionCSSDs_Recur[0],hJetEmbPt);
+    FillPtHistogramm(jetCollectionSigSD_Recur_Toy,hJetToySigPt);
+    FillPtHistogramm(jetCollectionCSSDs_Recur_Toy[0],hJetToyEmbPt);
+    FillPtHistogramm(jetCollectionSigSD_Recur_Injected,hJetInjectedPt);
+
+    //---------------------------------------------------------------------------
     //   write tree
     //---------------------------------------------------------------------------
     
@@ -261,14 +286,13 @@ int main (int argc, char ** argv) {
     }
     trw.addCollection("csRho",         rho);
     trw.addCollection("csRhom",        rhom);
-
     trw.addCollection("eventWeight",   eventWeight);
         
-    trw.fillTree();
-    trw2.fillTree();
-    trw3.fillTree();
-    trw4.fillTree();
-    trw5.fillTree();
+    trw.fillTree(); //jetTree
+    trw2.fillTree();    //TreeSig
+    trw3.fillTree();    //TreeEmb
+    trw4.fillTree();    //TreeToySig
+    trw5.fillTree();    //TreeToyEmb
     trw6.fillTree();
 
 
@@ -292,6 +316,12 @@ int main (int argc, char ** argv) {
   trOut4->Write();
   trOut5->Write();
   trOut6->Write();
+
+  hJetSigPt->Write();
+  hJetEmbPt->Write();
+  hJetToySigPt->Write();
+  hJetToyEmbPt->Write();
+  hJetInjectedPt->Write();
 
   fout->Write();
   fout->Close();
