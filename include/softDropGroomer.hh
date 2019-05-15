@@ -54,6 +54,8 @@ private :
   std::vector<double>             recur_logdr12_;     
   std::vector<double>             recur_logzgdr12_;
   std::vector<int>                recur_n_;
+  std::vector<double>             recur_erad_;
+  std::vector<double>             recur_z_;
   std::vector<double>             sjleadingtrack_;
   std::vector<double>             injectedtrack_z_;
   std::vector<double>             injectedtrack_theta_;
@@ -93,6 +95,8 @@ public :
   std::vector<double> getRecur_JetPt() const;
   std::vector<double> getRecur_LogDR12() const;
   std::vector<double> getRecur_LogZgDR12() const;
+  std::vector<double> getRecur_z() const;
+  std::vector<double> getRecur_Erad() const;
   std::vector<double> getInjectedz() const;
   std::vector<double> getInjectedtheta() const;
   std::vector<double> getInjectedpt() const;
@@ -232,6 +236,17 @@ std::vector<int> softDropGroomer::getRecur_N() const
 {
    return recur_n_;
 }
+
+std::vector<double> softDropGroomer::getRecur_z() const
+{
+   return recur_z_;
+}
+
+std::vector<double> softDropGroomer::getRecur_Erad() const
+{
+   return recur_erad_;
+}
+
 
 std::vector<double> softDropGroomer::getInjectedz() const
 {
@@ -550,6 +565,8 @@ void softDropGroomer::RecursiveParents(fastjet::PseudoJet fJet, Bool_t bflagAdde
     recur_logdr12_.push_back(TMath::Log(1.0/delta_R));
     recur_logzgdr12_.push_back(TMath::Log(z*delta_R));
     recur_n_.push_back(n);
+    recur_erad_.push_back(j1.e()+j2.e());
+    recur_z_.push_back(z);
     jj=j1;
   } 
 

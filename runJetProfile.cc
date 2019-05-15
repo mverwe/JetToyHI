@@ -37,6 +37,15 @@ void FillPtHistogramm(jetCollection jColl, TH1D* hPt){
   }
 }
 
+void DesignRecurColl(jetCollection *jColl, softDropGroomer sDG, int ncs=0){
+    jColl->addVector(Form("recur%i_jetpt",ncs),  sDG.getRecur_JetPt());
+    jColl->addVector(Form("recur%i_logdr12",ncs),  sDG.getRecur_LogDR12());
+    jColl->addVector(Form("recur%i_logztheta",ncs),  sDG.getRecur_LogZgDR12());
+    jColl->addVector(Form("recur%i_n",ncs),  sDG.getRecur_N());
+    jColl->addVector(Form("recur%i_z",ncs),  sDG.getRecur_z());
+    jColl->addVector(Form("recur%i_erad",ncs),  sDG.getRecur_Erad());
+}
+
 int main (int argc, char ** argv) {
 
   auto start_time = std::chrono::steady_clock::now();
@@ -169,23 +178,14 @@ int main (int argc, char ** argv) {
     }
 
     jetCollection jetCollectionSigSD_Recur(groomedJets_Sig);
-    jetCollectionSigSD_Recur.addVector("recur_jetpt",  sdgSig.getRecur_JetPt());
-    jetCollectionSigSD_Recur.addVector("recur_logdr12",  sdgSig.getRecur_LogDR12());
-    jetCollectionSigSD_Recur.addVector("recur_logztheta",  sdgSig.getRecur_LogZgDR12());
-    jetCollectionSigSD_Recur.addVector("recur_n",  sdgSig.getRecur_N());
-
-
+    DesignRecurColl(&jetCollectionSigSD_Recur,sdgSig);
     jetCollection jetCollectionSigSD_Recur_Toy(groomedJets_Sig_Toy);
-    jetCollectionSigSD_Recur_Toy.addVector("recur_jetpt",  sdgSig_Toy.getRecur_JetPt());
-    jetCollectionSigSD_Recur_Toy.addVector("recur_logdr12",  sdgSig_Toy.getRecur_LogDR12());
-    jetCollectionSigSD_Recur_Toy.addVector("recur_logztheta",  sdgSig_Toy.getRecur_LogZgDR12());
-    jetCollectionSigSD_Recur_Toy.addVector("recur_n",  sdgSig_Toy.getRecur_N());
+    DesignRecurColl(&jetCollectionSigSD_Recur_Toy,sdgSig_Toy);
 
     jetCollection jetCollectionSigSD_Recur_Injected(groomedJets_Sig_Toy);
     jetCollectionSigSD_Recur_Injected.addVector("injected_pt",  sdgSig_Toy.getInjectedpt());
     jetCollectionSigSD_Recur_Injected.addVector("injected_z",  sdgSig_Toy.getInjectedz());
     jetCollectionSigSD_Recur_Injected.addVector("injected_theta",  sdgSig_Toy.getInjectedtheta());
-    
 
     //SoftDrop grooming classic for CS jets (zcut=0.1, beta=0)
     std::vector<jetCollection> jetCollectionCSSDs;
@@ -216,16 +216,9 @@ int main (int argc, char ** argv) {
       jetCollectionCSSD.addVector(Form("jetProfile%d",j), sdgCS.getJetProfile(j));
       }
       jetCollection jetCollectionCSSD_Recur(groomedJets_CS);
-      jetCollectionCSSD_Recur.addVector(Form("recur%d_jetpt",ics),  sdgCS.getRecur_JetPt());
-      jetCollectionCSSD_Recur.addVector(Form("recur%d_logdr12",ics),  sdgCS.getRecur_LogDR12());
-      jetCollectionCSSD_Recur.addVector(Form("recur%d_logztheta",ics),  sdgCS.getRecur_LogZgDR12());
-      jetCollectionCSSD_Recur.addVector(Form("recur%d_n",ics),  sdgCS.getRecur_N());
-
+      DesignRecurColl(&jetCollectionCSSD_Recur,sdgCS,ics);
       jetCollection jetCollectionCSSD_Recur_Toy(groomedJets_CS_Toy);
-      jetCollectionCSSD_Recur_Toy.addVector(Form("recur_Toy%d_jetpt",ics),  sdgCS_Toy.getRecur_JetPt());
-      jetCollectionCSSD_Recur_Toy.addVector(Form("recur_Toy%d_logdr12",ics),  sdgCS_Toy.getRecur_LogDR12());
-      jetCollectionCSSD_Recur_Toy.addVector(Form("recur_Toy%d_logztheta",ics),  sdgCS_Toy.getRecur_LogZgDR12());
-      jetCollectionCSSD_Recur_Toy.addVector(Form("recur_Toy%d_n",ics),  sdgCS_Toy.getRecur_N());
+      DesignRecurColl(&jetCollectionCSSD_Recur_Toy,sdgCS_Toy,ics);
     
       jetCollectionCSSDs.push_back(jetCollectionCSSD);
       jetCollectionCSSDs_Recur.push_back(jetCollectionCSSD_Recur);
