@@ -16,6 +16,7 @@ INCLUDE += `$(FJCONFIG) --cxxflags`
 LIBRARIES  += `$(FJCONFIG) --libs --plugins` -lfastjetcontribfragile
 
 PYTHIA8LOCATION = /Users/mverweij/soft/pythia8235
+
 INCLUDE += -I$(PYTHIA8LOCATION)/include
 LIBRARIES  += -L$(PYTHIA8LOCATION)/lib -lpythia8
 LIBRARIES += -L/usr/local/Cellar/gsl/2.5/lib -lgsl -lgslcblas
@@ -31,14 +32,15 @@ COMMONSRC =
 F77SRC = 
 COMMONOBJ = 
 
-PROGSRC = runConversionQPYTHIA.cc runCreatePythiaEvents.cc runCreatePythiaEventsPartonLevel.cc runCreateThermalEvents.cc runCSVariations.cc runFromFile.cc runJetPerformance.cc runJewelSub.cc runSDGenVarious.cc runSDGenVariousJewelSub.cc runSharedLayerSubtraction.cc runtest.cc
-PROGOBJ = runConversionQPYTHIA.o runCreatePythiaEvents.o runCreatePythiaEventsPartonLevel.o runCreateThermalEvents.o runCSVariations.o runFromFile.o runJetPerformance.o runJewelSub.o runSDGenVarious.o runSDGenVariousJewelSub.o runSharedLayerSubtraction.o runtest.o
+PROGSRC = runConversionQPYTHIA.cc runCreatePythiaEvents.cc runCreatePythiaEventsPartonLevel.cc runCreateThermalEvents.cc runCSVariations.cc runFromFile.cc runJetPerformance.cc runJetProfile.cc runJewelSub.cc runSDGenVarious.cci  runSDGenVariousJewelSub.cc rundSharedLayerSubtraction.cc runtest.cc
+PROGOBJ = runConversionQPYTHIA.o runCreatePythiaEvents.o runCreatePythiaEventsPartonLevel.o runCreateThermalEvents.o runCSVariations.o runFromFile.cc runJetPerformance.o runJetProfile.o runJewelSub.o runSDGenVarious.o runSDGenVariousJewelSub.o runSharedLayerSubtraction.o runtest.o
 
 INCLUDE += 
 LIBRARIES += -LPU14 -lPU14 -lz
 
 
-all:  runConversionQPYTHIA runCreatePythiaEvents runCreatePythiaEventsPartonLevel runCreateThermalEvents runCSVariations runFromFile runJetPerformance runJewelSub runSDGenVarious runSDGenVariousJewelSub runSharedLayerSubtraction runtest 
+all:  runConversionQPYTHIA runCreatePythiaEvents runCreatePythiaEventsPartonLevel runCreateThermalEvents runCSVariations runJetPerformance runJetProfile runJewelSub runSDGenVarious runSDGenVariousJewelSub runtest 
+
 
 
 runConversionQPYTHIA: runConversionQPYTHIA.o  $(COMMONOBJ)
@@ -56,10 +58,10 @@ runCreateThermalEvents: runCreateThermalEvents.o  $(COMMONOBJ)
 runCSVariations: runCSVariations.o  $(COMMONOBJ)
 	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
 
-runFromFile: runFromFile.o  $(COMMONOBJ)
+runJetPerformance: runJetPerformance.o  $(COMMONOBJ)
 	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
 
-runJetPerformance: runJetPerformance.o  $(COMMONOBJ)
+runJetProfile: runJetProfile.o  $(COMMONOBJ)
 	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
 
 runJewelSub: runJewelSub.o  $(COMMONOBJ)
@@ -73,7 +75,6 @@ runSDGenVariousJewelSub: runSDGenVariousJewelSub.o  $(COMMONOBJ)
 
 runSharedLayerSubtraction: runSharedLayerSubtraction.o  $(COMMONOBJ)
 	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
-
 runtest: runtest.o  $(COMMONOBJ)
 	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
 
@@ -85,7 +86,9 @@ clean:
 	rm -vf $(COMMONOBJ) $(PROGOBJ)
 
 realclean: clean
-	rm -vf  runConversionQPYTHIA runCreatePythiaEvents runCreatePythiaEventsPartonLevel runCreateThermalEvents runCSVariations runFromFile runJetPerformance runJewelSub runSDGenVarious runSDGenVariousJewelSub runSharedLayerSubtraction runtest 
+
+	rm -vf  runConversionQPYTHIA runCreatePythiaEvents runCreatePythiaEventsPartonLevel runCreateThermalEvents runCSVariations runFromFile runJetPerformance runJetProfile runJewelSub runSDGenVarious runSDGenVariousJewelSub runtest 
+
 
 .cc.o:         $<
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
@@ -139,9 +142,17 @@ runJetPerformance.o: PU14/HepPID/ParticleIDMethods.hh
 runJetPerformance.o: include/jetCollection.hh include/csSubtractor.hh
 runJetPerformance.o: PU14/PU14.hh include/csSubtractorFullEvent.hh
 runJetPerformance.o: include/skSubtractor.hh include/softDropGroomer.hh
-runJetPerformance.o: include/jetCollection.hh include/jewelMatcher.hh
-runJetPerformance.o: include/treeWriter.hh include/jetMatcher.hh
-runJetPerformance.o: include/randomCones.hh include/Angularity.hh
+runJetPerformance.o: include/jetCollection.hh include/treeWriter.hh
+runJetPerformance.o: include/jetMatcher.hh include/randomCones.hh
+runJetPerformance.o: include/Angularity.hh include/jewelMatcher.hh
+runJetProfile.o: include/ProgressBar.h PU14/EventMixer.hh PU14/CmdLine.hh
+runJetProfile.o: PU14/EventSource.hh PU14/CmdLine.hh PU14/PU14.hh
+runJetProfile.o: PU14/HepPID/ParticleIDMethods.hh include/jetCollection.hh
+runJetProfile.o: include/csSubtractor.hh PU14/PU14.hh
+runJetProfile.o: include/csSubtractorFullEvent.hh include/skSubtractor.hh
+runJetProfile.o: include/softDropGroomer.hh include/softDropCounter.hh include/jetCollection.hh
+runJetProfile.o: include/treeWriter.hh include/jetMatcher.hh
+runJetProfile.o: include/randomCones.hh include/Angularity.hh
 runJewelSub.o: include/ProgressBar.h PU14/EventMixer.hh PU14/CmdLine.hh
 runJewelSub.o: PU14/EventSource.hh PU14/CmdLine.hh PU14/PU14.hh
 runJewelSub.o: PU14/HepPID/ParticleIDMethods.hh include/jetCollection.hh
@@ -157,9 +168,9 @@ runSDGenVarious.o: PU14/HepPID/ParticleIDMethods.hh include/jetCollection.hh
 runSDGenVarious.o: include/csSubtractor.hh PU14/PU14.hh
 runSDGenVarious.o: include/csSubtractorFullEvent.hh include/skSubtractor.hh
 runSDGenVarious.o: include/softDropGroomer.hh include/jetCollection.hh
-runSDGenVarious.o: include/jewelMatcher.hh include/treeWriter.hh
 runSDGenVarious.o: include/jetMatcher.hh include/randomCones.hh
-runSDGenVarious.o: include/Angularity.hh
+runSDGenVarious.o: include/treeWriter.hh include/jewelMatcher.hh 
+runSDGenVarious.o: include/randomCones.hh include/Angularity.hh
 runSDGenVariousJewelSub.o: include/ProgressBar.h PU14/EventMixer.hh
 runSDGenVariousJewelSub.o: PU14/CmdLine.hh PU14/EventSource.hh
 runSDGenVariousJewelSub.o: PU14/CmdLine.hh PU14/PU14.hh
@@ -171,7 +182,7 @@ runSDGenVariousJewelSub.o: include/jetCollection.hh include/jewelMatcher.hh
 runSDGenVariousJewelSub.o: include/treeWriter.hh include/jetMatcher.hh
 runSDGenVariousJewelSub.o: include/randomCones.hh include/Angularity.hh
 runSDGenVariousJewelSub.o: include/jewelMatcher.hh
-runSharedLayerSubtraction.o: include/ProgressBar.h PU14/EventMixer.hh
+runSharedLayerSubtraction.o: include/ProgressBar.h  PU14/EventMixer.hh
 runSharedLayerSubtraction.o: PU14/CmdLine.hh PU14/EventSource.hh
 runSharedLayerSubtraction.o: PU14/CmdLine.hh PU14/PU14.hh
 runSharedLayerSubtraction.o: PU14/HepPID/ParticleIDMethods.hh
@@ -179,6 +190,9 @@ runSharedLayerSubtraction.o: include/jetCollection.hh
 runSharedLayerSubtraction.o: include/sharedLayerSubtractor.hh PU14/PU14.hh
 runSharedLayerSubtraction.o: include/Angularity.hh include/treeWriter.hh
 runSharedLayerSubtraction.o: include/jetCollection.hh include/jetMatcher.hh
+runSDGenVariousJewelSub.o: include/jetCollection.hh include/treeWriter.hh
+runSDGenVariousJewelSub.o: include/jetMatcher.hh include/randomCones.hh
+runSDGenVariousJewelSub.o: include/Angularity.hh include/jewelMatcher.hh
 runtest.o: PU14/CmdLine.hh include/ProgressBar.h include/jetCollection.hh
 runtest.o: include/thermalEvent.hh include/extraInfo.hh
 runtest.o: include/pythiaEvent.hh include/csSubtractor.hh PU14/PU14.hh

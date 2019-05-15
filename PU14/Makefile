@@ -11,7 +11,11 @@ FFLAGS = -Wall -O2
 CXXFLAGS += -std=c++11
 LDFLAGS += -std=c++11
 
+<<<<<<< HEAD
 FJCONFIG = /Users/mverweij/soft/fastjet330-install/bin/fastjet-config
+=======
+FJCONFIG = /afs/cern.ch/user/l/lcunquei/ThWorkshop/fastjet-3.3.0/../fastjet-install/bin/fastjet-config
+>>>>>>> adding stuff from harry from last year
 INCLUDE += `$(FJCONFIG) --cxxflags`
 LIBRARIES  += `$(FJCONFIG) --libs --plugins` -lfastjetcontribfragile
 LIBRARIES += -L/usr/local/Cellar/gsl/2.5/lib -lgsl -lgslcblas
