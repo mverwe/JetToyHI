@@ -135,14 +135,14 @@ if (defined($options{"8"})) {
   # see if .pythia8 is there -- if so, use it to indicate
   # which version to use
   print "looking for pythia8\n";
-  if (-e ".pythia8") {
-    $pythia8location=`cat .pythia8`;
-    chomp($pythia8location);
-    print "Taking Pythia8 via $pythia8location\n";
-  }
-  push(@info, "Pythia8 in $pythia8location");
+#  if (-e ".pythia8") {
+#    $pythia8location=`cat .pythia8`;
+#    chomp($pythia8location);
+#    print "Taking Pythia8 via $pythia8location\n";
+#  }
+#  push(@info, "Pythia8 in $pythia8location");
   $makefile.="
-PYTHIA8LOCATION = $pythia8location
+PYTHIA8LOCATION = /afs/cern.ch/user/l/lcunquei/pythia8235
 INCLUDE += -I\$(PYTHIA8LOCATION)/include
 LIBRARIES  += -L\$(PYTHIA8LOCATION)/lib -lpythia8
 ";
