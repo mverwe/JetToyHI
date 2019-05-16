@@ -1,0 +1,12 @@
+# Rivet analysis that looks at events with either dijet or photon+jet and performs coincidence analysis
+
+to compile make sure you have the rootconfig (since for quick temp plotting in included root histograms etc...) and with the fastjet contrib fragile library with you can create with
+make fragile-shared
+make fragile-shared-install
+in your fastjet-contrib location 
+
+rivet-buildplugin RivetRecursive_Study.so Recursive_Study.cc  -lfastjetcontribfragile $(root-config --cflags --libs)
+
+you can then run it on a given hepmc file and it will create a root file. Unfortunately the setup now needs the output file name adjusted and compiled before you run on a different hepmc sample.  
+
+As of May 15th, ive only run the hadron+jet and photon+jet analysis with very simple pT cuts. Today i will include the STAR dijet selection and add more of the histograms we want to study.
