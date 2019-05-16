@@ -84,7 +84,7 @@ public :
   void setInjectTracks(Bool_t b, Int_t n);
   void setRecursiveAlgo(Int_t i);
   void setEventWeight(double e);
-  void RecursiveParents(fastjet::PseudoJet fJet,Bool_t bflagAdded, Int_t fAdditionalTracks, Int_t ReclusterAlgo);
+  void RecursiveParents(fastjet::PseudoJet fJet,Bool_t bflagAdded, Int_t fAdditionalTracks, Int_t RecursiveAlgo);
   std::vector<fastjet::PseudoJet> getGroomedJets() const;
   std::vector<double> getZgs() const;
   std::vector<int> getNDroppedSubjets() const;
@@ -413,6 +413,7 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGrooming()
       if(fReclusterAlgo == 2) reclusterer = new fastjet::contrib::Recluster(fastjet::kt_algorithm,1,true);
       if(fReclusterAlgo == 1) reclusterer = new fastjet::contrib::Recluster(fastjet::antikt_algorithm,1,true);
       if(fReclusterAlgo == 0) reclusterer = new fastjet::contrib::Recluster(fastjet::cambridge_algorithm,1,true);  
+      if(fReclusterAlgo == 3) reclusterer = new fastjet::contrib::Recluster(fastjet::genkt_algorithm,1,0.5);
       sd->set_reclustering(true,reclusterer);
 
       RecursiveParents(tempJets[0],bflagAdded,fAdditionalTracks,kRecursiveAlgo);
@@ -473,12 +474,12 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGrooming()
 }
 
 //_________________________________________________________________________
-void softDropGroomer::RecursiveParents(fastjet::PseudoJet fJet, Bool_t bflagAdded, Int_t fAdditionalTracks, Int_t ReclusterAlgo){
+void softDropGroomer::RecursiveParents(fastjet::PseudoJet fJet, Bool_t bflagAdded, Int_t fAdditionalTracks, Int_t RecursiveAlgo){
  
   std::vector<fastjet::PseudoJet>  fInputVectors;
   fInputVectors.clear();
   double xflagalgo=0; 
-  
+  Float_t kpval=0;
   fInputVectors = fJet.constituents();
   if(bflagAdded && fJet.m()!=0){
     //fastjet::PseudoJet MyJet;
@@ -531,19 +532,25 @@ void softDropGroomer::RecursiveParents(fastjet::PseudoJet fJet, Bool_t bflagAdde
 
   }
   
-  fastjet::JetAlgorithm jetalgo(fastjet::cambridge_algorithm);
- 
-  if(ReclusterAlgo==0){
-    jetalgo=fastjet::cambridge_algorithm;
+    fastjet::JetAlgorithm jetalgo(fastjet::genkt_algorithm);
+  if(RecursiveAlgo==0){
+    //CA
+    kpval=0;
   }
-  if(ReclusterAlgo==1){
-    jetalgo=fastjet::antikt_algorithm;
+  if(RecursiveAlgo==1){
+    //kT
+    kpval=-1;
   } 
-  if(ReclusterAlgo==2){ 
-    jetalgo=fastjet::kt_algorithm ;
-  }     
-  fastjet::JetDefinition fJetDef(jetalgo, 1., static_cast<fastjet::RecombinationScheme>(0), fastjet::BestFJ30 ); 
-
+  if(RecursiveAlgo==2){ 
+    //antikt
+    kpval=1;
+  }
+  if(RecursiveAlgo==3){ 
+    //tform-ordered
+    kpval=0.5;
+  }
+  
+fastjet::JetDefinition fJetDef(jetalgo, 1., kpval, static_cast<fastjet::RecombinationScheme>(0), fastjet::BestFJ30 ); 
 
   fastjet::ClusterSequence fClustSeqSA(fInputVectors, fJetDef);
   std::vector<fastjet::PseudoJet>   fOutputJets;
