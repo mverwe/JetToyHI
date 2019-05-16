@@ -88,7 +88,12 @@ namespace Rivet {
       
       //! parameters for splitting function
       z_cut=0.1;
-      beta = 0;      
+      beta = 0;
+
+      //! event normalizations
+      _Ntriggers = 0.0;
+      _Ndijets = 0.0;
+
 
       /// final state and jet projection
       FinalState fs(-5.0, 5.0, 0.2*GeV);
@@ -109,7 +114,7 @@ namespace Rivet {
 	vfs.addVetoOnThisFinalState(hadronfs);
 	addProjection(vfs, "VFS");
 	// addProjection(FastJets(vfs, FastJets::ANTIKT, _jetR), "Jets");
-	fout = new TFile("jettools_jewel_pp_200_hadron_jet_study_correlation_histograms.root", "RECREATE");
+	fout = new TFile("jettools_jewel_AuAu_cent05_wrecoil_200_hadron_jet_study_correlation_histograms.root", "RECREATE");
       } else if (_mode == 1) {
 	//! this is photon+jet 
 	LeadingParticlesFinalState photonfs(FinalState(-2.5, 2.5, 10.0*GeV));
@@ -118,12 +123,12 @@ namespace Rivet {
 	vfs.addVetoOnThisFinalState(photonfs);
 	addProjection(vfs, "VFS");
 	// addProjection(FastJets(vfs, FastJets::ANTIKT, _jetR), "Jets");
-	fout = new TFile("jettools_jewel_pp_200_gamma_jet_study_correlation_histograms.root", "RECREATE");
+	fout = new TFile("jettools_jewel_AuAu_cent05_wrecoil_200_gamma_jet_study_correlation_histograms.root", "RECREATE");
       } else if (_mode == 2) {
 	//! this is dijet+jet
 	// addProjection(FastJets(HCfs, FastJets::ANTIKT, _jetR), "JetsHC");	  
 	// addProjection(FastJets(fs, FastJets::ANTIKT, _jetR), "Jets");	  
-	fout = new TFile("jettools_jewel_pp_200_dijet_study_correlation_histograms.root", "RECREATE");
+	fout = new TFile("jettools_jewel_AuAu_cent05_wrecoil_200_dijet_study_correlation_histograms.root", "RECREATE");
       }
 
       
@@ -131,15 +136,17 @@ namespace Rivet {
       hDeltaPhi_Trigger_ChargedParticles = new TH1D("hDeltaPhi_Trigger_ChargedParticles", "", 60, 0, 3.3);
       hDeltaPhi_Trigger_LeadingRecoilJet = new TH1D("hDeltaPhi_Trigger_LeadingRecoilJet", "", 60, 0, 3.3);
       hDeltaPhi_Trigger_LeadingRecoilJet_WTAAxis = new TH1D("hDeltaPhi_Trigger_LeadingRecoilJet_WTAAxis", "", 60, 0, 3.3);
+      hDeltaPhi_Trigger_LeadingRecoilJet_WTAAxis_largeR = new TH1D("hDeltaPhi_Trigger_LeadingRecoilJet_WTAAxis_largeR", "", 60, 0, 3.3);
       hDeltaPhi_Trigger_SubLeadingRecoilJet = new TH1D("hDeltaPhi_Trigger_SubLeadingRecoilJet", "", 60, 0, 3.3);
       hDeltaPhi_Trigger_AllRecoilJets = new TH1D("hDeltaPhi_Trigger_AllRecoilJets", "", 60, 0, 3.3);
       hDeltaR_RecoilJet_JetAxis_WTAAxis = new TH1D("hDeltaR_RecoilJet_JetAxis_WTAAxis", "", 60, 0, 0.4);
+      hDeltaR_RecoilJet_JetAxis_WTAAxis_largeR = new TH1D("hDeltaR_RecoilJet_JetAxis_WTAAxis_largeR", "", 60, 0, 0.4);
       hDeltaR_RecoilJet_JetAxis_LeadSubJetAxis = new TH1D("hDeltaR_RecoilJet_JetAxis_LeadSubJetAxis", "", 60, 0, 0.4);
+      hDeltaR_RecoilJet_GroomedJetAxis_WTAAxis_largeR = new TH1D("hDeltaR_RecoilJet_GroomedJetAxis_WTAAxis_largeR", "", 60, 0, 0.4);
       h_RecoilJet_TwoSubJet_Theta_R0p1 = new TH1D("h_RecoilJet_TwoSubJet_Theta_R0p1", "", 60, 0, 0.5);
       h_RecoilJet_TwoSubJet_Z_R0p1 = new TH1D("h_RecoilJet_TwoSubJet_Z_R0p1", "", 60, 0, 0.5);
       hSoftDrop_Zg_LeadingRecoilJet = new TH1D("hSoftDrop_Zg_LeadingRecoilJet", "", 60, 0, 0.5);
       hSoftDrop_Rg_LeadingRecoilJet = new TH1D("hSoftDrop_Rg_LeadingRecoilJet", "", 60, 0, 0.5);
-
 
       h_HardCore_Dijet_Aj = new TH1D("h_HardCore_Dijet_Aj", "", 20, 0, 1);
       h_HardCore_RecoilJetYield = new TH1D("h_HardCore_RecoilJetYield", "", 40, 0, 40);
@@ -172,6 +179,8 @@ namespace Rivet {
       hDeltaR_MatchedRecoilJet_JetAxis_WTAAxis = new TH1D("hDeltaR_MatchedRecoilJet_JetAxis_WTAAxis", "", 60, 0, 0.6);
       hDeltaPhi_MatchedRecoilJet_MatchedRecoilJet_WTAAxis = new TH1D("hDeltaPhi_MatchedRecoilJet_MatchedRecoilJet_WTAAxis", "", 60, 0, 3.3);
     
+      hDeltaR_MatchedRecoilJet_JetAxis_WTAAxis_largeR = new TH1D("hDeltaR_MatchedRecoilJet_JetAxis_WTAAxis_largeR", "", 60, 0, 0.4);
+      hDeltaPhi_MatchedRecoilJet_MatchedRecoilJet_WTAAxis_largeR = new TH1D("hDeltaPhi_MatchedRecoilJet_MatchedRecoilJet_WTAAxis_largeR", "", 60, 0, 3.3);
       
 
       hTriggerPhi = new TH1D("hTriggerPhi", "", 100, -7, 7);
@@ -196,6 +205,8 @@ namespace Rivet {
       fastjet::JetDefinition jetd(fastjet::antikt_algorithm, _jetR);
       //! get wta axis for the jet -
       fastjet::JetDefinition wta_jet_def(fastjet::antikt_algorithm, _jetR, fastjet::WTA_pt_scheme);
+      //! get wta axis for the jet -
+      fastjet::JetDefinition wta_larger_jet_def(fastjet::antikt_algorithm, 1.0, fastjet::WTA_pt_scheme);
       //! get subjets -
       fastjet::JetDefinition sub_jetd(fastjet::antikt_algorithm, 0.1);
       //! fill the softdrop variable
@@ -219,6 +230,8 @@ namespace Rivet {
 	
 	if(trigger.momentum().pt() < 10)
 	  vetoEvent;
+
+	_Ntriggers+=weight;
 	
 	double trigger_phi = trigger.momentum().phi();
 	hTriggerPhi->Fill(trigger_phi);
@@ -270,7 +283,6 @@ namespace Rivet {
 	foreach(const fastjet::PseudoJet& jet, recoilJets){
 	  hDeltaPhi_Trigger_AllRecoilJets->Fill(deltaPhi(trigger.momentum().phi(), jet.phi()), weight);
 	}
-
 	
 	PseudoJets lead_recoiljet_consts = leading_recoiljet.constituents();
 	fastjet::ClusterSequence cs_wta_leadingrecoiljet(lead_recoiljet_consts, wta_jet_def);
@@ -280,6 +292,13 @@ namespace Rivet {
 	hDeltaR_RecoilJet_JetAxis_WTAAxis->Fill(leading_recoiljet.delta_R(wta_lead_recoiljet), weight);
 	hDeltaPhi_Trigger_LeadingRecoilJet_WTAAxis->Fill(deltaPhi(trigger.momentum().phi(), wta_lead_recoiljet.phi()), weight);
 
+	fastjet::ClusterSequence cs_wta_larger_leadingrecoiljet(lead_recoiljet_consts, wta_larger_jet_def);
+	PseudoJets wta_larger_lead_recoiljets = cs_wta_larger_leadingrecoiljet.inclusive_jets();
+	PseudoJet wta_larger_lead_recoiljet = wta_larger_lead_recoiljets.at(0);
+
+	hDeltaR_RecoilJet_JetAxis_WTAAxis_largeR->Fill(leading_recoiljet.delta_R(wta_larger_lead_recoiljet), weight);
+	hDeltaPhi_Trigger_LeadingRecoilJet_WTAAxis_largeR->Fill(deltaPhi(trigger.momentum().phi(), wta_larger_lead_recoiljet.phi()), weight);
+	
 	fastjet::ClusterSequence clust_seq_lead_recoil_subjet(lead_recoiljet_consts, sub_jetd);	
 	PseudoJets subjets = sorted_by_pt(clust_seq_lead_recoil_subjet.inclusive_jets());
 
@@ -297,8 +316,11 @@ namespace Rivet {
 	double z = sd_jet.structure_of<fastjet::contrib::SoftDrop>().symmetry();
 	double r = sd_jet.structure_of<fastjet::contrib::SoftDrop>().delta_R();
 
-	hSoftDrop_Zg_LeadingRecoilJet->Fill(z, weight);
-	hSoftDrop_Rg_LeadingRecoilJet->Fill(r, weight);
+	if(sd_jet!=0){
+	  hDeltaR_RecoilJet_GroomedJetAxis_WTAAxis_largeR->Fill(deltaPhi(sd_jet.phi(), wta_lead_recoiljet.phi()), weight);	
+	  hSoftDrop_Zg_LeadingRecoilJet->Fill(z, weight);
+	  hSoftDrop_Rg_LeadingRecoilJet->Fill(r, weight);
+	}
 
 
       }//! mode = 1 or 0 
@@ -370,6 +392,8 @@ namespace Rivet {
 	if(matched_dijets.size() != 2)
 	  vetoEvent;
 
+	_Ndijets+=weight;
+
 	//! now you have both matched and hardore dijet collections - fill the histograms for the observables
 
 	//! Aj - 
@@ -395,6 +419,13 @@ namespace Rivet {
 	hDeltaR_MatchedRecoilJet_JetAxis_WTAAxis->Fill(matched_dijets.at(1).delta_R(wta_matched_recoiljet), weight);
 	hDeltaPhi_MatchedRecoilJet_MatchedRecoilJet_WTAAxis->Fill(deltaPhi(matched_dijets.at(0).phi(), wta_matched_recoiljet.phi()), weight);
 
+	fastjet::ClusterSequence cs_wta_larger_matchedrecoiljet(recoil_matchedjet_consts, wta_larger_jet_def);
+	PseudoJets wta_larger_matched_recoiljets = cs_wta_larger_matchedrecoiljet.inclusive_jets();
+	PseudoJet wta_larger_matched_recoiljet = wta_larger_matched_recoiljets.at(0);
+
+	hDeltaR_MatchedRecoilJet_JetAxis_WTAAxis_largeR->Fill(matched_dijets.at(1).delta_R(wta_larger_matched_recoiljet), weight);
+	hDeltaPhi_MatchedRecoilJet_MatchedRecoilJet_WTAAxis_largeR->Fill(deltaPhi(matched_dijets.at(0).phi(), wta_larger_matched_recoiljet.phi()), weight);
+	
 	//! Do the softdrop zg/rg and two subjet theta and z analysis -
 	//! loop over the hardcore dijet and get the values for two subjet z and theta
 	vector<double> hardcore_zg;
@@ -492,7 +523,128 @@ namespace Rivet {
     void finalize() {
 
       fout->cd();
-      fout->Write();
+
+      //! normalize and write histograms 
+      if(_mode==0 || _mode == 1){
+	
+	hDeltaPhi_Trigger_ChargedParticles->Scale(1./_Ntriggers);
+	hDeltaPhi_Trigger_ChargedParticles->Write();
+	
+	hDeltaPhi_Trigger_LeadingRecoilJet->Scale(1./_Ntriggers);
+	hDeltaPhi_Trigger_LeadingRecoilJet->Write();
+	
+	hDeltaPhi_Trigger_SubLeadingRecoilJet->Scale(1./_Ntriggers);
+	hDeltaPhi_Trigger_SubLeadingRecoilJet->Write();
+	
+	hDeltaPhi_Trigger_AllRecoilJets->Scale(1./_Ntriggers);
+	hDeltaPhi_Trigger_AllRecoilJets->Write();
+
+	hDeltaR_RecoilJet_JetAxis_WTAAxis->Scale(1./_Ntriggers);
+	hDeltaR_RecoilJet_JetAxis_WTAAxis->Write();
+	
+	hDeltaR_RecoilJet_JetAxis_WTAAxis_largeR->Scale(1./_Ntriggers);
+	hDeltaR_RecoilJet_JetAxis_WTAAxis_largeR->Write();
+	
+	hDeltaR_RecoilJet_JetAxis_LeadSubJetAxis->Scale(1./_Ntriggers);
+	hDeltaR_RecoilJet_JetAxis_LeadSubJetAxis->Write();
+	
+	h_RecoilJet_TwoSubJet_Theta_R0p1->Scale(1./_Ntriggers);
+	h_RecoilJet_TwoSubJet_Theta_R0p1->Write();
+	
+	h_RecoilJet_TwoSubJet_Z_R0p1->Scale(1./_Ntriggers);
+	h_RecoilJet_TwoSubJet_Z_R0p1->Write();
+	
+	hSoftDrop_Zg_LeadingRecoilJet->Scale(1./_Ntriggers);
+	hSoftDrop_Zg_LeadingRecoilJet->Write();
+	
+	hSoftDrop_Rg_LeadingRecoilJet->Scale(1./_Ntriggers);
+	hSoftDrop_Rg_LeadingRecoilJet->Write();
+	
+	hDeltaPhi_Trigger_LeadingRecoilJet_WTAAxis->Scale(1./_Ntriggers);
+	hDeltaPhi_Trigger_LeadingRecoilJet_WTAAxis->Write();
+	
+	hDeltaPhi_Trigger_LeadingRecoilJet_WTAAxis_largeR->Scale(1./_Ntriggers);
+	hDeltaPhi_Trigger_LeadingRecoilJet_WTAAxis_largeR->Write();
+	
+	hTriggerPhi->Scale(1./_Ntriggers);
+	hTriggerPhi->Write();
+	
+	hJetPhi->Scale(1./_Ntriggers);
+	hJetPhi->Write();
+	
+      }
+
+      if(_mode == 2){
+
+	h_HardCore_Dijet_Aj->Scale(1./_Ndijets);
+	h_HardCore_RecoilJetYield->Scale(1./_Ndijets);
+	hDeltaPhi_HardCore_Dijet->Scale(1./_Ndijets);
+	h_HardCore_TriggerJet_Zg->Scale(1./_Ndijets);
+	h_HardCore_RecoilJet_Zg->Scale(1./_Ndijets);
+	h_HardCore_TriggerJet_Rg->Scale(1./_Ndijets);
+	h_HardCore_RecoilJet_Rg->Scale(1./_Ndijets);
+	h_HardCore_TriggerJet_Twosubjet_Z_R0p1->Scale(1./_Ndijets);
+	h_HardCore_RecoilJet_Twosubjet_Z_R0p1->Scale(1./_Ndijets);
+	h_HardCore_TriggerJet_Twosubjet_Theta_R0p1->Scale(1./_Ndijets);
+	h_HardCore_RecoilJet_Twosubjet_Theta_R0p1->Scale(1./_Ndijets);
+	h_HardCore_TriggerJet_deltaR_JetAxis_LeadSubJetAxis->Scale(1./_Ndijets);
+	h_HardCore_RecoilJet_deltaR_JetAxis_LeadSubJetAxis->Scale(1./_Ndijets);
+	h_Matched_Dijet_Aj->Scale(1./_Ndijets);
+	h_Matched_RecoilJetYield->Scale(1./_Ndijets);
+	hDeltaPhi_Matched_Dijet->Scale(1./_Ndijets);
+	h_Matched_TriggerJet_Zg->Scale(1./_Ndijets);
+	h_Matched_RecoilJet_Zg->Scale(1./_Ndijets);
+	h_Matched_TriggerJet_Rg->Scale(1./_Ndijets);
+	h_Matched_RecoilJet_Rg->Scale(1./_Ndijets);
+	h_Matched_TriggerJet_Twosubjet_Z_R0p1->Scale(1./_Ndijets);
+	h_Matched_RecoilJet_Twosubjet_Z_R0p1->Scale(1./_Ndijets);
+	h_Matched_TriggerJet_Twosubjet_Theta_R0p1->Scale(1./_Ndijets);
+	h_Matched_RecoilJet_Twosubjet_Theta_R0p1->Scale(1./_Ndijets);
+	h_Matched_TriggerJet_deltaR_JetAxis_LeadSubJetAxis->Scale(1./_Ndijets);
+	h_Matched_RecoilJet_deltaR_JetAxis_LeadSubJetAxis->Scale(1./_Ndijets);
+
+	hDeltaR_MatchedRecoilJet_JetAxis_WTAAxis->Scale(1./_Ndijets);
+	hDeltaPhi_MatchedRecoilJet_MatchedRecoilJet_WTAAxis->Scale(1./_Ndijets);
+    
+	hDeltaR_MatchedRecoilJet_JetAxis_WTAAxis_largeR->Scale(1./_Ndijets);
+	hDeltaPhi_MatchedRecoilJet_MatchedRecoilJet_WTAAxis_largeR->Scale(1./_Ndijets);
+
+	
+	h_HardCore_Dijet_Aj->Write();
+	h_HardCore_RecoilJetYield->Write();
+	hDeltaPhi_HardCore_Dijet->Write();
+	h_HardCore_TriggerJet_Zg->Write();
+	h_HardCore_RecoilJet_Zg->Write();
+	h_HardCore_TriggerJet_Rg->Write();
+	h_HardCore_RecoilJet_Rg->Write();
+	h_HardCore_TriggerJet_Twosubjet_Z_R0p1->Write();
+	h_HardCore_RecoilJet_Twosubjet_Z_R0p1->Write();
+	h_HardCore_TriggerJet_Twosubjet_Theta_R0p1->Write();
+	h_HardCore_RecoilJet_Twosubjet_Theta_R0p1->Write();
+	h_HardCore_TriggerJet_deltaR_JetAxis_LeadSubJetAxis->Write();
+	h_HardCore_RecoilJet_deltaR_JetAxis_LeadSubJetAxis->Write();
+	h_Matched_Dijet_Aj->Write();
+	h_Matched_RecoilJetYield->Write();
+	hDeltaPhi_Matched_Dijet->Write();
+	h_Matched_TriggerJet_Zg->Write();
+	h_Matched_RecoilJet_Zg->Write();
+	h_Matched_TriggerJet_Rg->Write();
+	h_Matched_RecoilJet_Rg->Write();
+	h_Matched_TriggerJet_Twosubjet_Z_R0p1->Write();
+	h_Matched_RecoilJet_Twosubjet_Z_R0p1->Write();
+	h_Matched_TriggerJet_Twosubjet_Theta_R0p1->Write();
+	h_Matched_RecoilJet_Twosubjet_Theta_R0p1->Write();
+	h_Matched_TriggerJet_deltaR_JetAxis_LeadSubJetAxis->Write();
+	h_Matched_RecoilJet_deltaR_JetAxis_LeadSubJetAxis->Write();
+
+	hDeltaR_MatchedRecoilJet_JetAxis_WTAAxis->Write();
+	hDeltaPhi_MatchedRecoilJet_MatchedRecoilJet_WTAAxis->Write();
+    
+	hDeltaR_MatchedRecoilJet_JetAxis_WTAAxis_largeR->Write();
+	hDeltaPhi_MatchedRecoilJet_MatchedRecoilJet_WTAAxis_largeR->Write();
+	
+      }
+      
       fout->Close();
       
     }//! finalize
@@ -508,6 +660,9 @@ namespace Rivet {
 
     double z_cut;
     double beta;
+
+    double _Ntriggers;
+    double _Ndijets;
         
   private:
 
@@ -516,12 +671,15 @@ namespace Rivet {
     TH1D * hDeltaPhi_Trigger_SubLeadingRecoilJet;
     TH1D * hDeltaPhi_Trigger_AllRecoilJets;
     TH1D * hDeltaR_RecoilJet_JetAxis_WTAAxis;
+    TH1D * hDeltaR_RecoilJet_JetAxis_WTAAxis_largeR;
     TH1D * hDeltaR_RecoilJet_JetAxis_LeadSubJetAxis;
     TH1D * h_RecoilJet_TwoSubJet_Theta_R0p1;
     TH1D * h_RecoilJet_TwoSubJet_Z_R0p1;
     TH1D * hSoftDrop_Zg_LeadingRecoilJet;
     TH1D * hSoftDrop_Rg_LeadingRecoilJet;
     TH1D * hDeltaPhi_Trigger_LeadingRecoilJet_WTAAxis;
+    TH1D * hDeltaPhi_Trigger_LeadingRecoilJet_WTAAxis_largeR;
+    TH1D * hDeltaR_RecoilJet_GroomedJetAxis_WTAAxis_largeR;
     TH1D * hTriggerPhi;
     TH1D * hJetPhi;
 
@@ -554,6 +712,9 @@ namespace Rivet {
 
     TH1D * hDeltaR_MatchedRecoilJet_JetAxis_WTAAxis;
     TH1D * hDeltaPhi_MatchedRecoilJet_MatchedRecoilJet_WTAAxis;
+    
+    TH1D * hDeltaR_MatchedRecoilJet_JetAxis_WTAAxis_largeR;
+    TH1D * hDeltaPhi_MatchedRecoilJet_MatchedRecoilJet_WTAAxis_largeR;
     
     
     TFile * fout;
