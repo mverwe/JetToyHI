@@ -115,7 +115,8 @@ Event samples can be found in the jet quenching CERNBOX:
 
 You will find samples from various event generators. For underlying event we have: 'thermal' which is independent particle production using a Boltzmann distribution with a fixed multiplicity and mean p<sub>T</sub> (indicated in the file names). For the hard signal we have PYTHIA8 and JEWEL events with various p<sub>T,hat</sub> settings.
 
-More details about the available samples can be found here: https://twiki.cern.ch/twiki/bin/view/JetQuenchingTools/PU14Samples
+More details about the available samples can be found here: https://jetquenchingtools.github.io/ (public)
+(old twiki at cern: https://twiki.cern.ch/twiki/bin/view/JetQuenchingTools/PU14Samples)
 
 
 ## convert PU14 to HepMC script -
