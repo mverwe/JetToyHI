@@ -161,8 +161,8 @@ int main (int argc, char ** argv) {
     sdgSig_Toy.setMediumParameters(1,3);
     std::vector<fastjet::PseudoJet> groomedJets_Sig = sdgSig.doGroomingWithJewelSub(jetCollectionSig, particlesDummy);
     std::vector<fastjet::PseudoJet> groomedJets_Sig_Toy = sdgSig_Toy.doGroomingWithJewelSub(jetCollectionSig, particlesDummy);
-    TH2F *temph2PtJetRho = sdgSig.calculateProfile(jetCollectionSig);
-    h2PtJetRho->Add(temph2PtJetRho,1);
+    // TH2F *temph2PtJetRho = sdgSig.calculateProfile(jetCollectionSig);
+    // h2PtJetRho->Add(temph2PtJetRho,1);
     jetCollection jetCollectionSigSD(groomedJets_Sig);
     jetCollectionSigSD.addVector("zgSigSD",    sdgSig.getZgs());
     jetCollectionSigSD.addVector("ndropSigSD", sdgSig.getNDroppedSubjets());
@@ -171,9 +171,9 @@ int main (int argc, char ** argv) {
     jetCollectionSigSD.addVector("logztheta",  sdgSig.getLogZgDR12());
     jetCollectionSigSD.addVector("sjMass",  sdgSig.getSubJetMass());
     jetCollectionSigSD.addVector("leadingtrack_pt",  sdgSig.getSubJetLeadingTrackPt());
-    for(int j=0;j<8;j++){
-      jetCollectionSigSD.addVector(Form("jetProfile%d",j), sdgSig.getJetProfile(j));
-    }
+    // for(int j=0;j<8;j++){
+    //   jetCollectionSigSD.addVector(Form("jetProfile%d",j), sdgSig.getJetProfile(j));
+    // }
 
     jetCollection jetCollectionSigSD_Recur(groomedJets_Sig);
     jetCollectionSigSD_Recur.addVector("recur_jetpt",  sdgSig.getRecur_JetPt());
@@ -220,9 +220,9 @@ int main (int argc, char ** argv) {
       jetCollectionCSSD.addVector(Form("log_%dztheta",ics),  sdgCS.getLogZgDR12());
       jetCollectionCSSD.addVector(Form("sjMass_CS%d",ics),  sdgCS.getSubJetMass());
       jetCollectionCSSD.addVector(Form("leadingtrack_pt_CS%d",ics),  sdgCS.getSubJetLeadingTrackPt());
-      for(int j=0;j<8;j++){
-      jetCollectionCSSD.addVector(Form("jetProfile%d",j), sdgCS.getJetProfile(j));
-      }
+      // for(int j=0;j<8;j++){
+      // jetCollectionCSSD.addVector(Form("jetProfile%d",j), sdgCS.getJetProfile(j));
+      // }
       jetCollection jetCollectionCSSD_Recur(groomedJets_CS);
       jetCollectionCSSD_Recur.addVector(Form("recur%d_jetpt",ics),  sdgCS.getRecur_JetPt());
       jetCollectionCSSD_Recur.addVector(Form("recur%d_logdr12",ics),  sdgCS.getRecur_LogDR12());

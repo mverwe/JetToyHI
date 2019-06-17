@@ -173,9 +173,9 @@ int main (int argc, char ** argv) {
     jetCollectionSigSD.addVector("logztheta",  sdgSig.getLogZgDR12());
     jetCollectionSigSD.addVector("sjMass",  sdgSig.getSubJetMass());
     jetCollectionSigSD.addVector("leadingtrack_pt",  sdgSig.getSubJetLeadingTrackPt());
-    for(int j=0;j<8;j++){
-      jetCollectionSigSD.addVector(Form("jetProfile%d",j), sdgSig.getJetProfile(j));
-    }
+    // for(int j=0;j<8;j++){
+    //   jetCollectionSigSD.addVector(Form("jetProfile%d",j), sdgSig.getJetProfile(j));
+    // }
 
     jetCollection jetCollectionSigSD_Recur(groomedJets_Sig);
     DesignRecurColl(&jetCollectionSigSD_Recur,sdgSig);
@@ -212,9 +212,9 @@ int main (int argc, char ** argv) {
       jetCollectionCSSD.addVector(Form("log_%dztheta",ics),  sdgCS.getLogZgDR12());
       jetCollectionCSSD.addVector(Form("sjMass_CS%d",ics),  sdgCS.getSubJetMass());
       jetCollectionCSSD.addVector(Form("leadingtrack_pt_CS%d",ics),  sdgCS.getSubJetLeadingTrackPt());
-      for(int j=0;j<8;j++){
-      jetCollectionCSSD.addVector(Form("jetProfile%d",j), sdgCS.getJetProfile(j));
-      }
+      // for(int j=0;j<8;j++){
+      // jetCollectionCSSD.addVector(Form("jetProfile%d",j), sdgCS.getJetProfile(j));
+      // }
       jetCollection jetCollectionCSSD_Recur(groomedJets_CS);
       DesignRecurColl(&jetCollectionCSSD_Recur,sdgCS,ics);
       jetCollection jetCollectionCSSD_Recur_Toy(groomedJets_CS_Toy);
