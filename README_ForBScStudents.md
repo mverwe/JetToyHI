@@ -85,7 +85,7 @@ Click on `jetTree` and play around.
 
 ## Contribute
 * If you want to contribute to this code you need to have a github account. Go here to do so: https://github.com/join.
-* Fork the original repository. Go to: https://github.com/JetQuenchingTools/JetToyHI and click 'Fork' in the upper right corner.
+* Fork the original repository. Go to: https://github.com/mverwe/JetToyHI and click 'Fork' in the upper right corner.
 * Instead of cloning the original repository as shown above, clone your own.
 * After committing your changes to your own branch, push them to your own fork. Don't know how to do this, ask your colleages or use google which might bring you here https://services.github.com/on-demand/downloads/github-git-cheat-sheet/
 * Do a pull request once you have finished your developements.
