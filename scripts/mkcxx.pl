@@ -146,7 +146,28 @@ PYTHIA8LOCATION = $pythia8location
 INCLUDE += -I\$(PYTHIA8LOCATION)/include
 LIBRARIES  += -L\$(PYTHIA8LOCATION)/lib -lpythia8
 ";
+
+  print "check if vincia available\n";
+  # see if .vincia is there -- if so, use it to indicate
+  # which version to use
+  print "looking for vincia\n";
+  if (-e ".vincia") {
+    $vincialocation=`cat .vincia`;
+    chomp($vincialocation);
+    print "Taking Vincia via $vincialocation\n";
+  }
+  push(@info, "Vincia in $vincialocation");
+  $makefile.="
+VINCIALOCATION = $vincialocation
+INCLUDE += -I\$(VINCIALOCATION)/include
+INCLUDE += -I\$(VINCIALOCATION)/include/VinciaMG5
+LIBRARIES  += \$(VINCIALOCATION)/lib/libvincia.a 
+LIBRARIES  += \$(VINCIALOCATION)/lib/libVinciaMG4.a 
+LIBRARIES  += \$(VINCIALOCATION)/lib/libVinciaMG5.a
+";
 }
+
+
 
 if (defined($options{"H"})) {
   print "Taking HOPPET via hoppet-config\n";
