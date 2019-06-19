@@ -80,7 +80,7 @@ public :
   void RecursiveParents(fastjet::PseudoJet fJet,Bool_t bflagAdded, Int_t fAdditionalTracks, Int_t RecursiveAlgo);
   std::vector<fastjet::PseudoJet> getGroomedJets() const;
   std::vector<double> getZgs() const;
-  std::vector<int> getNDroppedSubjets() const;
+  std::vector<int>    getNDroppedSubjets() const;
   std::vector<double> getDR12() const;
   std::vector<double> getSubJetMass() const;
   std::vector<double> getLogDR12() const;
@@ -108,7 +108,6 @@ public :
   std::vector<fastjet::PseudoJet> doGroomingWithJewelSub(jetCollection &c, std::vector<fastjet::PseudoJet> particlesDummy);
   std::vector<fastjet::PseudoJet> doGroomingWithJewelSub(std::vector<fastjet::PseudoJet> v, std::vector<fastjet::PseudoJet> particlesDummy);
   std::vector<fastjet::PseudoJet> doGroomingWithJewelSub(std::vector<fastjet::PseudoJet> particlesDummy);
-  double RelativePhi(Double_t mphi,Double_t vphi);
 
   Double_t leading_track_pt(fastjet::PseudoJet jet);
 };
@@ -589,18 +588,6 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGroomingWithJewelSub(std::vec
       }
    } //jet loop
   return fjOutputs_;
-}
-
-Double_t softDropGroomer::RelativePhi(Double_t mphi,Double_t vphi){
-
-  if (vphi < -1*TMath::Pi()) vphi += (2*TMath::Pi());
-  else if (vphi > TMath::Pi()) vphi -= (2*TMath::Pi());
-  if (mphi < -1*TMath::Pi()) mphi += (2*TMath::Pi());
-  else if (mphi > TMath::Pi()) mphi -= (2*TMath::Pi());
-  double dphi = mphi-vphi;
-  if (dphi < -1*TMath::Pi()) dphi += (2*TMath::Pi());
-  else if (dphi > TMath::Pi()) dphi -= (2*TMath::Pi());
-  return dphi;//dphi in [-Pi, Pi]
 }
 
 #endif

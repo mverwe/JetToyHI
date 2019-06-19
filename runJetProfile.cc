@@ -23,6 +23,7 @@
 #include "include/jetMatcher.hh"
 #include "include/randomCones.hh"
 #include "include/Angularity.hh"
+#include "include/jetProfile.hh"
 
 using namespace std;
 using namespace fastjet;
@@ -173,6 +174,24 @@ int main (int argc, char ** argv) {
     jetCollectionSigSD.addVector("logztheta",  sdgSig.getLogZgDR12());
     jetCollectionSigSD.addVector("sjMass",  sdgSig.getSubJetMass());
     jetCollectionSigSD.addVector("leadingtrack_pt",  sdgSig.getSubJetLeadingTrackPt());
+
+    jetProfile jetProf(jetCollectionSig, 1.);
+    const int np = 8;
+    double min_delR[np] = {0.,0.05,0.1,0.15,0.2,0.25,0.3,0.35};
+    double max_delR[np] = {0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4};
+    std::vector<double> vmin;
+    std::vector<double> vmax;
+    for(int j = 0; j<np; ++j) {
+      vmin.push_back(min_delR[j]);
+      vmax.push_back(max_delR[j]);
+    }
+    jetProf.setBoundariesMin(vmin);
+    jetProf.setBoundariesMax(vmax);
+    
+    jetProf.calculateProfile();
+    for(int j = 0; j<np; ++j)
+      jetCollectionSigSD.addVector(Form("jetProfile%d",j), jetProf.getJetProfile(j));
+    
     // for(int j=0;j<8;j++){
     //   jetCollectionSigSD.addVector(Form("jetProfile%d",j), sdgSig.getJetProfile(j));
     // }
@@ -212,6 +231,14 @@ int main (int argc, char ** argv) {
       jetCollectionCSSD.addVector(Form("log_%dztheta",ics),  sdgCS.getLogZgDR12());
       jetCollectionCSSD.addVector(Form("sjMass_CS%d",ics),  sdgCS.getSubJetMass());
       jetCollectionCSSD.addVector(Form("leadingtrack_pt_CS%d",ics),  sdgCS.getSubJetLeadingTrackPt());
+
+      jetProfile jetProfCS(jetCollectionCSs[ics], 1.);
+      jetProfCS.setBoundariesMin(vmin);
+      jetProfCS.setBoundariesMax(vmax);
+      jetProfCS.calculateProfile();
+      for(int j = 0; j<np; ++j)
+        jetCollectionCSSD.addVector(Form("cs%dJetProfile%d",ics,j), jetProfCS.getJetProfile(j));
+      
       // for(int j=0;j<8;j++){
       // jetCollectionCSSD.addVector(Form("jetProfile%d",j), sdgCS.getJetProfile(j));
       // }

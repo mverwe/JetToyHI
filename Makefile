@@ -172,7 +172,7 @@ runJetProfile.o: include/csSubtractorFullEvent.hh include/skSubtractor.hh
 runJetProfile.o: include/softDropGroomer.hh include/jetCollection.hh
 runJetProfile.o: include/jewelMatcher.hh include/treeWriter.hh
 runJetProfile.o: include/jetMatcher.hh include/randomCones.hh
-runJetProfile.o: include/Angularity.hh
+runJetProfile.o: include/Angularity.hh include/jetProfile.hh
 runJetProfileJewelSub.o: include/ProgressBar.h PU14/EventMixer.hh
 runJetProfileJewelSub.o: PU14/CmdLine.hh PU14/EventSource.hh PU14/CmdLine.hh
 runJetProfileJewelSub.o: PU14/PU14.hh PU14/HepPID/ParticleIDMethods.hh
