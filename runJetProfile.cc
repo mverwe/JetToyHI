@@ -31,14 +31,6 @@ using namespace fastjet;
 
 // ./runJetProfile -hard PythiaEventsTune14PtHat120.pu14  -nev 1
 
-void FillPtHistogramm(jetCollection jColl, TH1D* hPt){
-  vector<fastjet::PseudoJet> jSig=jColl.getJet();
-  for(int ijet=0;ijet<jSig.size();ijet++){
-     fastjet::PseudoJet jet=jSig[ijet];
-     hPt->Fill(jet.pt());
-  }
-}
-
 int main (int argc, char ** argv) {
 
   auto start_time = std::chrono::steady_clock::now();

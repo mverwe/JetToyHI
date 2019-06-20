@@ -164,8 +164,7 @@ void softDropCounter::run()
         kpval=0.5;
       }
 
-      fastjet::JetDefinition jet_def(jetalgo, fastjet::JetDefinition::max_allowable_R, kpval, static_cast<fastjet::RecombinationScheme>(0), fastjet::BestFJ30 );       
-      //fastjet::JetDefinition jet_def(fastjet::cambridge_algorithm,999.);
+      fastjet::JetDefinition jet_def(jetalgo, fastjet::JetDefinition::max_allowable_R, kpval, static_cast<fastjet::RecombinationScheme>(0));
       fastjet::ClusterSequence cs(particles, jet_def);
       std::vector<fastjet::PseudoJet> tempJets = fastjet::sorted_by_pt(cs.inclusive_jets());
 
@@ -180,8 +179,8 @@ void softDropCounter::run()
          continue;
       }
 
-      PseudoJet CurrentJet = tempJets[0];
-      PseudoJet Part1, Part2;
+      fastjet::PseudoJet CurrentJet = tempJets[0];
+      fastjet::PseudoJet Part1, Part2;
 
       std::vector<double> z;
       std::vector<double> dr;
