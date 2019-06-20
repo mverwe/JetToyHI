@@ -41,7 +41,8 @@ public:
   void setBoundariesMin(std::vector<double> v) { min_delR_ = v; }
   void setBoundariesMax(std::vector<double> v) { max_delR_ = v; }
   
-  std::vector<double> getJetProfile(int i) const {return jetProfiles_[i]; }
+  std::vector<double> getJetProfile(int ijet) const {return jetProfiles_[ijet]; }
+  std::vector<std::vector<double>> getJetProfiles() const {return jetProfiles_; }
   
 };
 
@@ -84,11 +85,10 @@ TH2F* jetProfile::calculateProfileHisto()
 void jetProfile::calculateProfile()
 {
   const int np = min_delR_.size();
+ 
+  jetProfiles_.clear();
+  jetProfiles_.reserve(jets_.size());
 
-  jetProfiles_.reserve(np);
-  for(int i = 0; i<np; ++i)
-    jetProfiles_[i].reserve(jets_.size());
-  
   for(fastjet::PseudoJet& jet : jets_) {
 
     std::vector<double> jetProfile(np);
@@ -110,10 +110,11 @@ void jetProfile::calculateProfile()
 
     for(int i = 0; i<np; ++i) {
       double dr = max_delR_[i]-min_delR_[i];
-      if(dr>0.) jetProfiles_[i].push_back(jetProfile[i]/dr);
-      else      jetProfiles_[i].push_back(0.);
+      double prof = jetProfile[i];
+      if(dr>0.) jetProfile[i] = prof/dr;
+      else      jetProfile[i] = 0.;
     }
-    
+    jetProfiles_.push_back(jetProfile);
   }//jet loop
 }
 
