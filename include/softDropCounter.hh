@@ -12,6 +12,9 @@
 #include "fastjet/contrib/SoftDrop.hh"
 #include "fastjet/contrib/Recluster.hh"
 
+#include "jetCollection.hh"
+#include "jewelMatcher.hh"
+
 //---------------------------------------------------------------
 // Description
 // This class runs iterative SoftDrop on a set of jets
@@ -26,6 +29,9 @@ private :
   double beta_;        // Beta parameter
   double r0_;          // Jet radius
   double rcut_;        // Termination Criteria
+
+  bool doJewelSub_;                                 // do JEWEL 4MomSub
+  std::vector<fastjet::PseudoJet> particlesDummy_;  // dummy particles for 4MomSub
 
   std::vector<fastjet::PseudoJet>  fjInputs_;    // ungroomed jets
   std::vector<std::vector<double>> zgs_;         // all the zg's in the algorithm
@@ -45,6 +51,9 @@ public :
 
   void setRecursiveAlgo(int r);
 
+  void setJewelSubFlag(bool b);
+  void doJewelSub(std::vector<fastjet::PseudoJet> dummies);
+
   std::vector<std::vector<double>> getZgs() const { return zgs_; }
   std::vector<std::vector<double>> getDRs() const { return drs_; }
   std::vector<std::vector<double>> getPts() const { return pts_; }
@@ -62,6 +71,7 @@ softDropCounter::softDropCounter(double z, double beta, double r0, double rcut)
    : zcut_(z), beta_(beta), r0_(r0), rcut_(rcut)
 {
   fRecursiveAlgo_ = 0;
+  doJewelSub_     = false;
 }
 
 void softDropCounter::setZCut(double c)
@@ -92,6 +102,16 @@ void softDropCounter::setInputJets(const std::vector<fastjet::PseudoJet> &v)
 void softDropCounter::setRecursiveAlgo(int r)
 {
   fRecursiveAlgo_ = r;
+}
+
+void softDropCounter::setJewelSubFlag(bool b)
+{
+  doJewelSub_ = b;
+}
+
+void softDropCounter::doJewelSub(std::vector<fastjet::PseudoJet> dummies) {
+  setJewelSubFlag(true);
+  particlesDummy_ = dummies;
 }
 
 
@@ -175,12 +195,22 @@ void softDropCounter::run()
          if(CurrentJet.pt2() <= 0)
             break;
 
-         double DeltaR = std::sqrt(Part1.squared_distance(Part2));
+         fastjet::PseudoJet sj1;
+         fastjet::PseudoJet sj2;
+         if(doJewelSub_) {
+           sj1 = GetCorrectedJet(Part1,particlesDummy_);
+           sj2 = GetCorrectedJet(Part2,particlesDummy_);
+         } else  {
+           sj1 = Part1;
+           sj2 = Part2;
+         }
+      
+         double DeltaR = std::sqrt(sj1.squared_distance(sj2));
          if(DeltaR < rcut_)
             break;
 
-         double PT1 = Part1.pt();
-         double PT2 = Part2.pt();
+         double PT1 = sj1.pt();
+         double PT2 = sj2.pt();
          double zg = -1;
 
          if(PT1 + PT2 > 0)
@@ -195,7 +225,7 @@ void softDropCounter::run()
             z.push_back(zg);
             dr.push_back(DeltaR);
             pt.push_back(CurrentJet.perp());
-            erad.push_back(Part1.e()+Part2.e());
+            erad.push_back(sj1.e()+sj2.e());
             log1dr.push_back(log(1./DeltaR));
             logzdr.push_back(log(zg*DeltaR));
          }

@@ -82,7 +82,7 @@ public :
   std::vector<fastjet::PseudoJet> doGrooming(jetCollection &c);
   std::vector<fastjet::PseudoJet> doGrooming(std::vector<fastjet::PseudoJet> v);
   std::vector<fastjet::PseudoJet> doGrooming();
-  
+
   std::vector<std::vector<fastjet::PseudoJet>> getConstituents() {return constituents_;}
   std::vector<std::vector<fastjet::PseudoJet>> getConstituents1() {return constituents1_;}
   std::vector<std::vector<fastjet::PseudoJet>> getConstituents2() {return constituents2_;}
@@ -225,6 +225,10 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGrooming()
    sjleadingtrack_.reserve(fjInputs_.size());
    logdr12_.reserve(fjInputs_.size());
    logzgdr12_.reserve(fjInputs_.size());
+
+   constituents_.reserve(fjInputs_.size());
+   constituents1_.reserve(fjInputs_.size());
+   constituents2_.reserve(fjInputs_.size());
    
    for(fastjet::PseudoJet& jet : fjInputs_) {
       std::vector<fastjet::PseudoJet> particles, ghosts;
@@ -243,6 +247,8 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGrooming()
          sjleadingtrack_.push_back(-1.);
          logdr12_.push_back(0.);
          logzgdr12_.push_back(0.);
+         constituents1_.push_back(std::vector<fastjet::PseudoJet>());
+         constituents2_.push_back(std::vector<fastjet::PseudoJet>());
          continue;
       }
       
@@ -268,10 +274,22 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGrooming()
          sjleadingtrack_.push_back(-1.);
          logdr12_.push_back(0.);
          logzgdr12_.push_back(0.);
+         constituents1_.push_back(std::vector<fastjet::PseudoJet>());
+         constituents2_.push_back(std::vector<fastjet::PseudoJet>());
          if(sd) { delete sd; sd = 0;}
          continue;
       }
       transformedJet = (*sd)(transformedJet);
+
+      fastjet::PseudoJet j1, j2;
+      if(transformedJet.has_parents(j1, j2) == true) {
+        constituents1_.push_back(j1.constituents());
+        constituents2_.push_back(j2.constituents());
+      } else {
+        constituents1_.push_back(std::vector<fastjet::PseudoJet>());
+        constituents2_.push_back(std::vector<fastjet::PseudoJet>());
+      }
+      constituents_.push_back(transformedJet.constituents());
 
       double zg = transformedJet.structure_of<fastjet::contrib::SoftDrop>().symmetry();
       int ndrop = transformedJet.structure_of<fastjet::contrib::SoftDrop>().dropped_count();
@@ -336,6 +354,11 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGroomingWithJewelSub(std::vec
    zg_.reserve(fjInputs_.size());
    drBranches_.reserve(fjInputs_.size());
    dr12_.reserve(fjInputs_.size());
+   sjmass_.reserve(fjInputs_.size());
+   sjleadingtrack_.reserve(fjInputs_.size());
+   logdr12_.reserve(fjInputs_.size());
+   logzgdr12_.reserve(fjInputs_.size());
+
    constituents_.reserve(fjInputs_.size());
    constituents1_.reserve(fjInputs_.size());
    constituents2_.reserve(fjInputs_.size());
@@ -344,15 +367,27 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGroomingWithJewelSub(std::vec
       std::vector<fastjet::PseudoJet> particles, ghosts;
       fastjet::SelectorIsPureGhost().sift(jet.constituents(), ghosts, particles);
 
-      fastjet::JetDefinition jet_def(fastjet::cambridge_algorithm, fastjet::JetDefinition::max_allowable_R);
+      fastjet::JetAlgorithm jetalgo(fastjet::cambridge_algorithm);
+      if(fReclusterAlgo == 1)      jetalgo=fastjet::antikt_algorithm;
+      else if(fReclusterAlgo == 2) jetalgo=fastjet::kt_algorithm;
+      else if(fReclusterAlgo == 3) jetalgo=fastjet::genkt_algorithm;
+      
+      fastjet::Recluster recluster(jetalgo,1,fastjet::Recluster::keep_only_hardest);
+      //if(fReclusterAlgo == 3) recluster = fastjet::Recluster(jetalgo,1,0.5);
+    
+      fastjet::JetDefinition jet_def(jetalgo, fastjet::JetDefinition::max_allowable_R);
       fastjet::ClusterSequence cs(particles, jet_def);
 
-      //std::cout << "reclustered with CA" << std::endl;
       std::vector<fastjet::PseudoJet> tempJets = fastjet::sorted_by_pt(cs.inclusive_jets());
       if(tempJets.size()<1) {
          fjOutputs_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
          zg_.push_back(-1.);
          drBranches_.push_back(-1.);
+         dr12_.push_back(-1.);
+         sjmass_.push_back(-1.);
+         sjleadingtrack_.push_back(-1.);
+         logdr12_.push_back(0.);
+         logzgdr12_.push_back(0.);
          constituents1_.push_back(std::vector<fastjet::PseudoJet>());
          constituents2_.push_back(std::vector<fastjet::PseudoJet>());
          continue;
@@ -401,6 +436,11 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGroomingWithJewelSub(std::vec
          fjOutputs_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
          zg_.push_back(-1.);
          drBranches_.push_back(-1.);
+         dr12_.push_back(-1.);
+         sjmass_.push_back(-1.);
+         sjleadingtrack_.push_back(-1.);
+         logdr12_.push_back(0.);
+         logzgdr12_.push_back(0.);
          constituents1_.push_back(std::vector<fastjet::PseudoJet>());
          constituents2_.push_back(std::vector<fastjet::PseudoJet>());
       } else {
@@ -409,13 +449,31 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGroomingWithJewelSub(std::vec
         if(Part2.has_constituents ()) constituents2_.push_back(Part2.constituents());
         
         //get distance between the two subjets
-        //double deltaR = std::sqrt((sj1.eta() -  sj2.eta())*(sj1.eta() - sj2.eta()) + (sj1.delta_phi_to(sj2))*(sj2.delta_phi_to(sj1)));
         double deltaR = sj1.delta_R(sj2);
         
         fjOutputs_.push_back( transformedJet ); //put CA reclusterd jet after softDrop into vector
         zg_.push_back(zg);
         dr12_.push_back(deltaR);
         drBranches_.push_back(ndrop);
+
+	if(sj1.perp() > sj2.perp()){
+          sjmass_.push_back(sj2.m()/sj2.perp());
+          sjleadingtrack_.push_back(leading_track_pt(sj2));
+        }
+        else{
+          sjmass_.push_back(sj1.m()/sj1.perp());
+          sjleadingtrack_.push_back(leading_track_pt(sj1));
+        }
+
+        if(sj1.delta_R(sj2)!=0){
+          logdr12_.push_back(TMath::Log(1/sj1.delta_R(sj2)));
+          logzgdr12_.push_back(TMath::Log(zg*sj1.delta_R(sj2)));
+        }
+        else{
+          logdr12_.push_back(0.);
+          logzgdr12_.push_back(0.);
+        }
+        
       }
    } //jet loop
    return fjOutputs_;
