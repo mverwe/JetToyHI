@@ -13,6 +13,7 @@
 #include "PU14/CmdLine.hh"
 #include "PU14/PU14.hh"
 
+#include "include/extraInfo.hh"
 #include "include/jetCollection.hh"
 #include "include/softDropGroomer.hh"
 #include "include/treeWriter.hh"
@@ -78,7 +79,11 @@ int main (int argc, char ** argv) {
     eventWeight.push_back(mixer.hard_weight());
     eventWeight.push_back(mixer.pu_weight());
 
-    // cluster hard event only
+    // extract hard partons that initiated the jets
+    fastjet::Selector parton_selector = SelectorVertexNumber(-1);
+    vector<PseudoJet> partons = parton_selector(particlesMerged);
+
+    // select final state particles from hard event only
     vector<PseudoJet> particlesBkg, particlesSig;
     SelectorIsHard().sift(particlesMerged, particlesSig, particlesBkg); // this sifts the full event into two vectors of PseudoJet, one for the hard event, one for the underlying event
 
@@ -119,7 +124,8 @@ int main (int argc, char ** argv) {
     //Only vectors of the types 'jetCollection', and 'double', 'int', 'PseudoJet' are supported
 
     trw.addCollection("eventWeight",   eventWeight);
-
+    trw.addPartonCollection("partons",       partons);
+    
     trw.addCollection("sigJet",        jetCollectionSig);
     trw.addCollection("sigJetSDBeta00Z01",      jetCollectionSigSDBeta00Z01);
     
