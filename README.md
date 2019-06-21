@@ -13,8 +13,51 @@ If you are using mac or linux, the steps are relatively straightforward.  For wi
 
 * C++ compiler: on mac you could install xcode (found on App Store) to get the g++ compilers
 * Latest version of ROOT: follow instructions here https://root.cern.ch/downloading-root
-* Fastjet and contrib package: follow the steps in the above about the fastjet installation
+* Fastjet and contrib package: follow the steps below about the fastjet installation
 * Pythia 8: it can be found here - http://home.thep.lu.se/~torbjorn/Pythia.html
+
+### Install ROOT
+The easiest is to just grep a precompiled version from the root website (take ROOT6)
+* https://root.cern.ch/content/release-61404
+
+### Install PYTHIA8
+```sh
+wget http://home.thep.lu.se/~torbjorn/pythia8/pythia8235.tgz
+tar xvfz pythia8235.tgz
+cd pythia8235
+./configure
+make
+PYTHIA=$PWD
+cd ..
+```
+
+### Install fastjet
+
+```sh
+curl -O http://fastjet.fr/repo/fastjet-3.3.2.tar.gz
+tar zxvf fastjet-3.3.2.tar.gz
+cd fastjet-3.3.2/
+
+./configure --prefix=$PWD/../fastjet332-install
+make
+make check
+make install
+FASTJET=$PWD/../fastjet332-install
+cd ..
+
+export FJ_CONTRIB_VER=1.041
+curl -Lo source.tar.gz http://fastjet.hepforge.org/contrib/downloads/fjcontrib-"$FJ_CONTRIB_VER".tar.gz
+tar xzf source.tar.gz
+cd fjcontrib-"$FJ_CONTRIB_VER"
+./configure --fastjet-config=$FASTJET/bin/fastjet-config --prefix=`$FASTJET/bin/fastjet-config --prefix`
+make
+make install
+make fragile-shared #make shared library
+make fragile-shared-install
+cd ..
+```
+
+### Jet workshop software
 
 Make sure that the root-config, pythia8-config and fastjet-config executables can be found in the $PATH environment variable.  Once the above is done, we can proceed with the compilation of the JetToyHI code:
 
@@ -31,8 +74,8 @@ echo (FASTJET LOCATION) > .fastjet
 echo (PYTHIA8 LOCATION) > .pythia8
 ./mkmk
 make
-cd ..
 
+cd ..
 scripts/mkcxx.pl -f -s -1 -r -8 '-IPU14' -l '-LPU14 -lPU14 -lz'
 make
 ./runFromFile -hard samples/PythiaEventsTune14PtHat120.pu14 -pileup samples/ThermalEventsMult12000PtAv0.70.pu14 -nev 10
@@ -54,7 +97,7 @@ source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.06.08/x86_64-slc6-gcc48-opt/ro
 
 #Install fastjet (you just have to do this once)
 
-curl -O http://fastjet.fr/repo/fastjet-3.3.0.tar.gz 
+curl -O http://fastjet.fr/repo/fastjet-3.3.2.tar.gz
 tar zxvf fastjet-3.3.0.tar.gz
 cd fastjet-3.3.0/
 
@@ -65,7 +108,7 @@ make install
 FASTJET=$PWD/../fastjet-install
 cd ..
 
-export FJ_CONTRIB_VER=1.026 
+export FJ_CONTRIB_VER=1.041 
 curl -Lo source.tar.gz http://fastjet.hepforge.org/contrib/downloads/fjcontrib-"$FJ_CONTRIB_VER".tar.gz
 tar xzf source.tar.gz
 cd fjcontrib-"$FJ_CONTRIB_VER"
@@ -76,7 +119,7 @@ make fragile-shared #make shared library
 make fragile-shared-install
 cd ..
 ```
-In /JetTotHI/, change the PYTHIA8LOCATION to your own pythia8 installation
+
 Next steps
 ```sh
 git clone https://github.com/JetQuenchingTools/JetToyHI.git
