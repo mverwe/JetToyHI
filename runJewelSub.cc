@@ -23,6 +23,7 @@
 #include "include/randomCones.hh"
 #include "include/Angularity.hh"
 #include "include/jewelMatcher.hh"
+#include "include/gridSubtractor.hh"
 
 using namespace std;
 using namespace fastjet;
@@ -107,7 +108,7 @@ int main (int argc, char ** argv) {
     jetCollection jetCollectionSigJewel(GetCorrectedJets(jetCollectionSig.getJet(), particlesDummy));
 
     //---------------------------------------------------------------------------
-    //   Groom the jets
+    //   Groom the jets using JEWEL 4MomSub for recoils
     //---------------------------------------------------------------------------
     
     //SoftDrop grooming classic for signal jets (zcut=0.1, beta=0)
@@ -121,6 +122,22 @@ int main (int argc, char ** argv) {
     vector<pair<PseudoJet, PseudoJet>> SigSDJewel = GetCorrectedSubJets(sdgSig.getConstituents1(), sdgSig.getConstituents2(), particlesDummy);
     jetCollectionSigSDJewel.addVector("sigJetSDJewelzg",   CalculateZG(SigSDJewel));
     jetCollectionSigSDJewel.addVector("sigJetSDJeweldr12", CalculateDR(SigSDJewel));
+
+    //---------------------------------------------------------------------------
+    //   Subtract recoils using JEWEL grid subtraction
+    //---------------------------------------------------------------------------
+    gridSubtractor gridSub(-5.,-M_PI,5.,M_PI,R,0.05);
+    jetCollection jetCollectionSigGridSub(gridSub.doGridSub1(jetCollectionSig, particlesDummy));
+
+    //---------------------------------------------------------------------------
+    //   Groom de grid subtracted jets
+    //---------------------------------------------------------------------------
+    softDropGroomer sdgSigGridSub(0.1, 0.0, R);
+    jetCollection jetCollectionSigGridSubSD(sdgSigGridSub.doGrooming(jetCollectionSigGridSub));
+    jetCollectionSigGridSubSD.addVector("sigJetGridSubSDZg",    sdgSigGridSub.getZgs());
+    jetCollectionSigGridSubSD.addVector("sigJetGridSubSDndrop", sdgSigGridSub.getNDroppedSubjets());
+    jetCollectionSigGridSubSD.addVector("sigJetGridSubSDdr12",  sdgSigGridSub.getDR12());
+    
    
     //---------------------------------------------------------------------------
     //   write tree
@@ -129,12 +146,15 @@ int main (int argc, char ** argv) {
     //Give variable we want to write out to treeWriter.
     //Only vectors of the types 'jetCollection', and 'double', 'int', 'PseudoJet' are supported
 
+    trw.addCollection("eventWeight",   eventWeight);
     trw.addCollection("sigJet",        jetCollectionSig);
     trw.addCollection("sigJetJewel",   jetCollectionSigJewel);
     trw.addCollection("sigJetSD",      jetCollectionSigSD);
     trw.addCollection("sigJetSDJewel", jetCollectionSigSDJewel);
-    trw.addCollection("eventWeight",   eventWeight);
-        
+    trw.addCollection("sigJetJewelGridSub", jetCollectionSigGridSub);
+    trw.addCollection("sigJetJewelGridSubSD", jetCollectionSigGridSubSD);
+    
+            
     trw.fillTree();
 
   }//event loop

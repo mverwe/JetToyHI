@@ -177,6 +177,7 @@ runJewelSub.o: include/softDropGroomer.hh include/jetCollection.hh
 runJewelSub.o: include/jewelMatcher.hh include/treeWriter.hh
 runJewelSub.o: include/jetMatcher.hh include/randomCones.hh
 runJewelSub.o: include/Angularity.hh include/jewelMatcher.hh
+runJewelSub.o: include/gridSubtractor.hh
 runSDGenVarious.o: include/ProgressBar.h PU14/EventMixer.hh PU14/CmdLine.hh
 runSDGenVarious.o: PU14/EventSource.hh PU14/CmdLine.hh PU14/PU14.hh
 runSDGenVarious.o: PU14/HepPID/ParticleIDMethods.hh include/jetCollection.hh
