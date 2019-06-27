@@ -155,15 +155,15 @@ LIBRARIES  += -L\$(PYTHIA8LOCATION)/lib -lpythia8
     $vincialocation=`cat .vincia`;
     chomp($vincialocation);
     print "Taking Vincia via $vincialocation\n";
-  push(@info, "Vincia in $vincialocation");
-  $makefile.="
-  VINCIALOCATION = $vincialocation
-  INCLUDE += -I\$(VINCIALOCATION)/include
-  INCLUDE += -I\$(VINCIALOCATION)/include/VinciaMG5
-  LIBRARIES  += \$(VINCIALOCATION)/lib/libvincia.a 
-  LIBRARIES  += \$(VINCIALOCATION)/lib/libVinciaMG4.a 
-  LIBRARIES  += \$(VINCIALOCATION)/lib/libVinciaMG5.a
-  ";
+    push(@info, "Vincia in $vincialocation");
+    $makefile.="
+    VINCIALOCATION = $vincialocation
+    INCLUDE += -I\$(VINCIALOCATION)/include
+    INCLUDE += -I\$(VINCIALOCATION)/include/VinciaMG5
+    LIBRARIES  += \$(VINCIALOCATION)/lib/libvincia.a
+    LIBRARIES  += \$(VINCIALOCATION)/lib/libVinciaMG4.a 
+    LIBRARIES  += \$(VINCIALOCATION)/lib/libVinciaMG5.a
+    ";
   }
 }
 

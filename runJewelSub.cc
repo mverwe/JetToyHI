@@ -127,7 +127,8 @@ int main (int argc, char ** argv) {
     //   Subtract recoils using JEWEL grid subtraction
     //---------------------------------------------------------------------------
     gridSubtractor gridSub(-5.,-M_PI,5.,M_PI,R,0.05);
-    jetCollection jetCollectionSigGridSub(gridSub.doGridSub1(jetCollectionSig, particlesDummy));
+    fastjet::ClusterSequenceArea csSub(gridSub.doGridSub1(jetCollectionSig, particlesDummy), jet_def, area_def);
+    jetCollection jetCollectionSigGridSub(sorted_by_pt(jet_selector(csSub.inclusive_jets(10.))));
 
     //---------------------------------------------------------------------------
     //   Groom de grid subtracted jets
