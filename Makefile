@@ -19,13 +19,13 @@ PYTHIA8LOCATION = /Users/mverweij/soft/pythia8240-install/
 INCLUDE += -I$(PYTHIA8LOCATION)/include
 LIBRARIES  += -L$(PYTHIA8LOCATION)/lib -lpythia8
 
-VINCIALOCATION = /Users/mverweij/soft/pythia8240/vincia-2.2.04
-INCLUDE += -I$(VINCIALOCATION)/include
-INCLUDE += -I$(VINCIALOCATION)/include/VinciaMG5
-LIBRARIES  += $(VINCIALOCATION)/lib/libvincia.a 
-LIBRARIES  += $(VINCIALOCATION)/lib/libVinciaMG4.a 
-LIBRARIES  += $(VINCIALOCATION)/lib/libVinciaMG5.a
-LIBRARIES += -L/usr/local/Cellar/gsl/2.5/lib -lgsl -lgslcblas
+  VINCIALOCATION = /Users/mverweij/soft/pythia8240/vincia-2.2.04
+  INCLUDE += -I$(VINCIALOCATION)/include
+  INCLUDE += -I$(VINCIALOCATION)/include/VinciaMG5
+  LIBRARIES  += $(VINCIALOCATION)/lib/libvincia.a 
+  LIBRARIES  += $(VINCIALOCATION)/lib/libVinciaMG4.a 
+  LIBRARIES  += $(VINCIALOCATION)/lib/libVinciaMG5.a
+  LIBRARIES += -L/usr/local/Cellar/gsl/2.5/lib -lgsl -lgslcblas
 
 INCLUDE += -I/usr/local/Cellar/gsl/2.5/include
 
