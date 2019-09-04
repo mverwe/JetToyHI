@@ -12,6 +12,17 @@ If you are using mac or linux, the steps are relatively straightforward.  For wi
 The easiest is to just grep a precompiled version from the root website (take ROOT6)
 * https://root.cern.ch/content/release-61404
 
+### Computers in student room
+You can also use the computers in the student room on which a C++ compiler and ROOT are already installed. To use these computers login with your solis ID. Then open a terminal and type:
+```sh
+ali
+alienv
+```
+To test if ROOT now works type
+```sh
+root
+```
+
 ### Install PYTHIA8
 ```sh
 wget http://home.thep.lu.se/~torbjorn/pythia8/pythia8235.tgz
