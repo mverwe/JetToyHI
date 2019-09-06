@@ -67,7 +67,7 @@ cd JetToyHI
 git pull --rebase origin forbsc
 
 echo `$FASTJET/bin/fastjet-config --prefix` > .fastjet
-echo `$PYTHIA` > .pythia8
+echo $PYTHIA > .pythia8
 ```
 
 ```sh
