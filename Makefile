@@ -11,16 +11,18 @@ FFLAGS = -Wall -O2
 CXXFLAGS += -std=c++11
 LDFLAGS += -std=c++11
 
-FJCONFIG = /Users/mverweij/soft/fastjet332-install/bin/fastjet-config
-INCLUDE += `$(FJCONFIG) --cxxflags`
-LIBRARIES  += `$(FJCONFIG) --libs --plugins` -lfastjetcontribfragile
+FJCONFIG = /soft/fastjet-3.3.2/../fastjet332-install/bin/fastjet-config
+FJLOC = /soft/fastjet-3.3.2/../fastjet332-install
 
-PYTHIA8LOCATION = /Users/mverweij/soft/pythia8240-install/
+INCLUDE += `$(FJCONFIG) --cxxflags`
+LIBRARIES  += -L$(FJLOC)/lib -lRecursiveTools `$(FJCONFIG) --libs --plugins` -lfastjetcontribfragile
+
+PYTHIA8LOCATION = /soft/pythia8235
 INCLUDE += -I$(PYTHIA8LOCATION)/include
 LIBRARIES  += -L$(PYTHIA8LOCATION)/lib -lpythia8
-LIBRARIES += -L/usr/local/Cellar/gsl/2.5/lib -lgsl -lgslcblas
+LIBRARIES += -L/usr/lib/x86_64-linux-gnu -lgsl -lgslcblas -lm
 
-INCLUDE += -I/usr/local/Cellar/gsl/2.5/include
+INCLUDE += -I/usr/include
 
 
 INCLUDE += `root-config --cflags`
@@ -209,10 +211,11 @@ runSharedLayerSubtraction.o: include/jetCollection.hh include/jetMatcher.hh
 runSimpleJetAnalysis.o: include/ProgressBar.h PU14/EventMixer.hh
 runSimpleJetAnalysis.o: PU14/CmdLine.hh PU14/EventSource.hh PU14/CmdLine.hh
 runSimpleJetAnalysis.o: PU14/PU14.hh PU14/HepPID/ParticleIDMethods.hh
-runSimpleJetAnalysis.o: include/jetCollection.hh include/softDropGroomer.hh
-runSimpleJetAnalysis.o: PU14/PU14.hh include/jetCollection.hh
-runSimpleJetAnalysis.o: include/jewelMatcher.hh include/treeWriter.hh
-runSimpleJetAnalysis.o: include/jetMatcher.hh include/Angularity.hh
+runSimpleJetAnalysis.o: include/extraInfo.hh include/jetCollection.hh
+runSimpleJetAnalysis.o: include/softDropGroomer.hh PU14/PU14.hh
+runSimpleJetAnalysis.o: include/jetCollection.hh include/jewelMatcher.hh
+runSimpleJetAnalysis.o: include/treeWriter.hh include/jetMatcher.hh
+runSimpleJetAnalysis.o: include/Angularity.hh
 runtest.o: PU14/CmdLine.hh include/ProgressBar.h include/jetCollection.hh
 runtest.o: include/thermalEvent.hh include/extraInfo.hh
 runtest.o: include/pythiaEvent.hh include/csSubtractor.hh PU14/PU14.hh

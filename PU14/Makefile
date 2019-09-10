@@ -11,13 +11,11 @@ FFLAGS = -Wall -O2
 CXXFLAGS += -std=c++11
 LDFLAGS += -std=c++11
 
-FJCONFIG = /Users/mverweij/soft/fastjet332-install/bin/fastjet-config
+FJCONFIG = /soft/fastjet-3.3.2/../fastjet332-install/bin/fastjet-config
 INCLUDE += `$(FJCONFIG) --cxxflags`
 LIBRARIES  += `$(FJCONFIG) --libs --plugins` -lfastjetcontribfragile
-LIBRARIES += -L/usr/local/Cellar/gsl/2.5/lib -lgsl -lgslcblas
-
-INCLUDE += -I/usr/local/Cellar/gsl/2.5/include
-
+LIBRARIES += 
+INCLUDE += 
 INCLUDE += $(LCLINCLUDE)
 
 COMMONSRC = CmdLine.cc EventMixer.cc EventSource.cc helpers.cc ParticleIDMethods.cc ParticleName.cc PU14.cc Version.cc zfstream.cc

@@ -115,6 +115,7 @@ if (defined($options{"f"})) {
   # which version to use
   if (-e ".fastjet") {
     $fastjetconfig=`cat .fastjet`;
+    $fastjetinstall=`cat .fastjet`;
     chomp($fastjetconfig);
     $fastjetconfig.="/bin/fastjet-config";
     print "Taking FastJet via $fastjetconfig\n";
@@ -125,8 +126,9 @@ if (defined($options{"f"})) {
   push(@info, "FastJet config is $fastjetconfig");
   $makefile.="
 FJCONFIG = $fastjetconfig
+FJLOC = $fastjetinstall
 INCLUDE += `\$(FJCONFIG) --cxxflags`
-LIBRARIES  += `\$(FJCONFIG) --libs --plugins` -lfastjetcontribfragile
+LIBRARIES  += -L\$(FJLOC)/lib -lRecursiveTools `\$(FJCONFIG) --libs --plugins` -lfastjetcontribfragile
 ";
 }
 
