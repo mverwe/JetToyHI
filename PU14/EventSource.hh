@@ -25,7 +25,8 @@ public:
   /// appends the particles from the next event that is read onto the 
   /// particles vector.
   bool append_next_event(std::vector<fastjet::PseudoJet> & particles,
-        double &event_weight, int vertex_number = 0);
+                         double &event_weight, double &prodX, double &prodY,
+                         int vertex_number = 0);
 
 private:
   std::istream * _stream;
