@@ -49,14 +49,15 @@ bool EventMixer::next_event() {
   _pu_event_weight = 1;
   
   // first get the hard event
-  if (! _hard->append_next_event(_particles,_hard_event_weight,0)) return false;
+  if (! _hard->append_next_event(_particles,_hard_event_weight,_posX,_posY,0)) return false;
 
   unsigned hard_size = _particles.size();
 
   // add pileup if available
   if (_pileup.get()){
     for (int i = 1; i <= _npu; i++) {
-      if (! _pileup->append_next_event(_particles,_pu_event_weight,i)) return false;
+      double dumX, dumY;
+      if (! _pileup->append_next_event(_particles,_pu_event_weight,dumX,dumY,i)) return false;
     }
   }
 

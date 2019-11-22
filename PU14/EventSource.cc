@@ -30,7 +30,8 @@ void EventSource::open_stream(const std::string & filename) {
 
 //----------------------------------------------------------------------
 bool EventSource::append_next_event(std::vector<fastjet::PseudoJet> & particles,
-                                    double &event_weight, int vertex_number) {
+                                    double &event_weight, double &prodX, double &prodY,
+                                    int vertex_number) {
   PseudoJet particle;
   string line;
   double px, py, pz, m, E;
@@ -48,6 +49,7 @@ bool EventSource::append_next_event(std::vector<fastjet::PseudoJet> & particles,
     // event (try to make the check as efficient as possible).
     if (line[0] == 'e' && line.substr(0,3) == "end") break;
 
+    bool bStop = false;
     // if the line says "weight", we multiply current weight by the number that follows
     if(line[0] == 'w' && line.substr(0, 6) == "weight")
     {
@@ -57,8 +59,24 @@ bool EventSource::append_next_event(std::vector<fastjet::PseudoJet> & particles,
        readline >> dummy >> temp;
        if(temp > 0)
           event_weight = event_weight * temp;
-       continue;
+       bStop = true;
     }
+
+    //extraction production point info for hybrid event generator
+    if(line.find("cross") < line.size()) {
+      std::size_t posX = line.find("X");
+      std::string strX = line.substr(posX+2,6);
+      
+      std::size_t posY = line.find("Y");
+      std::string strY = line.substr(posY+2,6);
+      
+      prodX = atof(strX.c_str());
+      prodY = atof(strY.c_str());
+
+      bStop = true;
+    }
+
+    if(bStop) continue;
 
     // FastIStringStream is not a proper stream, but it's a lot faster
     // than standard istringstream.

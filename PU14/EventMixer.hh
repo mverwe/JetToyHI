@@ -42,6 +42,8 @@ public:
   double weight() {return _hard_event_weight * _pu_event_weight;}
   double pu_weight() {return _pu_event_weight;}
   double hard_weight() {return _hard_event_weight;}
+  double productionX() {return _posX;}
+  double productionY() {return _posY;}
 
   /// returns the number of pileup events generated in the last mixed event 
   int npu() const {return _npu;}
@@ -73,6 +75,7 @@ private:
 
   std::vector<fastjet::PseudoJet> _particles;
   double _hard_event_weight, _pu_event_weight;
+  double _posX, _posY;
 };
 
 #endif  // __EVENTMIXER_HH__
