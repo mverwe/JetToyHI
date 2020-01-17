@@ -2,25 +2,54 @@
 
 ## Prerequisites
 
-If you are using mac or linux, the steps are relatively straightforward.  For windows machines I'm not sure what to do.  These are the things you need to install:
+For the project you will need an envinronment that allows you to compile and run different types of software. In the student room there are linux machines that you can use. If you prefer to use your windows computer, you will need to run linux on a virtual machine or use docker (more modern).
 
-* C++ compiler: on mac you could install xcode (found on App Store) to get the g++ compilers
+### Docker
+First you have to install docker on your laptop. For windows you can download it here: https://docs.docker.com/docker-for-windows/
+
+Once you have installed docker you will have to install some libraries. Follow these instructions that have you can type into the terminal:
+```sh
+docker pull ubuntu #this gets latest ubuntu image (bionic, 18.04)
+
+docker run -i -t ubuntu /bin/bash
+
+apt update -y
+
+apt install -y vim wget curl libcurl4-gnutls-dev build-essential gfortran cmake libmysqlclient-dev xorg-dev libglu1-mesa-dev libfftw3-dev libssl1.0 libssl1.0-dev libxml2-dev git unzip python-pip autoconf automake autopoint texinfo gettext libtool libtool-bin pkg-config bison flex libperl-dev libbz2-dev libboost-all-dev swig liblzma-dev libnanomsg-dev libyaml-cpp-dev rsync lsb-release unzip environment-modules
+
+apt-get install xutils-dev libgsl23 libtbb-dev
+
+apt-get install apt-utils libssl-dev
+apt-get install libgsl0-dev
+
+pip install matplotlib numpy certifi ipython==5.1.0 ipywidgets ipykernel notebook metakernel pyyaml
+```
+
+### Virtual Machine
+If you prefer to use a virtual machine running ubuntu, use google to find one that you like. Afterwards you will have to install the same librarie as listed above for docker. Note that you will have to put `sudo` in front of all the `apt` commands.
+
+### MacOS
+On a mac there is no need for a virtual machine or docker. But you will need a C++ compiler that you can get by installing xcode to be found in the AppStore.
 
 ## JetToyHI installation
 
-### Install ROOT
-The easiest is to just grep a precompiled version from the root website (take ROOT6)
-* https://root.cern.ch/content/release-61404
-
-### Computers in student room
-You can also use the computers in the student room on which a C++ compiler and ROOT are already installed. To use these computers login with your solis ID. Then open a terminal and type:
+Start with creating a directory in which you want to install the software that you will use for this project. For example:
 ```sh
-ali
-alienv
+mkdir soft
 ```
-To test if ROOT now works type
+Now go into the created directory:
 ```sh
-root
+cd soft
+```
+
+### Install ROOT
+The easiest is to just grep a precompiled version from the root website https://root.cern.ch/content/release-61404 (take ROOT6). You can do this directly from the terminal:
+```sh
+wget https://root.cern.ch/download/root_v6.14.04.Linux-ubuntu18-x86_64-gcc7.3.tar.gz
+tar xvfz  root_v6.14.04.Linux-ubuntu18-x86_64-gcc7.3.tar.gz
+rootsetup=$PWD/root/bin/thisroot.sh
+. $rootsetup
+echo $rootsetup >> ~/.bashrc
 ```
 
 ### Install PYTHIA8
@@ -99,7 +128,7 @@ Click on `jetTree` and play around.
 * Fork the original repository. Go to: https://github.com/mverwe/JetToyHI and click 'Fork' in the upper right corner.
 * Instead of cloning the original repository as shown above, clone your own.
 * After committing your changes to your own branch, push them to your own fork. Don't know how to do this, ask your colleages or use google which might bring you here https://services.github.com/on-demand/downloads/github-git-cheat-sheet/
-* Do a pull request once you have finished your developements.
+* Do a pull request once you have finished your developments.
 
 
 ## Samples
