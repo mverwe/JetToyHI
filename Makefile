@@ -11,18 +11,18 @@ FFLAGS = -Wall -O2
 CXXFLAGS += -std=c++11
 LDFLAGS += -std=c++11
 
-FJCONFIG = /soft/fastjet-3.3.2/../fastjet332-install/bin/fastjet-config
-FJLOC = /soft/fastjet-3.3.2/../fastjet332-install
+FJCONFIG = /Users/mverweij/soft/fastjet332-install/bin/fastjet-config
+FJLOC = /Users/mverweij/soft/fastjet332-install
 
 INCLUDE += `$(FJCONFIG) --cxxflags`
 LIBRARIES  += -L$(FJLOC)/lib -lRecursiveTools `$(FJCONFIG) --libs --plugins` -lfastjetcontribfragile
 
-PYTHIA8LOCATION = /soft/pythia8235
+PYTHIA8LOCATION = /Users/mverweij/soft/pythia8235
 INCLUDE += -I$(PYTHIA8LOCATION)/include
 LIBRARIES  += -L$(PYTHIA8LOCATION)/lib -lpythia8
-LIBRARIES += -L/usr/lib/x86_64-linux-gnu -lgsl -lgslcblas -lm
+LIBRARIES += -L/usr/local/Cellar/gsl/2.5/lib -lgsl -lgslcblas
 
-INCLUDE += -I/usr/include
+INCLUDE += -I/usr/local/Cellar/gsl/2.5/include
 
 
 INCLUDE += `root-config --cflags`
@@ -33,15 +33,18 @@ COMMONSRC =
 F77SRC = 
 COMMONOBJ = 
 
-PROGSRC = runConversionQPYTHIA.cc runCreatePythiaEvents.cc runCreatePythiaEventsPartonLevel.cc runCreateThermalEvents.cc runCSVariations.cc runFromFile.cc runJetPerformance.cc runJetProfile.cc runJetProfileJewelSub.cc runJewelSub.cc runSDGenVarious.cc runSDGenVariousJewelSub.cc runSharedLayerSubtraction.cc runSimpleJetAnalysis.cc runtest.cc
-PROGOBJ = runConversionQPYTHIA.o runCreatePythiaEvents.o runCreatePythiaEventsPartonLevel.o runCreateThermalEvents.o runCSVariations.o runFromFile.o runJetPerformance.o runJetProfile.o runJetProfileJewelSub.o runJewelSub.o runSDGenVarious.o runSDGenVariousJewelSub.o runSharedLayerSubtraction.o runSimpleJetAnalysis.o runtest.o
+PROGSRC = runConstituentSubtraction.cc runConversionQPYTHIA.cc runCreatePythiaEvents.cc runCreatePythiaEventsPartonLevel.cc runCreateThermalEvents.cc runCSVariations.cc runFromFile.cc runHybridJetAnalysis.cc runJetPerformance.cc runJetProfile.cc runJetProfileJewelSub.cc runJewelSub.cc runSDGenVarious.cc runSDGenVariousJewelSub.cc runSharedLayerSubtraction.cc runSimpleJetAnalysis.cc runtest.cc
+PROGOBJ = runConstituentSubtraction.o runConversionQPYTHIA.o runCreatePythiaEvents.o runCreatePythiaEventsPartonLevel.o runCreateThermalEvents.o runCSVariations.o runFromFile.o runHybridJetAnalysis.o runJetPerformance.o runJetProfile.o runJetProfileJewelSub.o runJewelSub.o runSDGenVarious.o runSDGenVariousJewelSub.o runSharedLayerSubtraction.o runSimpleJetAnalysis.o runtest.o
 
 INCLUDE += 
 LIBRARIES += -LPU14 -lPU14 -lz
 
 
-all:  runConversionQPYTHIA runCreatePythiaEvents runCreatePythiaEventsPartonLevel runCreateThermalEvents runCSVariations runFromFile runJetPerformance runJetProfile runJetProfileJewelSub runJewelSub runSDGenVarious runSDGenVariousJewelSub runSharedLayerSubtraction runSimpleJetAnalysis runtest 
+all:  runConstituentSubtraction runConversionQPYTHIA runCreatePythiaEvents runCreatePythiaEventsPartonLevel runCreateThermalEvents runCSVariations runFromFile runHybridJetAnalysis runJetPerformance runJetProfile runJetProfileJewelSub runJewelSub runSDGenVarious runSDGenVariousJewelSub runSharedLayerSubtraction runSimpleJetAnalysis runtest 
 
+
+runConstituentSubtraction: runConstituentSubtraction.o  $(COMMONOBJ)
+	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
 
 runConversionQPYTHIA: runConversionQPYTHIA.o  $(COMMONOBJ)
 	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
@@ -59,6 +62,9 @@ runCSVariations: runCSVariations.o  $(COMMONOBJ)
 	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
 
 runFromFile: runFromFile.o  $(COMMONOBJ)
+	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
+
+runHybridJetAnalysis: runHybridJetAnalysis.o  $(COMMONOBJ)
 	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
 
 runJetPerformance: runJetPerformance.o  $(COMMONOBJ)
@@ -96,7 +102,7 @@ clean:
 	rm -vf $(COMMONOBJ) $(PROGOBJ)
 
 realclean: clean
-	rm -vf  runConversionQPYTHIA runCreatePythiaEvents runCreatePythiaEventsPartonLevel runCreateThermalEvents runCSVariations runFromFile runJetPerformance runJetProfile runJetProfileJewelSub runJewelSub runSDGenVarious runSDGenVariousJewelSub runSharedLayerSubtraction runSimpleJetAnalysis runtest 
+	rm -vf  runConstituentSubtraction runConversionQPYTHIA runCreatePythiaEvents runCreatePythiaEventsPartonLevel runCreateThermalEvents runCSVariations runFromFile runHybridJetAnalysis runJetPerformance runJetProfile runJetProfileJewelSub runJewelSub runSDGenVarious runSDGenVariousJewelSub runSharedLayerSubtraction runSimpleJetAnalysis runtest 
 
 .cc.o:         $<
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
@@ -114,6 +120,15 @@ depend:
 	makedepend  $(LCLINCLUDE) -Y --   -- $(COMMONSRC) $(PROGSRC)
 # DO NOT DELETE
 
+runConstituentSubtraction.o: include/ProgressBar.h PU14/EventMixer.hh
+runConstituentSubtraction.o: PU14/CmdLine.hh PU14/EventSource.hh
+runConstituentSubtraction.o: PU14/CmdLine.hh PU14/PU14.hh
+runConstituentSubtraction.o: PU14/HepPID/ParticleIDMethods.hh
+runConstituentSubtraction.o: include/extraInfo.hh include/jetCollection.hh
+runConstituentSubtraction.o: include/softDropGroomer.hh PU14/PU14.hh
+runConstituentSubtraction.o: include/jetCollection.hh include/jewelMatcher.hh
+runConstituentSubtraction.o: include/treeWriter.hh include/jetMatcher.hh
+runConstituentSubtraction.o: include/Angularity.hh include/csSubtractor.hh
 runConversionQPYTHIA.o: include/ProgressBar.h include/pythiaEvent.hh
 runConversionQPYTHIA.o: include/extraInfo.hh include/extraInfo.hh
 runConversionQPYTHIA.o: PU14/CmdLine.hh
@@ -144,6 +159,14 @@ runFromFile.o: include/softDropGroomer.hh include/jetCollection.hh
 runFromFile.o: include/jewelMatcher.hh include/treeWriter.hh
 runFromFile.o: include/jetMatcher.hh include/randomCones.hh
 runFromFile.o: include/Angularity.hh include/jewelMatcher.hh
+runHybridJetAnalysis.o: include/ProgressBar.h PU14/EventMixer.hh
+runHybridJetAnalysis.o: PU14/CmdLine.hh PU14/EventSource.hh PU14/CmdLine.hh
+runHybridJetAnalysis.o: PU14/PU14.hh PU14/HepPID/ParticleIDMethods.hh
+runHybridJetAnalysis.o: include/extraInfo.hh include/jetCollection.hh
+runHybridJetAnalysis.o: include/softDropGroomer.hh PU14/PU14.hh
+runHybridJetAnalysis.o: include/jetCollection.hh include/jewelMatcher.hh
+runHybridJetAnalysis.o: include/treeWriter.hh include/jetMatcher.hh
+runHybridJetAnalysis.o: include/Angularity.hh
 runJetPerformance.o: include/ProgressBar.h PU14/EventMixer.hh PU14/CmdLine.hh
 runJetPerformance.o: PU14/EventSource.hh PU14/CmdLine.hh PU14/PU14.hh
 runJetPerformance.o: PU14/HepPID/ParticleIDMethods.hh
