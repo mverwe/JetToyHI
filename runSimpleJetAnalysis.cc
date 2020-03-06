@@ -73,7 +73,7 @@ int main (int argc, char ** argv) {
     Bar.Update(iev);
     Bar.PrintWithMod(entryDiv);
 
-    vector<PseudoJet> particlesMerged = mixer.particles();
+    vector<PseudoJet> particlesMergedAll = mixer.particles();
 
     vector<double> eventWeight;
     eventWeight.push_back(mixer.hard_weight());
@@ -81,11 +81,22 @@ int main (int argc, char ** argv) {
 
     // extract hard partons that initiated the jets
     fastjet::Selector parton_selector = SelectorVertexNumber(-1);
-    vector<PseudoJet> partons = parton_selector(particlesMerged);
-    
+    vector<PseudoJet> partons = parton_selector(particlesMergedAll);
+
     // select final state particles from hard event only
-    vector<PseudoJet> particlesBkg, particlesSig;
-    SelectorIsHard().sift(particlesMerged, particlesSig, particlesBkg); // this sifts the full event into two vectors of PseudoJet, one for the hard event, one for the underlying event
+    fastjet::Selector sig_selector = SelectorVertexNumber(0);
+    vector<PseudoJet> particlesSig = sig_selector(particlesMergedAll);
+
+    // select final state particles from background event only
+    fastjet::Selector bkg_selector = SelectorVertexNumber(1);
+    vector<PseudoJet> particlesBkg = bkg_selector(particlesMergedAll);
+
+    vector<PseudoJet> particlesMerged = particlesBkg;
+    particlesMerged.insert( particlesMerged.end(), particlesSig.begin(), particlesSig.end() );
+    
+    
+    //vector<PseudoJet> particlesBkg, particlesSig;
+    //SelectorIsHard().sift(particlesMerged, particlesSig, particlesBkg); // this sifts the full event into two vectors of PseudoJet, one for the hard event, one for the underlying event
 
     //---------------------------------------------------------------------------
     //   jet clustering
