@@ -17,6 +17,8 @@
 using namespace std;
 using namespace fastjet;
 
+// ./runCreateThermalEvents -nev 100 -ncent 0 -jobId 0
+
 int main (int argc, char ** argv)
 {
   // Uncomment to silence fastjet banner

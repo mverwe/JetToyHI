@@ -71,6 +71,8 @@ class csSubtractor {
       std::vector<std::vector<fastjet::PseudoJet>> getHard() const { return Hard; }
       std::vector<std::vector<fastjet::PseudoJet>> getSoft() const { return Soft; }
 
+      std::vector<fastjet::PseudoJet>  getUnsubtractedJets() const { return fjJetInputs_;}
+
       std::vector<fastjet::PseudoJet> doSubtraction() {
 
          Hard.clear();
@@ -81,19 +83,20 @@ class csSubtractor {
          //  return std::vector<fastjet::PseudoJet>();
          //}
 
-         fastjet::GhostedAreaSpec ghost_spec(ghostRapMax_, 1, ghostArea_);
-
+ 
          std::vector<fastjet::PseudoJet> jets = fjJetInputs_;
          //if(jets.size()==0) {
 
          // do the clustering with ghosts and get the jets
          //----------------------------------------------------------
-         fastjet::JetDefinition jet_def(antikt_algorithm, jetRParam_);
+         fastjet::GhostedAreaSpec ghost_spec(ghostRapMax_, 1, ghostArea_);
          fastjet::AreaDefinition area_def = fastjet::AreaDefinition(fastjet::active_area_explicit_ghosts,ghost_spec);
-
+         fastjet::JetDefinition jet_def(antikt_algorithm, jetRParam_);
+                           
          fastjet::ClusterSequenceArea cs(fjInputs_, jet_def, area_def);
          fastjet::Selector jet_selector = SelectorAbsRapMax(jetRapMax_);
          jets = fastjet::sorted_by_pt(jet_selector(cs.inclusive_jets()));
+         // fjJetInputs_ = jets;
          //}
 
          // create what we need for the background estimation
