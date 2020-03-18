@@ -130,6 +130,39 @@ Click on `jetTree` and play around.
 * After committing your changes to your own branch, push them to your own fork. Don't know how to do this, ask your colleages or use google which might bring you here https://services.github.com/on-demand/downloads/github-git-cheat-sheet/
 * Do a pull request once you have finished your developments.
 
+## Running on quark cluster from home
+```
+ssh -Y [solisID]@gemini.uu.nl
+ssh -Y quark.science.uu.nl
+```
+Now you are remotely logged in.
+
+We will use the centrally installed software for ROOT, pythia and fastjet:
+```
+module load python/2.7
+export PATH=/cm/local/apps/environment-modules/3.2.10/Modules/3.2.10/bin/:$PATH
+export ALIBUILD_WORK_DIR=/data1/software/alisoft
+alienv enter --shellrc VO_ALICE@pythia::v8243-3,VO_ALICE@ROOT::v6-18-04-alice1-2,VO_ALICE@fastjet::latest,VO_ALICE@GSL::v1.16-4
+```
+
+Last step is to install JetToyHI. (note that a new branch was created to make it compatible with the fastjet version that is available on the quark cluster)
+```
+git clone https://github.com/mverwe/JetToyHI.git
+cd JetToyHI
+git pull --rebase origin forbsc2
+
+pythia8-config --prefix > .pythia8
+fastjet-config --prefix > .fastjet
+
+cd PU14
+cp ../.fastjet .
+./mkmk
+make
+cd ..
+
+scripts/mkcxx.pl -f -s -1 -r -8 '-IPU14' -l '-LPU14 -lPU14 -lz'
+make
+```
 
 ## Samples
 Event samples can be found in the jet quenching CERNBOX:
