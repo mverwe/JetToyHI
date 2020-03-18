@@ -164,6 +164,21 @@ scripts/mkcxx.pl -f -s -1 -r -8 '-IPU14' -l '-LPU14 -lPU14 -lz'
 make
 ```
 
+###Submitting job to quark cluster
+A handy way is to make a submit script. Here I list an example and I name this file runJob.sh:
+```
+#!/bin/bash
+mkdir gqoexjburg
+cd gqoexjburg
+cp /nethome/verwe121/soft2/JetToyHI/runCreatePythiaEvents .
+./runCreatePythiaEvents -nev 10 -tune 14 -pthat 120
+ls
+```
+To submit this job to the quark cluster you type:
+```
+qsub -V -cwd -N job1 runJob.sh
+```
+
 ## Samples
 Event samples can be found in the jet quenching CERNBOX:
 * From lxplus (CERN account required): /eos/project/j/jetquenching/www
