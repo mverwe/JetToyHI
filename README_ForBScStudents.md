@@ -164,7 +164,7 @@ scripts/mkcxx.pl -f -s -1 -r -8 '-IPU14' -l '-LPU14 -lPU14 -lz'
 make
 ```
 
-###Submitting job to quark cluster
+### Submitting job to quark cluster
 A handy way is to make a submit script. Here I list an example and I name this file runJob.sh:
 ```
 #!/bin/bash
