@@ -77,7 +77,7 @@ make install
 FASTJET=$PWD/../fastjet332-install
 cd ..
 
-export FJ_CONTRIB_VER=1.041 
+export FJ_CONTRIB_VER=1.042 
 curl -Lo source.tar.gz http://fastjet.hepforge.org/contrib/downloads/fjcontrib-"$FJ_CONTRIB_VER".tar.gz
 tar xzf source.tar.gz
 cd fjcontrib-"$FJ_CONTRIB_VER"
