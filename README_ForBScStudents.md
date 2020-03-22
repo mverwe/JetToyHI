@@ -178,6 +178,7 @@ To submit this job to the quark cluster you type:
 ```
 qsub -V -cwd -N job1 runJob.sh
 ```
+More info on quark cluster can be found here: https://uugrasp.github.io/UUComputingDocs/quarkCluster.html
 
 ## Samples
 Event samples can be found in the jet quenching CERNBOX:
