@@ -142,7 +142,7 @@ We will use the centrally installed software for ROOT, pythia and fastjet:
 module load python/2.7
 export PATH=/cm/local/apps/environment-modules/3.2.10/Modules/3.2.10/bin/:$PATH
 export ALIBUILD_WORK_DIR=/data1/software/alisoft
-alienv enter --shellrc VO_ALICE@pythia::v8243-3,VO_ALICE@ROOT::v6-18-04-alice1-2,V0_ALICE@fastjet::latest-v3.3.3-release,VO_ALICE@GSL::v1.16-4
+alienv enter --shellrc VO_ALICE@pythia::v8243-3,VO_ALICE@ROOT::v6-18-04-alice1-2,VO_ALICE@fastjet::latest-v3.3.3-release,VO_ALICE@GSL::v1.16-4
 ```
 
 Last step is to install JetToyHI. (note that a new branch was created to make it compatible with the fastjet version that is available on the quark cluster)
