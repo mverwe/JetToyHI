@@ -56,7 +56,8 @@ pythiaEventWJet::pythiaEventWJet(double pthat, unsigned int tune, double rapMin,
   pythia.readString(Form("Tune:pp = %d",tune_));
   pythia.readString("Random:setSeed = on");
   pythia.readString("WeakBosonAndParton:qqbar2Wg=on");
-  pythia.readString("WeakBosonAndParton:qg2Wq=on");  
+  pythia.readString("WeakBosonAndParton:qg2Wq=on");
+  pythia.readString("24:onMode = off");  
   pythia.readString("24:onIfAny = 1 2 3 4 5");
   pythia.readString("310:mayDecay = off");
   pythia.readString("3122:mayDecay = off");
