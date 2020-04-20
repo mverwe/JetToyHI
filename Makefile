@@ -33,14 +33,14 @@ COMMONSRC =
 F77SRC = 
 COMMONOBJ = 
 
-PROGSRC = runConstituentSubtraction.cc runConversionQPYTHIA.cc runCreatePythiaEvents.cc runCreatePythiaEventsPartonLevel.cc runCreateThermalEvents.cc runCSVariations.cc runFromFile.cc runHybridJetAnalysis.cc runJetPerformance.cc runJetProfile.cc runJetProfileJewelSub.cc runJewelSub.cc runSDGenVarious.cc runSDGenVariousJewelSub.cc runSharedLayerSubtraction.cc runSimpleJetAnalysis.cc runtest.cc
-PROGOBJ = runConstituentSubtraction.o runConversionQPYTHIA.o runCreatePythiaEvents.o runCreatePythiaEventsPartonLevel.o runCreateThermalEvents.o runCSVariations.o runFromFile.o runHybridJetAnalysis.o runJetPerformance.o runJetProfile.o runJetProfileJewelSub.o runJewelSub.o runSDGenVarious.o runSDGenVariousJewelSub.o runSharedLayerSubtraction.o runSimpleJetAnalysis.o runtest.o
+PROGSRC = runConstituentSubtraction.cc runConversionQPYTHIA.cc runCreatePythiaEvents.cc runCreatePythiaEvents10000E-W-320.cc runCreatePythiaEventsPartonLevel.cc runCreatePythiaEventsWJet.cc runCreateThermalEvents.cc runCSVariations.cc runFromFile.cc runHybridJetAnalysis.cc runJetPerformance.cc runJetProfile.cc runJetProfileJewelSub.cc runJewelSub.cc runSDGenVarious.cc runSDGenVariousJewelSub.cc runSharedLayerSubtraction.cc runSimpleJetAnalysis.cc runtest.cc
+PROGOBJ = runConstituentSubtraction.o runConversionQPYTHIA.o runCreatePythiaEvents.o runCreatePythiaEvents10000E-W-320.o runCreatePythiaEventsPartonLevel.o runCreatePythiaEventsWJet.o runCreateThermalEvents.o runCSVariations.o runFromFile.o runHybridJetAnalysis.o runJetPerformance.o runJetProfile.o runJetProfileJewelSub.o runJewelSub.o runSDGenVarious.o runSDGenVariousJewelSub.o runSharedLayerSubtraction.o runSimpleJetAnalysis.o runtest.o
 
 INCLUDE += 
 LIBRARIES += -LPU14 -lPU14 -lz
 
 
-all:  runConstituentSubtraction runConversionQPYTHIA runCreatePythiaEvents runCreatePythiaEventsPartonLevel runCreateThermalEvents runCSVariations runFromFile runHybridJetAnalysis runJetPerformance runJetProfile runJetProfileJewelSub runJewelSub runSDGenVarious runSDGenVariousJewelSub runSharedLayerSubtraction runSimpleJetAnalysis runtest 
+all:  runConstituentSubtraction runConversionQPYTHIA runCreatePythiaEvents runCreatePythiaEvents10000E-W-320 runCreatePythiaEventsPartonLevel runCreatePythiaEventsWJet runCreateThermalEvents runCSVariations runFromFile runHybridJetAnalysis runJetPerformance runJetProfile runJetProfileJewelSub runJewelSub runSDGenVarious runSDGenVariousJewelSub runSharedLayerSubtraction runSimpleJetAnalysis runtest 
 
 
 runConstituentSubtraction: runConstituentSubtraction.o  $(COMMONOBJ)
@@ -52,7 +52,13 @@ runConversionQPYTHIA: runConversionQPYTHIA.o  $(COMMONOBJ)
 runCreatePythiaEvents: runCreatePythiaEvents.o  $(COMMONOBJ)
 	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
 
+runCreatePythiaEvents10000E-W-320: runCreatePythiaEvents10000E-W-320.o  $(COMMONOBJ)
+	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
+
 runCreatePythiaEventsPartonLevel: runCreatePythiaEventsPartonLevel.o  $(COMMONOBJ)
+	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
+
+runCreatePythiaEventsWJet: runCreatePythiaEventsWJet.o  $(COMMONOBJ)
 	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
 
 runCreateThermalEvents: runCreateThermalEvents.o  $(COMMONOBJ)
@@ -102,7 +108,7 @@ clean:
 	rm -vf $(COMMONOBJ) $(PROGOBJ)
 
 realclean: clean
-	rm -vf  runConstituentSubtraction runConversionQPYTHIA runCreatePythiaEvents runCreatePythiaEventsPartonLevel runCreateThermalEvents runCSVariations runFromFile runHybridJetAnalysis runJetPerformance runJetProfile runJetProfileJewelSub runJewelSub runSDGenVarious runSDGenVariousJewelSub runSharedLayerSubtraction runSimpleJetAnalysis runtest 
+	rm -vf  runConstituentSubtraction runConversionQPYTHIA runCreatePythiaEvents runCreatePythiaEvents10000E-W-320 runCreatePythiaEventsPartonLevel runCreatePythiaEventsWJet runCreateThermalEvents runCSVariations runFromFile runHybridJetAnalysis runJetPerformance runJetProfile runJetProfileJewelSub runJewelSub runSDGenVarious runSDGenVariousJewelSub runSharedLayerSubtraction runSimpleJetAnalysis runtest 
 
 .cc.o:         $<
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
@@ -135,10 +141,17 @@ runConversionQPYTHIA.o: PU14/CmdLine.hh
 runCreatePythiaEvents.o: include/ProgressBar.h include/pythiaEvent.hh
 runCreatePythiaEvents.o: include/extraInfo.hh include/extraInfo.hh
 runCreatePythiaEvents.o: PU14/CmdLine.hh
+runCreatePythiaEvents10000E-W-320.o: include/ProgressBar.h
+runCreatePythiaEvents10000E-W-320.o: include/pythiaEventW.hh
+runCreatePythiaEvents10000E-W-320.o: include/extraInfo.hh
+runCreatePythiaEvents10000E-W-320.o: include/extraInfo.hh PU14/CmdLine.hh
 runCreatePythiaEventsPartonLevel.o: include/ProgressBar.h
 runCreatePythiaEventsPartonLevel.o: include/pythiaEvent.hh
 runCreatePythiaEventsPartonLevel.o: include/extraInfo.hh include/extraInfo.hh
 runCreatePythiaEventsPartonLevel.o: PU14/CmdLine.hh
+runCreatePythiaEventsWJet.o: include/ProgressBar.h include/pythiaEventWJet.hh
+runCreatePythiaEventsWJet.o: include/extraInfo.hh include/extraInfo.hh
+runCreatePythiaEventsWJet.o: PU14/CmdLine.hh
 runCreateThermalEvents.o: include/ProgressBar.h include/thermalEvent.hh
 runCreateThermalEvents.o: include/extraInfo.hh PU14/CmdLine.hh
 runCSVariations.o: include/ProgressBar.h PU14/EventMixer.hh PU14/CmdLine.hh
