@@ -26,7 +26,7 @@ pip install matplotlib numpy certifi ipython==5.1.0 ipywidgets ipykernel noteboo
 ```
 
 ### Virtual Machine
-If you prefer to use a virtual machine running ubuntu, use google to find one that you like. Afterwards you will have to install the same librarie as listed above for docker. Note that you will have to put `sudo` in front of all the `apt` commands.
+If you prefer to use a virtual machine running ubuntu, use google to find one that you like. Afterwards you will have to install the same libraries as listed above for docker. Note that you will have to put `sudo` in front of all the `apt` commands.
 
 ### MacOS
 On a mac there is no need for a virtual machine or docker. But you will need a C++ compiler that you can get by installing xcode to be found in the AppStore.
@@ -178,7 +178,7 @@ To submit this job to the quark cluster you type:
 ```
 qsub -V -cwd -N job1 runJob.sh
 ```
-More info on quark cluster can be found here: https://uugrasp.github.io/UUComputingDocs/quarkCluster.html
+More info on the quark cluster can be found here: https://uugrasp.github.io/UUComputingDocs/quarkCluster.html
 
 ## Samples
 Event samples can be found in the jet quenching CERNBOX:
