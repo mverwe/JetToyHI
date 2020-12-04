@@ -37,6 +37,8 @@ public :
   
   std::vector<fastjet::PseudoJet> getPartonList() const { return partons; }
 
+  void getStat() {pythia.stat();}
+
 };
   
 pythiaEvent::pythiaEvent(double pthat, unsigned int tune, double rapMin, double rapMax, bool partonLevel) :

@@ -52,9 +52,6 @@ int main (int argc, char ** argv)
   for(unsigned int ie = 0; ie < nEvent; ie++) {
     Bar.Update(ie);
     Bar.PrintWithMod(entryDiv);
-
-    Bar.Update(ie);
-    Bar.PrintWithMod(entryDiv);
     
     //---------------------------------------------------------------------------
     //   produce event
@@ -80,6 +77,8 @@ int main (int argc, char ** argv)
     fout << "end\n";
   }
 
+  pyt.getStat();
+  
   fout.close();
 
   std::cout << "\n Finished generating PYTHIA events" << std::endl;
