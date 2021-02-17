@@ -33,14 +33,14 @@ COMMONSRC =
 F77SRC = 
 COMMONOBJ = 
 
-PROGSRC = runConstituentSubtraction.cc runConversionQPYTHIA.cc runCreatePythiaEvents.cc runCreatePythiaEventsPartonLevel.cc runCreatePythiaEventsWJet.cc runCreateThermalEvents.cc runCSVariations.cc runFromFile.cc runHybridJetAnalysis.cc runJetPerformance.cc runJetProfile.cc runJewelSub.cc runSDGenVarious.cc runSDGenVariousJewelSub.cc runSharedLayerSubtraction.cc runSimpleJetAnalysis.cc runSoftDrop.cc runtest.cc
-PROGOBJ = runConstituentSubtraction.o runConversionQPYTHIA.o runCreatePythiaEvents.o runCreatePythiaEventsPartonLevel.o runCreatePythiaEventsWJet.o runCreateThermalEvents.o runCSVariations.o runFromFile.o runHybridJetAnalysis.o runJetPerformance.o runJetProfile.o runJewelSub.o runSDGenVarious.o runSDGenVariousJewelSub.o runSharedLayerSubtraction.o runSimpleJetAnalysis.o runSoftDrop.o runtest.o
+PROGSRC = runConstituentSubtraction.cc runConversionQPYTHIA.cc runCreatePythiaEvents.cc runCreatePythiaEventsPartonLevel.cc runCreatePythiaEventsWJet.cc runCreateThermalEvents.cc runCreateVinciaEvents.cc runCSVariations.cc runFromFile.cc runHybridJetAnalysis.cc runJetPerformance.cc runJetProfile.cc runJewelSub.cc runSDGenVarious.cc runSDGenVariousJewelSub.cc runSharedLayerSubtraction.cc runSimpleJetAnalysis.cc runSoftDrop.cc runtest.cc
+PROGOBJ = runConstituentSubtraction.o runConversionQPYTHIA.o runCreatePythiaEvents.o runCreatePythiaEventsPartonLevel.o runCreatePythiaEventsWJet.o runCreateThermalEvents.o runCreateVinciaEvents.o runCSVariations.o runFromFile.o runHybridJetAnalysis.o runJetPerformance.o runJetProfile.o runJewelSub.o runSDGenVarious.o runSDGenVariousJewelSub.o runSharedLayerSubtraction.o runSimpleJetAnalysis.o runSoftDrop.o runtest.o
 
 INCLUDE += 
 LIBRARIES += -LPU14 -lPU14 -lz
 
 
-all:  runConstituentSubtraction runConversionQPYTHIA runCreatePythiaEvents runCreatePythiaEventsPartonLevel runCreatePythiaEventsWJet runCreateThermalEvents runCSVariations runFromFile runHybridJetAnalysis runJetPerformance runJetProfile runJewelSub runSDGenVarious runSDGenVariousJewelSub runSharedLayerSubtraction runSimpleJetAnalysis runSoftDrop runtest 
+all:  runConstituentSubtraction runConversionQPYTHIA runCreatePythiaEvents runCreatePythiaEventsPartonLevel runCreatePythiaEventsWJet runCreateThermalEvents runCreateVinciaEvents runCSVariations runFromFile runHybridJetAnalysis runJetPerformance runJetProfile runJewelSub runSDGenVarious runSDGenVariousJewelSub runSharedLayerSubtraction runSimpleJetAnalysis runSoftDrop runtest 
 
 
 runConstituentSubtraction: runConstituentSubtraction.o  $(COMMONOBJ)
@@ -59,6 +59,9 @@ runCreatePythiaEventsWJet: runCreatePythiaEventsWJet.o  $(COMMONOBJ)
 	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
 
 runCreateThermalEvents: runCreateThermalEvents.o  $(COMMONOBJ)
+	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
+
+runCreateVinciaEvents: runCreateVinciaEvents.o  $(COMMONOBJ)
 	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
 
 runCSVariations: runCSVariations.o  $(COMMONOBJ)
@@ -105,7 +108,7 @@ clean:
 	rm -vf $(COMMONOBJ) $(PROGOBJ)
 
 realclean: clean
-	rm -vf  runConstituentSubtraction runConversionQPYTHIA runCreatePythiaEvents runCreatePythiaEventsPartonLevel runCreatePythiaEventsWJet runCreateThermalEvents runCSVariations runFromFile runHybridJetAnalysis runJetPerformance runJetProfile runJewelSub runSDGenVarious runSDGenVariousJewelSub runSharedLayerSubtraction runSimpleJetAnalysis runSoftDrop runtest 
+	rm -vf  runConstituentSubtraction runConversionQPYTHIA runCreatePythiaEvents runCreatePythiaEventsPartonLevel runCreatePythiaEventsWJet runCreateThermalEvents runCreateVinciaEvents runCSVariations runFromFile runHybridJetAnalysis runJetPerformance runJetProfile runJewelSub runSDGenVarious runSDGenVariousJewelSub runSharedLayerSubtraction runSimpleJetAnalysis runSoftDrop runtest 
 
 .cc.o:         $<
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
@@ -147,6 +150,9 @@ runCreatePythiaEventsWJet.o: include/extraInfo.hh include/extraInfo.hh
 runCreatePythiaEventsWJet.o: PU14/CmdLine.hh
 runCreateThermalEvents.o: include/ProgressBar.h include/thermalEvent.hh
 runCreateThermalEvents.o: include/extraInfo.hh PU14/CmdLine.hh
+runCreateVinciaEvents.o: include/ProgressBar.h include/pythiaEvent.hh
+runCreateVinciaEvents.o: include/extraInfo.hh include/extraInfo.hh
+runCreateVinciaEvents.o: PU14/CmdLine.hh
 runCSVariations.o: include/ProgressBar.h PU14/EventMixer.hh PU14/CmdLine.hh
 runCSVariations.o: PU14/EventSource.hh PU14/CmdLine.hh PU14/PU14.hh
 runCSVariations.o: PU14/HepPID/ParticleIDMethods.hh include/jetCollection.hh
