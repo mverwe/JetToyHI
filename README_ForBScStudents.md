@@ -52,11 +52,11 @@ rootsetup=$PWD/root/bin/thisroot.sh
 echo $rootsetup >> ~/.bashrc
 ```
 
-### Install PYTHIA8
+### Install PYTHIA8.3
 ```sh
-wget http://home.thep.lu.se/~torbjorn/pythia8/pythia8235.tgz
-tar xvfz pythia8235.tgz
-cd pythia8235
+wget http://home.thep.lu.se/~torbjorn/pythia8/pythia8303.tgz
+tar xvfz pythia8303.tgz
+cd pythia8303
 ./configure
 make
 PYTHIA=$PWD
@@ -77,7 +77,7 @@ make install
 FASTJET=$PWD/../fastjet333-install
 cd ..
 
-export FJ_CONTRIB_VER=1.042 
+export FJ_CONTRIB_VER=1.045 
 curl -Lo source.tar.gz http://fastjet.hepforge.org/contrib/downloads/fjcontrib-"$FJ_CONTRIB_VER".tar.gz
 tar xzf source.tar.gz
 cd fjcontrib-"$FJ_CONTRIB_VER"
@@ -93,7 +93,7 @@ cd ..
 ```sh
 git clone https://github.com/mverwe/JetToyHI.git
 cd JetToyHI
-git pull --rebase origin forbsc2
+git pull --rebase origin pyt83
 
 echo `$FASTJET/bin/fastjet-config --prefix` > .fastjet
 echo $PYTHIA > .pythia8
