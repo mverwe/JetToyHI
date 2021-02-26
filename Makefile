@@ -33,14 +33,14 @@ COMMONSRC =
 F77SRC = 
 COMMONOBJ = 
 
-PROGSRC = runConstituentSubtraction.cc runConversionQPYTHIA.cc runCreatePythiaEvents.cc runCreatePythiaEventsPartonLevel.cc runCreatePythiaEventsWJet.cc runCreateThermalEvents.cc runCreateVinciaEvents.cc runCSVariations.cc runFromFile.cc runHybridJetAnalysis.cc runJetPerformance.cc runJetProfile.cc runJewelSub.cc runSDGenVarious.cc runSDGenVariousJewelSub.cc runSharedLayerSubtraction.cc runSimpleJetAnalysis.cc runSoftDrop.cc runtest.cc
-PROGOBJ = runConstituentSubtraction.o runConversionQPYTHIA.o runCreatePythiaEvents.o runCreatePythiaEventsPartonLevel.o runCreatePythiaEventsWJet.o runCreateThermalEvents.o runCreateVinciaEvents.o runCSVariations.o runFromFile.o runHybridJetAnalysis.o runJetPerformance.o runJetProfile.o runJewelSub.o runSDGenVarious.o runSDGenVariousJewelSub.o runSharedLayerSubtraction.o runSimpleJetAnalysis.o runSoftDrop.o runtest.o
+PROGSRC = runConstituentSubtraction.cc runConversionQPYTHIA.cc runCreatePythiaEvents.cc runCreatePythiaEventsPartonLevel.cc runCreatePythiaEventsWJet.cc runCreateThermalEvents.cc runCreateVinciaEvents.cc runCSVariations.cc runFromFile.cc runGluonSplittingAnalysis.cc runHybridJetAnalysis.cc runJetPerformance.cc runJetProfile.cc runJewelSub.cc runSDGenVarious.cc runSDGenVariousJewelSub.cc runSharedLayerSubtraction.cc runSimpleJetAnalysis.cc runSoftDrop.cc runtest.cc
+PROGOBJ = runConstituentSubtraction.o runConversionQPYTHIA.o runCreatePythiaEvents.o runCreatePythiaEventsPartonLevel.o runCreatePythiaEventsWJet.o runCreateThermalEvents.o runCreateVinciaEvents.o runCSVariations.o runFromFile.o runGluonSplittingAnalysis.o runHybridJetAnalysis.o runJetPerformance.o runJetProfile.o runJewelSub.o runSDGenVarious.o runSDGenVariousJewelSub.o runSharedLayerSubtraction.o runSimpleJetAnalysis.o runSoftDrop.o runtest.o
 
 INCLUDE += 
 LIBRARIES += -LPU14 -lPU14 -lz
 
 
-all:  runConstituentSubtraction runConversionQPYTHIA runCreatePythiaEvents runCreatePythiaEventsPartonLevel runCreatePythiaEventsWJet runCreateThermalEvents runCreateVinciaEvents runCSVariations runFromFile runHybridJetAnalysis runJetPerformance runJetProfile runJewelSub runSDGenVarious runSDGenVariousJewelSub runSharedLayerSubtraction runSimpleJetAnalysis runSoftDrop runtest 
+all:  runConstituentSubtraction runConversionQPYTHIA runCreatePythiaEvents runCreatePythiaEventsPartonLevel runCreatePythiaEventsWJet runCreateThermalEvents runCreateVinciaEvents runCSVariations runFromFile runGluonSplittingAnalysis runHybridJetAnalysis runJetPerformance runJetProfile runJewelSub runSDGenVarious runSDGenVariousJewelSub runSharedLayerSubtraction runSimpleJetAnalysis runSoftDrop runtest 
 
 
 runConstituentSubtraction: runConstituentSubtraction.o  $(COMMONOBJ)
@@ -68,6 +68,9 @@ runCSVariations: runCSVariations.o  $(COMMONOBJ)
 	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
 
 runFromFile: runFromFile.o  $(COMMONOBJ)
+	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
+
+runGluonSplittingAnalysis: runGluonSplittingAnalysis.o  $(COMMONOBJ)
 	$(CXX) $(LDFLAGS) -o $@ $@.o $(COMMONOBJ) $(LIBRARIES)
 
 runHybridJetAnalysis: runHybridJetAnalysis.o  $(COMMONOBJ)
@@ -108,7 +111,7 @@ clean:
 	rm -vf $(COMMONOBJ) $(PROGOBJ)
 
 realclean: clean
-	rm -vf  runConstituentSubtraction runConversionQPYTHIA runCreatePythiaEvents runCreatePythiaEventsPartonLevel runCreatePythiaEventsWJet runCreateThermalEvents runCreateVinciaEvents runCSVariations runFromFile runHybridJetAnalysis runJetPerformance runJetProfile runJewelSub runSDGenVarious runSDGenVariousJewelSub runSharedLayerSubtraction runSimpleJetAnalysis runSoftDrop runtest 
+	rm -vf  runConstituentSubtraction runConversionQPYTHIA runCreatePythiaEvents runCreatePythiaEventsPartonLevel runCreatePythiaEventsWJet runCreateThermalEvents runCreateVinciaEvents runCSVariations runFromFile runGluonSplittingAnalysis runHybridJetAnalysis runJetPerformance runJetProfile runJewelSub runSDGenVarious runSDGenVariousJewelSub runSharedLayerSubtraction runSimpleJetAnalysis runSoftDrop runtest 
 
 .cc.o:         $<
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
@@ -171,6 +174,15 @@ runFromFile.o: include/softDropGroomer.hh include/jetCollection.hh
 runFromFile.o: include/jewelMatcher.hh include/treeWriter.hh
 runFromFile.o: include/jetMatcher.hh include/randomCones.hh
 runFromFile.o: include/Angularity.hh include/jewelMatcher.hh
+runGluonSplittingAnalysis.o: include/ProgressBar.h PU14/EventMixer.hh
+runGluonSplittingAnalysis.o: PU14/CmdLine.hh PU14/EventSource.hh
+runGluonSplittingAnalysis.o: PU14/CmdLine.hh PU14/PU14.hh
+runGluonSplittingAnalysis.o: PU14/HepPID/ParticleIDMethods.hh
+runGluonSplittingAnalysis.o: include/extraInfo.hh include/jetCollection.hh
+runGluonSplittingAnalysis.o: include/softDropGroomer.hh PU14/PU14.hh
+runGluonSplittingAnalysis.o: include/jetCollection.hh include/jewelMatcher.hh
+runGluonSplittingAnalysis.o: include/treeWriter.hh include/jetMatcher.hh
+runGluonSplittingAnalysis.o: include/Angularity.hh
 runHybridJetAnalysis.o: include/ProgressBar.h PU14/EventMixer.hh
 runHybridJetAnalysis.o: PU14/CmdLine.hh PU14/EventSource.hh PU14/CmdLine.hh
 runHybridJetAnalysis.o: PU14/PU14.hh PU14/HepPID/ParticleIDMethods.hh
