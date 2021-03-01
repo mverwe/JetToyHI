@@ -41,6 +41,7 @@ private :
   std::vector<std::vector<double>> log1drs_;     // Log(1/angle) in the algorithm
   std::vector<std::vector<double>> logzdrs_;     // Log(z*angle) in the algorithm
   std::vector<std::vector<double>> tfs_;         // formation time tf = 2 / (z*(1-z)*pt*theta^2)
+  std::vector<std::vector<double>> tfes_;         // formation time tf = 1 / 2*(z*(1-z)*E*(1-cos(theta)))
   
 public :
   softDropCounter(double z = 0.1, double beta = 0.0, double r0 = 0.4, double rcut = 0.1);
@@ -62,6 +63,7 @@ public :
   std::vector<std::vector<double>> getLog1DRs() const { return log1drs_; }
   std::vector<std::vector<double>> getLogzDRs() const { return logzdrs_; }
   std::vector<std::vector<double>> getTfs() const { return tfs_; }
+  std::vector<std::vector<double>> getTfes() const { return tfes_; }
   
   void run(const jetCollection &c);
   void run(const std::vector<fastjet::PseudoJet> &v);
@@ -141,6 +143,7 @@ void softDropCounter::run()
          log1drs_.push_back(vector<double>());
          logzdrs_.push_back(vector<double>());
          tfs_.push_back(vector<double>());
+         tfes_.push_back(vector<double>());
          continue;
       }
 
@@ -183,6 +186,7 @@ void softDropCounter::run()
          log1drs_.push_back(vector<double>());
          logzdrs_.push_back(vector<double>());
          tfs_.push_back(vector<double>());
+         tfes_.push_back(vector<double>());
          continue;
       }
 
@@ -196,6 +200,7 @@ void softDropCounter::run()
       std::vector<double> log1dr;
       std::vector<double> logzdr;
       std::vector<double> tf;
+      std::vector<double> tfe;
       
       while(CurrentJet.has_parents(Part1, Part2))
       {
@@ -219,12 +224,15 @@ void softDropCounter::run()
          double PT1 = sj1.pt();
          double PT2 = sj2.pt();
          double zg = -1;
-
+         
          if(PT1 + PT2 > 0)
-            zg = min(PT1, PT2) / (PT1 + PT2);
+           zg = min(PT1, PT2) / (PT1 + PT2);
          else
-            break;
+           break;
 
+         double z1 = max(sj1.e(),sj2.e())/CurrentJet.e();
+         double z2 = min(sj1.e(),sj2.e())/CurrentJet.e();
+         
          double Threshold = zcut_ * std::pow(DeltaR / r0_, beta_);
 
          if(zg >= Threshold)   // yay
@@ -236,6 +244,7 @@ void softDropCounter::run()
             log1dr.push_back(log(1./DeltaR));
             logzdr.push_back(log(zg*DeltaR));
             tf.push_back(2./(zg*(1.-zg)*CurrentJet.perp()*GeVtofm*DeltaR*DeltaR/r0_/r0_));
+            tfe.push_back(1./(2.*z1*z2*CurrentJet.e()*GeVtofm*(1-fastjet::cos_theta(sj1,sj2))));
          }
 
          if(PT1 > PT2)
@@ -251,6 +260,7 @@ void softDropCounter::run()
       log1drs_.push_back(log1dr);
       logzdrs_.push_back(logzdr);
       tfs_.push_back(tf);
+      tfes_.push_back(tfe);
    }
 }
 
