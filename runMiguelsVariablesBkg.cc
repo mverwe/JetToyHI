@@ -169,8 +169,8 @@ int main (int argc, char ** argv) {
       tau2SigSD.push_back(nSub2_beta1(tempjets[0]));
       ++ij;
     }
-    jetCollectionSigSDBeta00Z01.addVector("widthSigSD", widthSig);
-    jetCollectionSigSDBeta00Z01.addVector("pTDSigSD", pTDSig);
+    jetCollectionSigSDBeta00Z01.addVector("widthSigSD", widthSigSD);
+    jetCollectionSigSDBeta00Z01.addVector("pTDSigSD", pTDSigSD);
     jetCollectionSigSDBeta00Z01.addVector("tau2SigSD", tau2SigSD);
 
     //---------------------------------------------------------------------------
