@@ -231,13 +231,33 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGrooming()
    constituents2_.reserve(fjInputs_.size());
    
    for(fastjet::PseudoJet& jet : fjInputs_) {
+     //std::cout << "new jet" << std::endl;
+
+     if(!jet.has_constituents()) {
+       fjOutputs_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
+       zg_.push_back(-1.);
+       drBranches_.push_back(-1.);
+       dr12_.push_back(-1.);
+       sjmass_.push_back(-1.);
+       sjleadingtrack_.push_back(-1.);
+       logdr12_.push_back(0.);
+       logzgdr12_.push_back(0.);
+       constituents1_.push_back(std::vector<fastjet::PseudoJet>());
+       constituents2_.push_back(std::vector<fastjet::PseudoJet>());
+       continue;
+     }
+     
       std::vector<fastjet::PseudoJet> particles, ghosts;
       fastjet::SelectorIsPureGhost().sift(jet.constituents(), ghosts, particles);
-
+      //std::cout << "nr of constituents: " << particles.size() << std::endl;
       fastjet::JetDefinition jet_def(fastjet::cambridge_algorithm,fastjet::JetDefinition::max_allowable_R);
       fastjet::ClusterSequence cs(particles, jet_def);
 
       std::vector<fastjet::PseudoJet> tempJets = fastjet::sorted_by_pt(cs.inclusive_jets());
+
+      //// To make the jetp_index work we need to define our jets like this
+      //std::vector<fastjet::PseudoJet> tempJets_two = cs.jets();
+      
       if(tempJets.size()<1) {
          fjOutputs_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
          zg_.push_back(-1.);
@@ -251,7 +271,8 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGrooming()
          constituents2_.push_back(std::vector<fastjet::PseudoJet>());
          continue;
       }
-      
+
+      //std::cout << "init SoftDrop" << std::endl;
       fastjet::contrib::SoftDrop * sd = new fastjet::contrib::SoftDrop(beta_, zcut_, r0_ );
       sd->set_verbose_structure(true);
 
@@ -259,11 +280,12 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGrooming()
       if(fReclusterAlgo == 1)      jetalgo=fastjet::antikt_algorithm;
       else if(fReclusterAlgo == 2) jetalgo=fastjet::kt_algorithm;
       else if(fReclusterAlgo == 3) jetalgo=fastjet::genkt_algorithm;
-      
+
+      //std::cout << "recluster" << std::endl;
       fastjet::Recluster recluster(jetalgo,1,fastjet::Recluster::keep_only_hardest);
       //if(fReclusterAlgo == 3) recluster = fastjet::Recluster(jetalgo,1,0.5);
       sd->set_reclustering(true,&recluster);
-      
+      //std::cout << "get transformed jet" << std::endl;
       fastjet::PseudoJet transformedJet = tempJets[0];
       if ( transformedJet == 0 ) {
          fjOutputs_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
@@ -274,13 +296,14 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGrooming()
          sjleadingtrack_.push_back(-1.);
          logdr12_.push_back(0.);
          logzgdr12_.push_back(0.);
+         constituents_.push_back(std::vector<fastjet::PseudoJet>());
          constituents1_.push_back(std::vector<fastjet::PseudoJet>());
          constituents2_.push_back(std::vector<fastjet::PseudoJet>());
          if(sd) { delete sd; sd = 0;}
          continue;
       }
       transformedJet = (*sd)(transformedJet);
-
+      //std::cout << "extract constituents of transformed jet and subjets" << std::endl; 
       fastjet::PseudoJet j1, j2;
       if(transformedJet.has_parents(j1, j2) == true) {
         constituents1_.push_back(j1.constituents());
@@ -290,12 +313,12 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGrooming()
         constituents2_.push_back(std::vector<fastjet::PseudoJet>());
       }
       constituents_.push_back(transformedJet.constituents());
-
+      //std::cout << "calc zg" << std::endl;
       double zg = transformedJet.structure_of<fastjet::contrib::SoftDrop>().symmetry();
       int ndrop = transformedJet.structure_of<fastjet::contrib::SoftDrop>().dropped_count();
       zg_.push_back(zg);
       drBranches_.push_back(ndrop);
-
+      //std::cout << "calc Rg" << std::endl;
       //get distance between the two subjets
       std::vector<fastjet::PseudoJet> subjets;
       if ( transformedJet.has_pieces() ) {
@@ -328,12 +351,14 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGrooming()
         logdr12_.push_back(0.);
         logzgdr12_.push_back(0.);
       }
-
+      //std::cout << "ending softDropGroomer" << std::endl;
       fjOutputs_.push_back( transformedJet ); //put CA reclustered jet after softDrop into vector
+      //std::cout << "transformedJet in fjOutputs_" << std::endl;
 
       if(sd) { delete sd; sd = 0;}
       //   if(reclusterer) { delete reclusterer; sd = 0;}
    }
+
    return fjOutputs_;
 }
 
