@@ -78,6 +78,9 @@ int main (int argc, char ** argv) {
   unsigned int entryDiv = (nEvent > 200) ? nEvent / 200 : 1;
   while ( mixer.next_event() && iev < nEvent )
   {
+    //std::cout << "iev: " << iev << std::endl;
+    //if(iev<6) { iev++; continue;}
+    //std::cout << "iev: " << iev << std::endl;
     // increment event number    
     iev++;
 
@@ -324,7 +327,9 @@ int main (int argc, char ** argv) {
     jetCollectionCSFullSDBeta00Z01.addVector("zgCSFullSDBeta00Z01",    sdgCSFullBeta00Z01.getZgs());
     jetCollectionCSFullSDBeta00Z01.addVector("ndropCSFullSDBeta00Z01", sdgCSFullBeta00Z01.getNDroppedSubjets());
     jetCollectionCSFullSDBeta00Z01.addVector("dr12CSFullSDBeta00Z01",  sdgCSFullBeta00Z01.getDR12());
-
+    //std::cout << "size ungroomed CSFull jets: " << jetCollectionCSFull.getJet().size() << std::endl;
+    //std::cout << "size groomed  CSFull jets: " << jetCollectionCSFullSDBeta00Z01.getJet().size() << std::endl;
+    
     //calculate some angularities
     //std::cout << "angularities SD grooming CSFull" << std::endl;
     vector<double> widthCSFullSD; widthCSFullSD.reserve(jetCollectionCSFullSDBeta00Z01.getJet().size());
@@ -334,24 +339,29 @@ int main (int argc, char ** argv) {
     int ijcf = 0;
     std::vector<std::vector<fastjet::PseudoJet>> listOfConstituentsSDCSFull = sdgCSFullBeta00Z01.getConstituents();
     for(PseudoJet jet : jetCollectionCSFullSDBeta00Z01.getJet()) {
-      if(jet.pt() > 50.) {
+      //std::cout << "CSF pt jet: " << jet.pt() << std::endl;
+      if(jet.pt() > 50. || listOfConstituentsSDCSFull[ijcf].size()>10000) {
+        //std::cout << "n constituents: " << listOfConstituentsSDCSFull[ijcf].size() << std::endl;
         fastjet::ClusterSequenceArea csCSFSD(listOfConstituentsSDCSFull[ijcf], jet_def_ca, area_def);
         std::vector<fastjet::PseudoJet> tempjets = csCSFSD.inclusive_jets();
         //std::cout << "CSF pt jet: " << jet.pt() << "  reclustered: " << tempjets[0].pt() << std::endl;
         widthCSFullSD.push_back(width.result(tempjets[0]));
         pTDCSFullSD.push_back(pTD.result(tempjets[0]));
         tau2CSFullSD.push_back(nSub2_beta1(tempjets[0]));
+        //std::cout << "stored angularities " << std::endl;
       } else {
         widthCSFullSD.push_back(-999.);
         pTDCSFullSD.push_back(-999.);
         tau2CSFullSD.push_back(-999.);
       }
-      ++ijcf;
+      ijcf++;
     }
-    jetCollectionCSFullSDBeta00Z01.addVector("widthCSFullSD", widthSig);
-    jetCollectionCSFullSDBeta00Z01.addVector("pTDCSFullSD", pTDSig);
+    //std::cout << "add angulaity vectors" << std::endl;
+    jetCollectionCSFullSDBeta00Z01.addVector("widthCSFullSD", widthCSFullSD);
+    jetCollectionCSFullSDBeta00Z01.addVector("pTDCSFullSD", pTDCSFullSD);
     jetCollectionCSFullSDBeta00Z01.addVector("tau2CSFullSD", tau2CSFullSD);
-
+    //std::cout << "add angulaity vectors  --p-- done" << std::endl;
+    
     //---------------------------------------------------------------------------
     //   Dynamical grooming CSFull jets
     //---------------------------------------------------------------------------

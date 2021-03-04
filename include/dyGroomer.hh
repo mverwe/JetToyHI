@@ -123,8 +123,8 @@ std::vector<fastjet::PseudoJet> dyGroomer::doGrooming()
    dr12_.reserve(fjInputs_.size());
    drBranches_.reserve(fjInputs_.size());
    kappa_.reserve(fjInputs_.size());
- //  tau21_.reserve(fjInputs_.size());
-//   tau32_.reserve(fjInputs_.size());
+   //  tau21_.reserve(fjInputs_.size());
+   //   tau32_.reserve(fjInputs_.size());
 
    int ijet = -1;
 

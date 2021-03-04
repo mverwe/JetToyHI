@@ -242,6 +242,7 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGrooming()
        sjleadingtrack_.push_back(-1.);
        logdr12_.push_back(0.);
        logzgdr12_.push_back(0.);
+       constituents_.push_back(std::vector<fastjet::PseudoJet>());
        constituents1_.push_back(std::vector<fastjet::PseudoJet>());
        constituents2_.push_back(std::vector<fastjet::PseudoJet>());
        continue;
@@ -267,6 +268,7 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGrooming()
          sjleadingtrack_.push_back(-1.);
          logdr12_.push_back(0.);
          logzgdr12_.push_back(0.);
+         constituents_.push_back(std::vector<fastjet::PseudoJet>());
          constituents1_.push_back(std::vector<fastjet::PseudoJet>());
          constituents2_.push_back(std::vector<fastjet::PseudoJet>());
          continue;
