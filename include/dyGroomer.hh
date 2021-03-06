@@ -215,7 +215,8 @@ std::vector<fastjet::PseudoJet> dyGroomer::doGrooming()
      drBranches_.push_back(ndrop);
      zg_.push_back(zg);
      dr12_.push_back(deltaR);
-     kappa_.push_back(kappa);
+     //kappa_.push_back(kappa);
+     kappa_.push_back(1./getKappa(pt,deltaR,zg));
    }
 
     // Compute the n-subjettiness ratio

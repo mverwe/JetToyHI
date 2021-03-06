@@ -31,6 +31,7 @@ using namespace fastjet;
 // This class runs time reclustering with background
 
 // ./runMiguelsVariablesBkg -hard samples/PythiaEventsTune14PtHat120_10k.pu14 -pileup samples/ThermalEventsMult7000PtAv1.20_0.pu14 -nev 10
+// ./runMiguelsVariablesBkg -hard samples/nikhef/PythiaEventsTune14PtHat120_0.pu14 -pileup samples/nikhef/ThermalEventsMult7000PtAv1.20_0.pu14 -nev 10
 //https://indico.cern.ch/event/974749/contributions/4104667/attachments/2147059/3619205/Strong2020-JetObservables.pdf
 //(SD_tau2, kappaTD), (tau2,SD_pt), (SD_rz, kappaTD), (SD_ptD, kappaktD)
 
@@ -180,7 +181,7 @@ int main (int argc, char ** argv) {
     dyGroomer dygTDSig(2);
     jetCollection jetCollectionSigDYTD(dygTDSig.doGrooming(jetCollectionSig));
     jetCollectionSigDYTD.addVector("kappaSigDYTD",    dygTDSig.getKappas());
-
+    
     dyGroomer dygKTDSig(1);
     jetCollection jetCollectionSigDYKTD(dygKTDSig.doGrooming(jetCollectionSig));
     jetCollectionSigDYKTD.addVector("kappaSigDYKTD",    dygKTDSig.getKappas());
@@ -268,8 +269,8 @@ int main (int argc, char ** argv) {
     //   }
     //   ++ijc;
     // }
-    // jetCollectionCSSDBeta00Z01.addVector("widthCSSD", widthSig);
-    // jetCollectionCSSDBeta00Z01.addVector("pTDCSSD", pTDSig);
+    // jetCollectionCSSDBeta00Z01.addVector("widthCSSD", widthSigCSSD);
+    // jetCollectionCSSDBeta00Z01.addVector("pTDCSSD", pTDSigCSSD);
     // jetCollectionCSSDBeta00Z01.addVector("tau2CSSD", tau2CSSD);
 
     // //---------------------------------------------------------------------------
