@@ -39,6 +39,7 @@ public :
   std::vector<fastjet::PseudoJet> getPartonList() const { return partons; }
 
   void getStat() {pythia.stat();}
+  double getWeight() {return pythia.info.weight();}
 
 };
   
@@ -94,6 +95,28 @@ std::vector<fastjet::PseudoJet> pythiaEvent::createPythiaEvent() {
         d2 = pythia.event[d2].daughter2();
       }
 
+      if(vinciaShower_) { //in vincia need to pass the recoil type of particles
+        int st1 = pythia.event[d1].status();
+        int st2 = pythia.event[d2].status();
+        //std::cout << "d1: " << d1 << " st1: " << st1 << " d2: " << d2 << " st2: " << st2 << std::endl;
+        
+        while(abs(st1)<51 && abs(st2)<51) {
+          if(st1==-44) { //44 : outgoing shifted by a branching
+            d1 = pythia.event[d1].daughter1();
+            d2 = pythia.event[d1].daughter2();
+          } else if(st2==-44) {
+            d1 = pythia.event[d2].daughter1();
+            d2 = pythia.event[d2].daughter2();
+          }
+          st1 = pythia.event[d1].status();
+          st2 = pythia.event[d2].status();
+
+          //std::cout << "d1: " << d1 << " st1: " << st1 << " d2: " << d2 << " st2: " << st2 << std::endl;
+        }
+      }
+
+      //std::cout << "mom: " << i << " d1: " << d1 << " d2: " << d2 << std::endl; 
+      
       fastjet::PseudoJet pd1(pythia.event[d1].px(),pythia.event[d1].py(),pythia.event[d1].pz(),pythia.event[d1].e());
       pd1.set_user_info(new extraInfo(pythia.event[d1].id(), -2)); 
       partons.push_back(pd1);
@@ -105,8 +128,8 @@ std::vector<fastjet::PseudoJet> pythiaEvent::createPythiaEvent() {
     }
   }
 
-  // pythia.event.list();
-
+  //pythia.event.list();
+  
   return particles;
 }
 
