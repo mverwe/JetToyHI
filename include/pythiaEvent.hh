@@ -76,6 +76,8 @@ std::vector<fastjet::PseudoJet> pythiaEvent::createPythiaEvent() {
   std::vector<fastjet::PseudoJet> particles;
   partons.clear(); //empty list before storing partons of new event
 
+  //int iprint = 0;
+  
   for (int i = 0; i < pythia.event.size(); ++i) {
     if (pythia.event[i].isFinal()) { //all final state particles
       fastjet::PseudoJet p(pythia.event[i].px(),pythia.event[i].py(),pythia.event[i].pz(),pythia.event[i].e());
@@ -107,6 +109,19 @@ std::vector<fastjet::PseudoJet> pythiaEvent::createPythiaEvent() {
           } else if(st2==-44) {
             d1 = pythia.event[d2].daughter1();
             d2 = pythia.event[d2].daughter2();
+          } else {
+            //std::cout << "mom: " << i << " d1: " << d1 << " st1: " << pythia.event[d1].status() << " d2: " << d2 << " st2: " << pythia.event[d2].status() << std::endl;
+            double pt1 = pythia.event[d1].px()*pythia.event[d1].px() + pythia.event[d1].py()*pythia.event[d1].py();
+            double pt2 = pythia.event[d2].px()*pythia.event[d2].px() + pythia.event[d2].py()*pythia.event[d2].py();
+            if(pt1 > pt2) {
+              d1 = pythia.event[d1].daughter1();
+              d2 = pythia.event[d1].daughter2();
+            } else {
+              d1 = pythia.event[d2].daughter1();
+              d2 = pythia.event[d2].daughter2();
+            }
+            //iprint = 1;
+            //std::cout << "mom: " << i << " d1: " << d1 << " st1: " << pythia.event[d1].status() << " d2: " << d2 << " st2: " << pythia.event[d2].status() << std::endl;
           }
           st1 = pythia.event[d1].status();
           st2 = pythia.event[d2].status();
@@ -128,7 +143,7 @@ std::vector<fastjet::PseudoJet> pythiaEvent::createPythiaEvent() {
     }
   }
 
-  //pythia.event.list();
+  //if(iprint==1) pythia.event.list();
   
   return particles;
 }
