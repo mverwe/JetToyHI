@@ -59,6 +59,8 @@ int main (int argc, char ** argv)
     //   produce event
     //---------------------------------------------------------------------------
 
+    //std::cout << "# event " << ie << "\n";
+    
     fout << "# event " << ie << "\n";
 
     //create pythia event
