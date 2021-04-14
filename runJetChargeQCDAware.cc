@@ -46,7 +46,8 @@ int main (int argc, char ** argv) {
   int          showerType = cmdline.value<int>("-shower",1);
   
   std::cout << "will run on " << nEvent << " events" << std::endl;
-
+  std::cout << "showerType: " << showerType << std::endl;
+  
   // Uncomment to silence fastjet banner
   ClusterSequence::set_fastjet_banner_stream(NULL);
 
@@ -72,7 +73,9 @@ int main (int argc, char ** argv) {
   double jetRapMax = 100.;//3.0;
   fastjet::Selector jet_selector = SelectorAbsRapMax(jetRapMax);
 
-  JetCharge jetCharge(0.5);
+  JetCharge jetCharge(0.5, -1.);
+  JetCharge jetChargePtMin1(0.5, 1.);
+  JetCharge jetChargePtMin2(0.5, 2.);
 
   //Pythia settings
   Pythia8::Pythia pythia;
@@ -85,7 +88,7 @@ int main (int argc, char ** argv) {
   pythia.readString("Random:setSeed = on");
   pythia.readString("Random:seed = 0");
   pythia.readString(Form("PartonShowers:Model = %d",showerType)); //1: default 2: VINCIA  3: DIRE
-  pythia.readString(Form("Tune:pp = %d",tune));
+  if(showerType==1) pythia.readString(Form("Tune:pp = %d",tune));
   pythia.init();
   
   ProgressBar Bar(cout, nEvent);
@@ -199,10 +202,16 @@ int main (int argc, char ** argv) {
   
       //Calculate jet charge
       vector<double> jetChargeSig; jetChargeSig.reserve(jetCollectionSig.getJet().size());
+      vector<double> jetChargePtmin1Sig; jetChargePtmin1Sig.reserve(jetCollectionSig.getJet().size());
+      vector<double> jetChargePtmin2Sig; jetChargePtmin2Sig.reserve(jetCollectionSig.getJet().size());
       for(PseudoJet jet : jetCollectionSig.getJet()) {
         jetChargeSig.push_back(jetCharge.result(jet));
+        jetChargePtmin1Sig.push_back(jetChargePtMin1.result(jet));
+        jetChargePtmin2Sig.push_back(jetChargePtMin2.result(jet));
       }
       jetCollectionSig.addVector("sigJetCharge", jetChargeSig);
+      jetCollectionSig.addVector("sigJetChargePtmin1", jetChargePtmin1Sig);
+      jetCollectionSig.addVector("sigJetChargePtmin2", jetChargePtmin2Sig);
 
       trwSig.addCollection("sigJet",        jetCollectionSig);
     }
