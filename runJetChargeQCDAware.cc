@@ -247,12 +247,19 @@ int main (int argc, char ** argv) {
       jetCollectionSigCh.addVector("sigJetCh_partonMatchPDG", partonmatchpdgCh);
       
       //Calculate jet charge
-      vector<double> jetChargeSigCh; jetChargeSigCh.reserve(jetCollectionSigCh.getJet().size());
+      vector<double> jetChargeSigCh;       jetChargeSigCh.reserve(jetCollectionSigCh.getJet().size());
+      vector<double> jetChargePtmin1SigCh; jetChargePtmin1SigCh.reserve(jetCollectionSigCh.getJet().size());
+      vector<double> jetChargePtmin2SigCh; jetChargePtmin2SigCh.reserve(jetCollectionSigCh.getJet().size());
       for(PseudoJet jet : jetCollectionSigCh.getJet()) {
         jetChargeSigCh.push_back(jetCharge.result(jet));
+        jetChargePtmin1SigCh.push_back(jetChargePtMin1.result(jet));
+        jetChargePtmin2SigCh.push_back(jetChargePtMin2.result(jet));
       }
       jetCollectionSigCh.addVector("sigJetChCharge", jetChargeSigCh);
-    
+      jetCollectionSigCh.addVector("sigJetChChargePtmin1", jetChargePtmin1SigCh);
+      jetCollectionSigCh.addVector("sigJetChChargePtmin2", jetChargePtmin2SigCh);
+
+
       //---------------------------------------------------------------------------
       //   write tree
       //---------------------------------------------------------------------------
