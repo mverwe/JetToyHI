@@ -84,7 +84,7 @@ int main (int argc, char ** argv) {
   pythia.readString("Next:numberShowEvent = 0");
   pythia.readString("Random:setSeed = on");
   pythia.readString("Random:seed = 0");
-  pythia.readString(Forn("PartonShowers:Model = %d",showerType)); //1: default 2: VINCIA  3: DIRE
+  pythia.readString(Form("PartonShowers:Model = %d",showerType)); //1: default 2: VINCIA  3: DIRE
   pythia.readString(Form("Tune:pp = %d",tune));
   pythia.init();
   
@@ -262,15 +262,18 @@ int main (int argc, char ** argv) {
   Bar.Print();
   Bar.PrintLine();
 
-  TString strOut = "JetToyHIResultJetChargeQCDAware_PYTHIA.root";
-  if(showerType==2) strOut = "JetToyHIResultJetChargeQCDAware_VINCIA.root";
-  if(showerType==3) strOut = "JetToyHIResultJetChargeQCDAware_DIRE.root";
-  TFile *fout = new TFile(,"RECREATE");
+  TString strOut = Form("JetToyHIResultJetChargeQCDAware_PYTHIA_PTHAT%.0f.root",ptHat);
+  if(showerType==2) strOut = Form("JetToyHIResultJetChargeQCDAware_VINCIA_PTHAT%.0f.root",ptHat);
+  if(showerType==3) strOut = Form("JetToyHIResultJetChargeQCDAware_DIRE_PTHAT%.0f.root",ptHat);
+  TFile *fout = new TFile(strOut.Data(),"RECREATE");
   trwSig.getTree()->Write();
   
   fout->Write();
   fout->Close();
 
+  delete akt04dm;
+  delete qcdawareakt04;
+  
   double time_in_seconds = std::chrono::duration_cast<std::chrono::milliseconds>
     (std::chrono::steady_clock::now() - start_time).count() / 1000.0;
   std::cout << "runFromFile: " << time_in_seconds << std::endl;
