@@ -1,5 +1,5 @@
-#ifndef __Angularity_HH__
-#define __Angularity_HH__
+#ifndef __JetCharge_HH__
+#define __JetCharge_HH__
 
 //------------------------------------------------------------------------
 /// jet charge
