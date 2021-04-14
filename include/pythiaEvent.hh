@@ -49,7 +49,7 @@ pythiaEvent::pythiaEvent(double pthat, unsigned int tune, double rapMin, double 
     
   // Generator. LHC process and output selection. Initialization.
   // tunes: http://home.thep.lu.se/~torbjorn/pythia82html/Tunes.html
-  pythia.readString("Beams:eCM = 5002.");
+  pythia.readString("Beams:eCM = 5020.");
   pythia.readString("HardQCD:all = on");
   pythia.readString(Form("PhaseSpace:pTHatMin = %.1f",pthat_));
   pythia.readString("Next:numberShowInfo = 0");
