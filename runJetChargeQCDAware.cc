@@ -55,7 +55,7 @@ int main (int argc, char ** argv) {
   treeWriter trwSig("jetTreeSig");
 
   bool runFull = true;
-  bool runCharged = false;//true;
+  bool runCharged = true;
  
   //Jet definition
   double R                   = 0.4;
@@ -213,6 +213,25 @@ int main (int argc, char ** argv) {
       jetCollectionSig.addVector("sigJetChargePtmin1", jetChargePtmin1Sig);
       jetCollectionSig.addVector("sigJetChargePtmin2", jetChargePtmin2Sig);
 
+      //count constituents entering jet charge calculation
+      vector<int> jetNConstSig;       jetNConstSig.reserve(jetCollectionSig.getJet().size());
+      vector<int> jetNConstPtmin1Sig; jetNConstPtmin1Sig.reserve(jetCollectionSig.getJet().size());
+      vector<int> jetNConstPtmin2Sig; jetNConstPtmin2Sig.reserve(jetCollectionSig.getJet().size());
+      for(PseudoJet jet : jetCollectionSig.getJet()) {
+        int nconst[3] = {0,0,0};
+        for(fastjet::PseudoJet p : jet.constituents()) {
+          ++nconst[0];
+          if(p.perp()>1.) ++nconst[1];
+          if(p.perp()>2.) ++nconst[2];
+        }
+        jetNConstSig.push_back(nconst[0]);
+        jetNConstPtmin1Sig.push_back(nconst[1]);
+        jetNConstPtmin2Sig.push_back(nconst[2]);
+      }
+      jetCollectionSig.addVector("sigJetNConst", jetNConstSig);
+      jetCollectionSig.addVector("sigJetNConstPtmin1", jetNConstPtmin1Sig);
+      jetCollectionSig.addVector("sigJetNConstPtmin2", jetNConstPtmin2Sig);
+      
       trwSig.addCollection("sigJet",        jetCollectionSig);
     }
 
@@ -259,6 +278,25 @@ int main (int argc, char ** argv) {
       jetCollectionSigCh.addVector("sigJetChChargePtmin1", jetChargePtmin1SigCh);
       jetCollectionSigCh.addVector("sigJetChChargePtmin2", jetChargePtmin2SigCh);
 
+      //count constituents entering jet charge calculation
+      vector<int> jetNConstSigCh;       jetNConstSigCh.reserve(jetCollectionSigCh.getJet().size());
+      vector<int> jetNConstPtmin1SigCh; jetNConstPtmin1SigCh.reserve(jetCollectionSigCh.getJet().size());
+      vector<int> jetNConstPtmin2SigCh; jetNConstPtmin2SigCh.reserve(jetCollectionSigCh.getJet().size());
+
+      for(PseudoJet jet : jetCollectionSigCh.getJet()) {
+        int nconst[3] = {0,0,0};
+        for(fastjet::PseudoJet p : jet.constituents()) {
+          ++nconst[0];
+          if(p.perp()>1.) ++nconst[1];
+          if(p.perp()>2.) ++nconst[2];
+        }
+        jetNConstSigCh.push_back(nconst[0]);
+        jetNConstPtmin1SigCh.push_back(nconst[1]);
+        jetNConstPtmin2SigCh.push_back(nconst[2]);
+      }
+      jetCollectionSigCh.addVector("sigJetChNConst", jetNConstSigCh);
+      jetCollectionSigCh.addVector("sigJetChNConstPtmin1", jetNConstPtmin1SigCh);
+      jetCollectionSigCh.addVector("sigJetChNConstPtmin2", jetNConstPtmin2SigCh);
 
       //---------------------------------------------------------------------------
       //   write tree
