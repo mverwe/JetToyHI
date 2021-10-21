@@ -48,6 +48,7 @@ public :
     subtractor_.set_distance_type(contrib::ConstituentSubtractor::deltaR);
     subtractor_.set_max_distance(rParam_); //free parameter for the maximal allowed distance between particle i and ghost k
     subtractor_.set_alpha(alpha_); // free parameter for the distance measure (the exponent of particle pt). Note that in older versions of the package alpha was multiplied by two but in newer versions this is not the case anymore
+    subtractor_.set_scale_fourmomentum(); //Keep rapidity and pseudo-rapidity fixed (scale fourmomentum). Recommended - observed better performance than the mass correction. Use: subtractor.set_scale_fourmomentum();
     subtractor_.set_do_mass_subtraction();//true);
 
   }

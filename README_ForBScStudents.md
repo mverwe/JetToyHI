@@ -9,20 +9,20 @@ First you have to install docker on your laptop. For windows you can download it
 
 Once you have installed docker you will have to install some libraries. Follow these instructions that have you can type into the terminal:
 ```sh
-docker pull ubuntu #this gets latest ubuntu image (bionic, 18.04)
+docker pull ubuntu:20.04 #this gets long-term support ubunut version 20.04
 
 docker run -i -t ubuntu /bin/bash
 
 apt update -y
 
-apt install -y vim wget curl libcurl4-gnutls-dev build-essential gfortran cmake libmysqlclient-dev xorg-dev libglu1-mesa-dev libfftw3-dev libssl1.0 libssl1.0-dev libxml2-dev git unzip python-pip autoconf automake autopoint texinfo gettext libtool libtool-bin pkg-config bison flex libperl-dev libbz2-dev libboost-all-dev swig liblzma-dev libnanomsg-dev libyaml-cpp-dev rsync lsb-release unzip environment-modules
+apt install -y vim wget curl libcurl4-gnutls-dev build-essential gfortran cmake libmysqlclient-dev xorg-dev libglu1-mesa-dev libfftw3-dev libssl1.1 libxml2-dev git unzip python3-pip autoconf automake autopoint texinfo gettext libtool libtool-bin pkg-config bison flex libperl-dev libbz2-dev libboost-all-dev swig liblzma-dev libnanomsg-dev libyaml-cpp-dev rsync lsb-release unzip environment-modules
 
 apt-get install xutils-dev libgsl23 libtbb-dev
 
 apt-get install apt-utils libssl-dev
 apt-get install libgsl0-dev
 
-pip install matplotlib numpy certifi ipython==5.1.0 ipywidgets ipykernel notebook metakernel pyyaml
+pip install matplotlib numpy certifi ipython==7.28.0 ipywidgets ipykernel notebook metakernel pyyaml
 ```
 
 ### Virtual Machine
@@ -52,11 +52,11 @@ rootsetup=$PWD/root/bin/thisroot.sh
 echo $rootsetup >> ~/.bashrc
 ```
 
-### Install PYTHIA8
+### Install PYTHIA8.3
 ```sh
-wget http://home.thep.lu.se/~torbjorn/pythia8/pythia8235.tgz
-tar xvfz pythia8235.tgz
-cd pythia8235
+wget http://home.thep.lu.se/~torbjorn/pythia8/pythia8303.tgz
+tar xvfz pythia8303.tgz
+cd pythia8303
 ./configure
 make
 PYTHIA=$PWD
@@ -77,7 +77,7 @@ make install
 FASTJET=$PWD/../fastjet333-install
 cd ..
 
-export FJ_CONTRIB_VER=1.042 
+export FJ_CONTRIB_VER=1.045 
 curl -Lo source.tar.gz http://fastjet.hepforge.org/contrib/downloads/fjcontrib-"$FJ_CONTRIB_VER".tar.gz
 tar xzf source.tar.gz
 cd fjcontrib-"$FJ_CONTRIB_VER"
@@ -93,7 +93,7 @@ cd ..
 ```sh
 git clone https://github.com/mverwe/JetToyHI.git
 cd JetToyHI
-git pull --rebase origin forbsc2
+git pull --rebase origin pyt83
 
 echo `$FASTJET/bin/fastjet-config --prefix` > .fastjet
 echo $PYTHIA > .pythia8

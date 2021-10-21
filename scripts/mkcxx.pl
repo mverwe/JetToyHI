@@ -146,7 +146,7 @@ if (defined($options{"8"})) {
   $makefile.="
 PYTHIA8LOCATION = $pythia8location
 INCLUDE += -I\$(PYTHIA8LOCATION)/include
-LIBRARIES  += -L\$(PYTHIA8LOCATION)/lib -lpythia8
+LIBRARIES  += -L\$(PYTHIA8LOCATION)/lib -Wl,-rpath,\$(PYTHIA8LOCATION)/lib -lpythia8 -ldl
 ";
 }
 
