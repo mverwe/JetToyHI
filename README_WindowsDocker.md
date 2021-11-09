@@ -1,4 +1,15 @@
 # Setting up software and run jet analysis with JetToyHI framework with Docker
+To run this software inside of a docker container you can use the following container: https://hub.docker.com/repository/docker/bashofman/jettoyhi
+
+This container comes loaded with:
+```ROOT``` : 6.24/06
+
+```Pythia``` : 8.306
+
+```Fastjet``` : 3.4.0
+
+```FJ Contrib``` : 1.045
+
 
 ## Windows 
 To run the JetToyHI software with Windows we need 3 pieces of software: WSL, Docker and Xming.
@@ -50,7 +61,7 @@ We will use a pre-configured docker container: https://hub.docker.com/repository
 To download this container do:
 
 ```sh
-docker pull bashofman/jettoyhi:latest
+docker pull bashofman/jettoyhi:1.0
 ```
 
 After the container downloaded succesfully we will be cloning the JetToyHI code. Navigate to a directory into which you would like to download the code and do:
@@ -58,13 +69,13 @@ After the container downloaded succesfully we will be cloning the JetToyHI code.
 ```sh
 git clone https://github.com/mverwe/JetToyHI.git
 cd JetToyHI
-git pull --rebase origin pyt83
+git pull --rebase origin forbsc2
 ```
 
 You should now be in the folder containing the JetToyHI code. From this folder we will be launching docker using:
 
 ```sh
-docker run -it -v $PWD:/soft/JetToyHI -e DISPLAY=$DISPLAY bashofman/jettoyhi:latest
+docker run -it -v $PWD:/soft/JetToyHI -e DISPLAY=$DISPLAY bashofman/jettoyhi:1.0
 ```
 
 here ```-it``` runs the container interactively, so it stays open and you can work inside of it. ```-v $PWD:/soft/JetToyHI``` binds the folder your code is in (```$PWD```) to a folder inside of the container (```/soft/JetToyHI```). The ```-e``` flag sets the IP adress to send your graphical output to.
