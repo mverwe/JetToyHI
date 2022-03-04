@@ -29,7 +29,8 @@ pip install matplotlib numpy certifi ipython==7.28.0 ipywidgets ipykernel notebo
 If you prefer to use a virtual machine running ubuntu, use google to find one that you like. Afterwards you will have to install the same libraries as listed above for docker. Note that you will have to put `sudo` in front of all the `apt` commands.
 
 ### MacOS
-On a mac there is no need for a virtual machine or docker. But you will need a C++ compiler that you can get by installing xcode to be found in the AppStore.
+On a mac there is no need for a virtual machine or docker. But you will need a C++ compiler that you can get by installing xcode to be found in the AppStore. In addition it is good to still homebew so that you can easily pull in packages. You will need for example:
+```brew install makedepend```
 
 ## JetToyHI installation
 
