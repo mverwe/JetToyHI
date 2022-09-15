@@ -43,9 +43,9 @@ cd soft
 ```
 
 ### Install ROOT
-The easiest is to just grep a precompiled version from the root website https://root.cern.ch/content/release-61404 (take ROOT6). You can do this directly from the terminal:
+The easiest is to just grep a precompiled version from the root website https://root.cern/install/all_releases/ (take ROOT6). You can do this directly from the terminal:
 ```sh
-wget https://root.cern.ch/download/root_v6.14.04.Linux-ubuntu18-x86_64-gcc7.3.tar.gz
+wget https://root.cern.ch/download/root_v6.14.04.Linux-ubuntu18-x86_64-gcc7.3.tar.gz  #adjust this line with the appropriate version for you OS (see link above)
 tar xvfz  root_v6.14.04.Linux-ubuntu18-x86_64-gcc7.3.tar.gz
 rootsetup=$PWD/root/bin/thisroot.sh
 . $rootsetup
