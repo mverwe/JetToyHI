@@ -31,8 +31,9 @@ private :
   std::vector<double>             zg_;         //zg of groomed jets
   std::vector<int>                drBranches_; //dropped branches
   std::vector<double>             dr12_;       //distance between the two subjet
-  std::vector<double>             tau21_; //n-subjettiness ratio 21
-  std::vector<double>             tau32_; //n-subjettiness ratio 32
+  std::vector<double>             kt_;         //kt of groomed jets
+  std::vector<double>             tau21_;      //n-subjettiness ratio 21
+  std::vector<double>             tau32_;      //n-subjettiness ratio 32
   std::vector<double>             kappa_;      //kappa of groomed jets
 
 public :
@@ -42,6 +43,7 @@ public :
   std::vector<double> getZgs() const;
   std::vector<double>  calculateZg();
   std::vector<double> getDR12() const;
+  std::vector<double> getKts() const;
   std::vector<int> getNDroppedSubjets() const;
   std::vector<double> getKappas() const;
   std::vector<double> getTau21() const;
@@ -75,6 +77,11 @@ std::vector<double> dyGroomer::getZgs() const
 std::vector<double> dyGroomer::getDR12() const
 {
    return dr12_;
+}
+
+std::vector<double> dyGroomer::getKts() const
+{
+   return kt_;
 }
 
 std::vector<double> dyGroomer::getTau21() const
@@ -121,6 +128,7 @@ std::vector<fastjet::PseudoJet> dyGroomer::doGrooming()
    fjOutputs_.reserve(fjInputs_.size());
    zg_.reserve(fjInputs_.size());
    dr12_.reserve(fjInputs_.size());
+   kt_.reserve(fjInputs_.size());
    drBranches_.reserve(fjInputs_.size());
    kappa_.reserve(fjInputs_.size());
    //  tau21_.reserve(fjInputs_.size());
@@ -135,6 +143,7 @@ std::vector<fastjet::PseudoJet> dyGroomer::doGrooming()
          fjOutputs_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
          zg_.push_back(-1.);
          dr12_.push_back(-1.);
+         kt_.push_back(-1.);
          drBranches_.push_back(-1.);
          kappa_.push_back(-1.);
          //tau21_.push_back(-1);
@@ -157,6 +166,7 @@ std::vector<fastjet::PseudoJet> dyGroomer::doGrooming()
          fjOutputs_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
          zg_.push_back(-1.);
          dr12_.push_back(-1.);
+         kt_.push_back(-1.);
          drBranches_.push_back(-1.);
          kappa_.push_back(-1.);
          //tau21_.push_back(-1);
@@ -207,17 +217,19 @@ std::vector<fastjet::PseudoJet> dyGroomer::doGrooming()
      fastjet::PseudoJet daughter1, daughter2;
      groomed_jet.has_parents(daughter1, daughter2);
 
-   //  if(daughter1.pt() + daughter2.pt() > 0 && daughter1.E()>0. && daughter2.E()>0. && daughter1.m()>0. && daughter2.m()>0.){
-   if (daughter1.pt() + daughter2.pt() > 0 && daughter1.E()>0. && daughter2.E()>0){
-     double pt = daughter1.pt() + daughter2.pt();
-     double zg = min(daughter1.pt(), daughter2.pt()) / pt;
-     double deltaR = daughter1.delta_R(daughter2);
-     drBranches_.push_back(ndrop);
-     zg_.push_back(zg);
-     dr12_.push_back(deltaR);
-     //kappa_.push_back(kappa);
-     kappa_.push_back(1./getKappa(pt,deltaR,zg));
-   }
+     //  if(daughter1.pt() + daughter2.pt() > 0 && daughter1.E()>0. && daughter2.E()>0. && daughter1.m()>0. && daughter2.m()>0.){
+     if (daughter1.pt() + daughter2.pt() > 0 && daughter1.E()>0. && daughter2.E()>0){
+       double pt = daughter1.pt() + daughter2.pt();
+       double zg = min(daughter1.pt(), daughter2.pt()) / pt;
+       double deltaR = daughter1.delta_R(daughter2);
+       double kt = min(daughter1.pt(), daughter2.pt()) * deltaR;
+       drBranches_.push_back(ndrop);
+       zg_.push_back(zg);
+       dr12_.push_back(deltaR);
+       kt_.push_back(kt);
+       //kappa_.push_back(kappa);
+       kappa_.push_back(1./getKappa(pt,deltaR,zg));
+     }
 
     // Compute the n-subjettiness ratio
    // double beta = 2;
@@ -236,6 +248,7 @@ std::vector<fastjet::PseudoJet> dyGroomer::doGrooming()
    else {fjOutputs_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
          zg_.push_back(-1.);
          dr12_.push_back(-1.);
+         kt_.push_back(-1.);
          drBranches_.push_back(-1.);
          kappa_.push_back(-1.);
        //  tau21_.push_back(-1);
