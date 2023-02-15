@@ -29,7 +29,7 @@ using namespace std;
 using namespace fastjet;
 
 // This class runs large kT VLE analysis
-// ./runHardKtVLE -hard samples/PythiaEventsTune14PtHat120_10k.pu14 -pileup samples/ThermalEventsMult7000PtAv1.20_0.pu14 -nev 10
+// ./runHardKtVLE -hard samples/PythiaEventsTune14PtHat120_10k.pu14 -nev 10
 
 int main (int argc, char ** argv) {
 
@@ -120,6 +120,14 @@ int main (int argc, char ** argv) {
     jetCollectionSigDYKTD.addVector("rgSigDYKTD",       dygKTDSig.getDR12());   
     jetCollectionSigDYKTD.addVector("zgSigDYKTD",       dygKTDSig.getZgs());   
     jetCollectionSigDYKTD.addVector("ktgSigDYKTD",       dygKTDSig.getKts());
+
+    //---------------------------------------------------------------------------
+    //   Recursive Soft Drop for signal jets
+    //---------------------------------------------------------------------------
+    softDropCounter sdcSig(0.1,0.0,R,0.0);
+    sdcSig.setRecursiveAlgo(0);//0 = CA 1 = AKT 2 = KT  3=gen_kt t-form ordered
+    sdcSig.run(jetCollectionSig);
+    jetCollectionSig.addVector("sigJetRecur_nSD",       sdcSig.calculateNSD(0.0));
     
     //---------------------------------------------------------------------------
     //   write tree
@@ -127,7 +135,6 @@ int main (int argc, char ** argv) {
     
     //Give variable we want to write out to treeWriter.
     //Only vectors of the types 'jetCollection', and 'double', 'int', 'fastjet::PseudoJet' are supported
-
     trwSig.addCollection("eventWeight",   eventWeight);
   
     trwSig.addCollection("sigJet",        jetCollectionSig);
@@ -140,7 +147,7 @@ int main (int argc, char ** argv) {
   Bar.Print();
   Bar.PrintLine();
 
-  TFile *fout = new TFile("JetToyHIResultHardKtVLEHybrid.root","RECREATE");
+  TFile *fout = new TFile("JetToyHIResultHardKtVLE.root","RECREATE");
   trwSig.getTree()->Write();
   
   fout->Write();
