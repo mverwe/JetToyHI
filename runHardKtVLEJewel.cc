@@ -86,7 +86,7 @@ int main (int argc, char ** argv) {
     eventWeight.push_back(mixer.hard_weight());
     eventWeight.push_back(mixer.pu_weight());
 
-    // extract hard partons that initiated the jets
+    // extract thermal and dummies
     fastjet::Selector dummy_selector = SelectorVertexNumber(-1);
     vector<PseudoJet> particlesDummy = dummy_selector(particlesMergedAll);
 
@@ -120,8 +120,7 @@ int main (int argc, char ** argv) {
     subtractor.set_remove_all_zero_pt_particles(true);
 
     std::vector<fastjet::PseudoJet> subtracted_particles = subtractor.do_subtraction(particlesSig, particlesDummy);
-    
-     
+
     //---------------------------------------------------------------------------
     //   jet clustering
     //---------------------------------------------------------------------------

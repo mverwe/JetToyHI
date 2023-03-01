@@ -44,7 +44,7 @@ int main (int argc, char ** argv) {
   ClusterSequence::set_fastjet_banner_stream(NULL);
 
   //to write info to root tree
-  treeWriter trw("jetTree");
+  treeWriter trw("jetTreeSig");
 
   //Jet definition
   double R                   = 0.4;
@@ -77,26 +77,46 @@ int main (int argc, char ** argv) {
     Bar.Update(iev);
     Bar.PrintWithMod(entryDiv);
 
-    vector<PseudoJet> particlesMerged = mixer.particles();
+    vector<PseudoJet> particlesMergedAll = mixer.particles();
 
     vector<double> eventWeight;
     eventWeight.push_back(mixer.hard_weight());
     eventWeight.push_back(mixer.pu_weight());
 
-    // cluster hard event only
-    vector<PseudoJet> particlesDummy, particlesReal;
-    vector<PseudoJet> particlesBkg, particlesSig;
-    SelectorVertexNumber(-1).sift(particlesMerged, particlesDummy, particlesReal);
-    SelectorVertexNumber(0).sift(particlesReal, particlesSig, particlesBkg);
+    // extract thermal and dummies
+    fastjet::Selector dummy_selector = SelectorVertexNumber(-1);
+    vector<PseudoJet> particlesDummy = dummy_selector(particlesMergedAll);
 
-    for(int i = 0; i < (int)particlesDummy.size(); i++)
-    {
-       if(particlesDummy[i].perp() < 1e-5 && fabs(particlesDummy[i].pz()) > 2000)
-       {
-          particlesDummy.erase(particlesDummy.begin() + i);
-          i = i - 1;
-       }
+    // select final state particles from hard event only
+    fastjet::Selector sig_selector = SelectorVertexNumber(0);
+    vector<PseudoJet> particlesSig = sig_selector(particlesMergedAll);
+
+    // select final state particles from background event only
+    fastjet::Selector bkg_selector = SelectorVertexNumber(1);
+    vector<PseudoJet> particlesBkg = bkg_selector(particlesMergedAll);
+
+    vector<PseudoJet> particlesMerged = particlesBkg;
+    particlesMerged.insert( particlesMerged.end(), particlesSig.begin(), particlesSig.end() );
+
+    //remove ghosts from jewel dummies
+    for(int i = 0; i < (int)particlesDummy.size(); i++) {
+      if(particlesDummy[i].perp() < 1e-5 && fabs(particlesDummy[i].pz()) > 2000) {
+        particlesDummy.erase(particlesDummy.begin() + i);
+        i = i - 1;
+      }
     }
+
+    //---------------------------------------------------------------------------
+    //   subtract medium response in full event
+    //---------------------------------------------------------------------------
+    fastjet::contrib::ConstituentSubtractor subtractor;
+    subtractor.set_distance_type(fastjet::contrib::ConstituentSubtractor::deltaR);  // distance in eta-phi plane
+    subtractor.set_max_distance(0.5);  // free parameter for the maximal allowed distance between particle i and ghost k
+    subtractor.set_alpha(0.);  // free parameter for the distance measure (the exponent of particle pt). Note that in older versions of the package alpha was multiplied by two but in newer versions this is not the case anymore
+    //subtractor.set_scale_fourmomentum();
+    subtractor.set_remove_all_zero_pt_particles(true);
+
+    std::vector<fastjet::PseudoJet> subtracted_particles = subtractor.do_subtraction(particlesSig, particlesDummy);
 
     //---------------------------------------------------------------------------
     //   jet clustering
@@ -106,6 +126,18 @@ int main (int argc, char ** argv) {
     jetCollection jetCollectionSig(sorted_by_pt(jet_selector(csSig.inclusive_jets(10.))));
     jetCollection jetCollectionSigJewel(GetCorrectedJets(jetCollectionSig.getJet(), particlesDummy));
 
+    // run the clustering on subtracted event
+    fastjet::ClusterSequenceArea csSigCS(subtracted_particles, jet_def, area_def);
+    jetCollection jetCollectionSigCS(sorted_by_pt(jet_selector(csSigCS.inclusive_jets(10.))));
+
+    //match CS jets to signal jets
+    jetMatcher jmCS(R);
+    jmCS.setBaseJets(jetCollectionSigCS);
+    jmCS.setTagJets(jetCollectionSig);
+    jmCS.matchJets();
+
+    jmCS.reorderedToTag(jetCollectionSigCS);
+    
     //---------------------------------------------------------------------------
     //   Groom the jets
     //---------------------------------------------------------------------------
@@ -116,12 +148,21 @@ int main (int argc, char ** argv) {
     jetCollectionSigSD.addVector("sigJetSDZg",    sdgSig.getZgs());
     jetCollectionSigSD.addVector("sigJetSDndrop", sdgSig.getNDroppedSubjets());
     jetCollectionSigSD.addVector("sigJetSDdr12",  sdgSig.getDR12());
+
     
     jetCollection jetCollectionSigSDJewel(GetCorrectedJets(sdgSig.getConstituents(), particlesDummy));
     vector<pair<PseudoJet, PseudoJet>> SigSDJewel = GetCorrectedSubJets(sdgSig.getConstituents1(), sdgSig.getConstituents2(), particlesDummy);
     jetCollectionSigSDJewel.addVector("sigJetSDJewelzg",   CalculateZG(SigSDJewel));
     jetCollectionSigSDJewel.addVector("sigJetSDJeweldr12", CalculateDR(SigSDJewel));
-   
+
+
+    softDropGroomer sdgSigCS(0.1, 0.0, R);
+    jetCollection jetCollectionSigCSSD(sdgSigCS.doGrooming(jetCollectionSigCS));
+    jetCollectionSigCSSD.addVector("sigJetCSSDZg",    sdgSigCS.getZgs());
+    jetCollectionSigCSSD.addVector("sigJetCSSDndrop", sdgSigCS.getNDroppedSubjets());
+    jetCollectionSigCSSD.addVector("sigJetCSSDdr12",  sdgSigCS.getDR12());
+
+
     //---------------------------------------------------------------------------
     //   write tree
     //---------------------------------------------------------------------------
@@ -129,11 +170,15 @@ int main (int argc, char ** argv) {
     //Give variable we want to write out to treeWriter.
     //Only vectors of the types 'jetCollection', and 'double', 'int', 'PseudoJet' are supported
 
+    trw.addCollection("eventWeight",   eventWeight);
+
     trw.addCollection("sigJet",        jetCollectionSig);
     trw.addCollection("sigJetJewel",   jetCollectionSigJewel);
     trw.addCollection("sigJetSD",      jetCollectionSigSD);
     trw.addCollection("sigJetSDJewel", jetCollectionSigSDJewel);
-    trw.addCollection("eventWeight",   eventWeight);
+
+    trw.addCollection("sigJetCS",      jetCollectionSigCS);
+    trw.addCollection("sigJetCSSD",    jetCollectionSigCSSD);
         
     trw.fillTree();
 
