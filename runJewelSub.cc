@@ -106,16 +106,29 @@ int main (int argc, char ** argv) {
       }
     }
 
+    //---------------------------------------------------------------------------
+    //   subtract medium response in full event
+    //---------------------------------------------------------------------------
+    fastjet::contrib::ConstituentSubtractor subtractor;
+    subtractor.set_distance_type(fastjet::contrib::ConstituentSubtractor::deltaR);  // distance in eta-phi plane
+    subtractor.set_max_distance(0.5);  // free parameter for the maximal allowed distance between particle i and ghost k
+    subtractor.set_alpha(0.);  // free parameter for the distance measure (the exponent of particle pt). Note that in older versions of the package alpha was multiplied by two but in newer versions this is not the case anymore
+    //subtractor.set_scale_fourmomentum(); //commented to treat particles as massless
+    subtractor.set_remove_all_zero_pt_particles(true);
+
+    std::vector<fastjet::PseudoJet> subtracted_particles = subtractor.do_subtraction(particlesSig, particlesDummy);
 
 
     //---------------------------------------------------------------------------
     //   jet clustering
     //---------------------------------------------------------------------------
-    
     ClusterSequenceArea csSig(particlesSig, jet_def, area_def);
     jetCollection jetCollectionSig(sorted_by_pt(jet_selector(csSig.inclusive_jets(10.))));
     jetCollection jetCollectionSigJewel(GetCorrectedJets(jetCollectionSig.getJet(), particlesDummy));
- 
+    
+    // run the clustering on subtracted event
+    fastjet::ClusterSequenceArea csSigCS(subtracted_particles, jet_def, area_def);
+    jetCollection jetCollectionSigCS(sorted_by_pt(jet_selector(csSigCS.inclusive_jets(10.))));
     
     //---------------------------------------------------------------------------
     //   Groom the jets
@@ -135,21 +148,7 @@ int main (int argc, char ** argv) {
     jetCollectionSigSDJewel.addVector("sigJetSDJeweldr12", CalculateDR(SigSDJewel));
 
 
-    //---------------------------------------------------------------------------
-    //   subtract medium response in full event
-    //---------------------------------------------------------------------------
-    fastjet::contrib::ConstituentSubtractor subtractor;
-    subtractor.set_distance_type(fastjet::contrib::ConstituentSubtractor::deltaR);  // distance in eta-phi plane
-    subtractor.set_max_distance(0.5);  // free parameter for the maximal allowed distance between particle i and ghost k
-    subtractor.set_alpha(0.);  // free parameter for the distance measure (the exponent of particle pt). Note that in older versions of the package alpha was multiplied by two but in newer versions this is not the case anymore
-    //subtractor.set_scale_fourmomentum();
-    subtractor.set_remove_all_zero_pt_particles(true);
 
-    std::vector<fastjet::PseudoJet> subtracted_particles = subtractor.do_subtraction(particlesSig, particlesDummy);
-
-    // run the clustering on subtracted event
-    fastjet::ClusterSequenceArea csSigCS(subtracted_particles, jet_def, area_def);
-    jetCollection jetCollectionSigCS(sorted_by_pt(jet_selector(csSigCS.inclusive_jets(10.))));
 
     //match CS jets to signal jets
     jetMatcher jmCS(R);
