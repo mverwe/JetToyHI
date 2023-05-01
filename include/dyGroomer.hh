@@ -28,6 +28,8 @@ private :
 
   std::vector<fastjet::PseudoJet> fjInputs_;   //ungroomed jets
   std::vector<fastjet::PseudoJet> fjOutputs_;  //groomed jets
+  std::vector<fastjet::PseudoJet> fjDaughters1_;  //daughter 1
+  std::vector<fastjet::PseudoJet> fjDaughters2_;  //daughter 2
   std::vector<double>             zg_;         //zg of groomed jets
   std::vector<int>                drBranches_; //dropped branches
   std::vector<double>             dr12_;       //distance between the two subjet
@@ -40,6 +42,8 @@ public :
   dyGroomer(double a = 1);
   void setInputJets(std::vector<fastjet::PseudoJet> v);
   std::vector<fastjet::PseudoJet> getGroomedJets() const;
+  std::vector<fastjet::PseudoJet> getDaughters1() const;
+   std::vector<fastjet::PseudoJet> getDaughters2() const;
   std::vector<double> getZgs() const;
   std::vector<double>  calculateZg();
   std::vector<double> getDR12() const;
@@ -67,6 +71,16 @@ void dyGroomer::setInputJets(const std::vector<fastjet::PseudoJet> v)
 std::vector<fastjet::PseudoJet> dyGroomer::getGroomedJets() const
 {
    return fjOutputs_;
+}
+
+std::vector<fastjet::PseudoJet> dyGroomer::getDaughters1() const
+{
+   return fjDaughters1_;
+}
+
+std::vector<fastjet::PseudoJet> dyGroomer::getDaughters2() const
+{
+   return fjDaughters2_;
 }
 
 std::vector<double> dyGroomer::getZgs() const
@@ -126,6 +140,8 @@ double dyGroomer::getKappa(double pt, double theta, double z)
 std::vector<fastjet::PseudoJet> dyGroomer::doGrooming()
 {
    fjOutputs_.reserve(fjInputs_.size());
+   fjDaughters1_.reserve(fjInputs_.size());
+   fjDaughters2_.reserve(fjInputs_.size());
    zg_.reserve(fjInputs_.size());
    dr12_.reserve(fjInputs_.size());
    kt_.reserve(fjInputs_.size());
@@ -141,6 +157,8 @@ std::vector<fastjet::PseudoJet> dyGroomer::doGrooming()
 
       if(!jet.has_constituents()) {
          fjOutputs_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
+         fjDaughters1_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
+         fjDaughters2_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
          zg_.push_back(-1.);
          dr12_.push_back(-1.);
          kt_.push_back(-1.);
@@ -164,6 +182,8 @@ std::vector<fastjet::PseudoJet> dyGroomer::doGrooming()
 
       if(tempJets.size()<1) {
          fjOutputs_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
+         fjDaughters1_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
+         fjDaughters2_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
          zg_.push_back(-1.);
          dr12_.push_back(-1.);
          kt_.push_back(-1.);
@@ -237,13 +257,14 @@ std::vector<fastjet::PseudoJet> dyGroomer::doGrooming()
 
 //    fastjet::contrib::NsubjettinessRatio nSub32_beta2(3,2, fastjet::contrib::OnePass_KT_Axes(), fastjet::contrib::UnnormalizedMeasure(beta));
 
-  //  double tau21_beta2 = nSub21_beta2(groomed_jet);
+  //  double tau21_beta2 = nSub21beta2(groomed_jet);
    // double tau32_beta2 = nSub32_beta2(groomed_jet);
 
    // tau21_.push_back(tau21_beta2);
   //  tau32_.push_back(tau32_beta2);
     fjOutputs_.push_back(groomed_jet); //put CA reclusterd jet after grooming
-
+    fjDaughters1_.push_back(daughter1);
+    fjDaughters2_.push_back(daughter2);
    }
    else {fjOutputs_.push_back(fastjet::PseudoJet(0.,0.,0.,0.));
          zg_.push_back(-1.);
