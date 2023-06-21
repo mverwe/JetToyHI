@@ -33,8 +33,11 @@
 
 # specific for this project
 .fastjet
+.vincia
+*.pu14
 runtest
 runFromFile
 runCreatePythiaEvents
 runCreateThermalEvents
 Makefile
+
