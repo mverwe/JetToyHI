@@ -33,17 +33,18 @@ private :
   std::vector<fastjet::PseudoJet> partons;
 
 public :
-  pythiaEvent(double pthat = 120., unsigned int tune = 14, double rapMin = -3., double rapMax = 3., bool partonLevel = false, bool vinciaShower = false);
+  pythiaEvent(double pthat = 120., unsigned int tune = 14, double rapMin = -3., double rapMax = 3., bool partonLevel = false, bool vinciaShower = false, bool flatPtHat = false);
   std::vector<fastjet::PseudoJet> createPythiaEvent();
   
   std::vector<fastjet::PseudoJet> getPartonList() const { return partons; }
 
   void getStat() {pythia.stat();}
   double getWeight() {return pythia.info.weight();}
+  double getPtHat()  {return pythia.info.pTHat();}
 
 };
   
-pythiaEvent::pythiaEvent(double pthat, unsigned int tune, double rapMin, double rapMax, bool partonLevel, bool vinciaShower) :
+pythiaEvent::pythiaEvent(double pthat, unsigned int tune, double rapMin, double rapMax, bool partonLevel, bool vinciaShower, bool flatPtHat) :
   pthat_(pthat), tune_(tune), rapMin_(rapMin), rapMax_(rapMax), partonLevel_(partonLevel), vinciaShower_(vinciaShower)
 {
     
@@ -64,6 +65,13 @@ pythiaEvent::pythiaEvent(double pthat, unsigned int tune, double rapMin, double 
     pythia.readString("PartonShowers:Model = 2"); //activate the VINCIA parton shower
   else
       pythia.readString(Form("Tune:pp = %d",tune_));
+
+  if(flatPtHat) {
+    //flat pthard
+    pythia.readString("PhaseSpace:bias2Selection = on");
+    pythia.readString("PhaseSpace:bias2SelectionPow = 4.5");
+    pythia.readString("PhaseSpace:bias2SelectionRef = 15");
+  }
   
   pythia.init();
 

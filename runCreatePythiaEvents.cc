@@ -58,9 +58,10 @@ int main (int argc, char ** argv)
     //---------------------------------------------------------------------------
 
     fout << "# event " << ie << "\n";
-
+   
     //create pythia event
     std::vector<fastjet::PseudoJet> particlesSig = pyt.createPythiaEvent();
+    fout << "weight " << pyt.getWeight() <<  " pthat " << pyt.getPtHat() << "\n"; //<< " weight " << pow(15./pyt.getPtHat(),4.5)
 
     std::vector<fastjet::PseudoJet> partons = pyt.getPartonList();
     for(fastjet::PseudoJet p : partons) {
@@ -75,10 +76,14 @@ int main (int argc, char ** argv)
       fout << p.px() << " " << p.py() << " " << p.pz() << " " << p.m() << " " << pdgid << " " << vtx << "\n";
     }
     fout << "end\n";
+    
+    //std::cout << "weight: " << std::scientific << pyt.getWeight() << std::endl;
+    //std::cout << "pthat: " << std::fixed <<  pyt.getPtHat() << std::endl;
   }
 
   pyt.getStat();
-  
+ 
+
   fout.close();
 
   std::cout << "\n Finished generating PYTHIA events" << std::endl;
