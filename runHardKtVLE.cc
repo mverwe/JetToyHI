@@ -49,7 +49,7 @@ int main (int argc, char ** argv) {
   treeWriter trwSig("jetTreeSig");
  
   //Jet definition
-  double R                   = 0.4;
+  double R                   = 0.2;
   double ghostRapMax         = 6.0;
   double ghost_area          = 0.005;
   int    active_area_repeats = 1;
@@ -119,7 +119,7 @@ int main (int argc, char ** argv) {
     jetCollectionSigDYKTD.addVector("kappaSigDYKTD",    dygKTDSig.getKappas());
     jetCollectionSigDYKTD.addVector("rgSigDYKTD",       dygKTDSig.getDR12());   
     jetCollectionSigDYKTD.addVector("zgSigDYKTD",       dygKTDSig.getZgs());   
-    jetCollectionSigDYKTD.addVector("ktgSigDYKTD",       dygKTDSig.getKts());
+    jetCollectionSigDYKTD.addVector("ktgSigDYKTD",      dygKTDSig.getKts());
 
     //---------------------------------------------------------------------------
     //   Recursive Soft Drop for signal jets
