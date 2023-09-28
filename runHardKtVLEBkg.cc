@@ -49,7 +49,7 @@ int main (int argc, char ** argv) {
   treeWriter trwSig("jetTreeSig");
  
   //Jet definition
-  double R                   = 0.4;
+  double R                   = 0.2;
   double ghostRapMax         = 6.0;
   double ghost_area          = 0.005;
   int    active_area_repeats = 1;
@@ -172,7 +172,9 @@ int main (int argc, char ** argv) {
     //---------------------------------------------------------------------------
     //   Full event constituent subtraction
     //---------------------------------------------------------------------------
-    csSubtractorFullEvent csSubFull( 0., 0.25, 0.005, 2.5);  // alpha, rParam, ghA, ghRapMax
+    //csSubtractorFullEvent csSubFull( 0., 0.25, 0.005, 2.5);  // alpha, rParam, ghA, ghRapMax
+    //using smaller Rmax for smaller jets
+    csSubtractorFullEvent csSubFull( 0., 0.1, 0.005, 2.5);  // alpha, rParam, ghA, ghRapMax
     csSubFull.setRho(csSub.getRho());
     csSubFull.setRhom(csSub.getRhoM());
     csSubFull.setInputParticles(particlesMerged);
