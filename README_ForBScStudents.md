@@ -93,7 +93,7 @@ cd ..
 ```sh
 git clone https://github.com/mverwe/JetToyHI.git
 cd JetToyHI
-git pull --rebase origin pyt83
+git pull --rebase origin master
 
 echo `$FASTJET/bin/fastjet-config --prefix` > .fastjet
 echo $PYTHIA > .pythia8
