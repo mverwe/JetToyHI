@@ -54,9 +54,9 @@ echo $rootsetup >> ~/.bashrc
 
 ### Install PYTHIA8.3
 ```sh
-wget http://home.thep.lu.se/~torbjorn/pythia8/pythia8303.tgz
-tar xvfz pythia8303.tgz
-cd pythia8303
+wget https://pythia.org/download/pythia83/pythia8310.tgz
+tar xvfz pythia8310.tgz
+cd pythia8310
 ./configure
 make
 PYTHIA=$PWD
