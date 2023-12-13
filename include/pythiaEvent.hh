@@ -29,11 +29,12 @@ private :
   double rapMax_;
   bool   partonLevel_;
   bool   vinciaShower_;
+  int    process_;      //0: dijet; 1: prompt photon
 
   std::vector<fastjet::PseudoJet> partons;
 
 public :
-  pythiaEvent(double pthat = 120., unsigned int tune = 14, double rapMin = -3., double rapMax = 3., bool partonLevel = false, bool vinciaShower = false, bool flatPtHat = false);
+  pythiaEvent(double pthat = 120., unsigned int tune = 14, double rapMin = -3., double rapMax = 3., bool partonLevel = false, bool vinciaShower = false, bool flatPtHat = false, int process = 0);
   std::vector<fastjet::PseudoJet> createPythiaEvent();
   
   std::vector<fastjet::PseudoJet> getPartonList() const { return partons; }
@@ -44,14 +45,15 @@ public :
 
 };
   
-pythiaEvent::pythiaEvent(double pthat, unsigned int tune, double rapMin, double rapMax, bool partonLevel, bool vinciaShower, bool flatPtHat) :
-  pthat_(pthat), tune_(tune), rapMin_(rapMin), rapMax_(rapMax), partonLevel_(partonLevel), vinciaShower_(vinciaShower)
+pythiaEvent::pythiaEvent(double pthat, unsigned int tune, double rapMin, double rapMax, bool partonLevel, bool vinciaShower, bool flatPtHat, int process) :
+  pthat_(pthat), tune_(tune), rapMin_(rapMin), rapMax_(rapMax), partonLevel_(partonLevel), vinciaShower_(vinciaShower), process_(process)
 {
     
   // Generator. LHC process and output selection. Initialization.
   // tunes: http://home.thep.lu.se/~torbjorn/pythia82html/Tunes.html
   pythia.readString("Beams:eCM = 5020.");
-  pythia.readString("HardQCD:all = on");
+  if(process_==0)      pythia.readString("HardQCD:all = on");
+  else if(process_==1) pythia.readString("PromptPhoton:all = on");
   pythia.readString(Form("PhaseSpace:pTHatMin = %.1f",pthat_));
   pythia.readString("Next:numberShowInfo = 0");
   pythia.readString("Next:numberShowProcess = 0");
@@ -100,7 +102,7 @@ std::vector<fastjet::PseudoJet> pythiaEvent::createPythiaEvent() {
       //find the case where the splitting to two separate daughters happens
       int d1 = pythia.event[i].daughter1();
       int d2 = pythia.event[i].daughter2();
-      while(d1==d2) {
+      while(d1==d2 && d1>0) {
         d1 = pythia.event[d1].daughter1();
         d2 = pythia.event[d2].daughter2();
       }
@@ -139,15 +141,17 @@ std::vector<fastjet::PseudoJet> pythiaEvent::createPythiaEvent() {
       }
 
       //std::cout << "mom: " << i << " d1: " << d1 << " d2: " << d2 << std::endl; 
-      
-      fastjet::PseudoJet pd1(pythia.event[d1].px(),pythia.event[d1].py(),pythia.event[d1].pz(),pythia.event[d1].e());
-      pd1.set_user_info(new extraInfo(pythia.event[d1].id(), -2)); 
-      partons.push_back(pd1);
 
-      fastjet::PseudoJet pd2(pythia.event[d2].px(),pythia.event[d2].py(),pythia.event[d2].pz(),pythia.event[d2].e());
-      pd2.set_user_info(new extraInfo(pythia.event[d2].id(), -2)); 
-      partons.push_back(pd2);
-      
+      if(d1>0) {
+	fastjet::PseudoJet pd1(pythia.event[d1].px(),pythia.event[d1].py(),pythia.event[d1].pz(),pythia.event[d1].e());
+	pd1.set_user_info(new extraInfo(pythia.event[d1].id(), -2)); 
+	partons.push_back(pd1);
+      }
+      if(d2>0) {
+	fastjet::PseudoJet pd2(pythia.event[d2].px(),pythia.event[d2].py(),pythia.event[d2].pz(),pythia.event[d2].e());
+	pd2.set_user_info(new extraInfo(pythia.event[d2].id(), -2)); 
+	partons.push_back(pd2);
+      }
     }
   }
 
