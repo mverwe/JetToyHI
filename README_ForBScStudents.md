@@ -9,18 +9,17 @@ First you have to install docker on your laptop. For windows you can download it
 
 Once you have installed docker you will have to install some libraries. Follow these instructions that have you can type into the terminal:
 ```sh
-docker pull ubuntu:20.04 #this gets long-term support ubunut version 20.04
+docker pull ubuntu:23.04 #this gets long-term support ubuntu version 23.04
 
-docker run -i -t ubuntu /bin/bash
+docker run -i -t ubuntu /bin/bash   # add --platform linux/amd64 when using apple M chip
 
 apt update -y
 
-apt install -y vim wget curl libcurl4-gnutls-dev build-essential gfortran cmake libmysqlclient-dev xorg-dev libglu1-mesa-dev libfftw3-dev libssl libxml2-dev git unzip python3-pip autoconf automake autopoint texinfo gettext libtool libtool-bin pkg-config bison flex libperl-dev libbz2-dev libboost-all-dev swig liblzma-dev libnanomsg-dev libyaml-cpp-dev rsync lsb-release unzip environment-modules
+apt install -y vim wget curl libcurl4-gnutls-dev build-essential gfortran cmake libmysqlclient-dev xorg-dev libglu1-mesa-dev libfftw3-dev libssl-dev libxml2-dev git unzip python3-pip autoconf automake autopoint texinfo gettext libtool libtool-bin pkg-config bison flex libperl-dev libbz2-dev libboost-all-dev swig liblzma-dev libnanomsg-dev libyaml-cpp-dev rsync lsb-release unzip environment-modules
 
-apt-get install xutils-dev libgsl23 libtbb-dev
+apt-get install xutils-dev libgsl-dev libtbb-dev
 
-apt-get install apt-utils libssl-dev
-apt-get install libgsl0-dev
+apt-get install apt-utils
 
 pip install matplotlib numpy certifi ipython==7.28.0 ipywidgets ipykernel notebook metakernel pyyaml
 ```
@@ -45,11 +44,15 @@ cd soft
 ### Install ROOT
 The easiest is to just grep a precompiled version from the root website https://root.cern/install/all_releases/ (take ROOT6). You can do this directly from the terminal:
 ```sh
-wget https://root.cern.ch/download/root_v6.14.04.Linux-ubuntu18-x86_64-gcc7.3.tar.gz  #adjust this line with the appropriate version for you OS (see link above)
-tar xvfz  root_v6.14.04.Linux-ubuntu18-x86_64-gcc7.3.tar.gz
+wget https://root.cern/download/root_v6.30.02.Linux-ubuntu23.04-x86_64-gcc12.3.tar.gz  #adjust this line with the appropriate version for you OS (see link above)
+tar xvfz root_v6.30.02.Linux-ubuntu23.04-x86_64-gcc12.3.tar.gz
 rootsetup=$PWD/root/bin/thisroot.sh
-. $rootsetup
-echo $rootsetup >> ~/.bashrc
+cd root
+source $rootsetup
+echo 'cd '${PWD}'' >> ~/.bashrc
+echo 'source '${rootsetup}'' >> ~/.bashrc
+cd ..
+echo 'cd '${PWD}'' >> ~/.bashrc
 ```
 
 ### Install PYTHIA8.3
@@ -66,18 +69,18 @@ cd ..
 ### Install fastjet
 
 ```sh
-curl -O http://fastjet.fr/repo/fastjet-3.3.3.tar.gz 
-tar zxvf fastjet-3.3.3.tar.gz
-cd fastjet-3.3.3/
+curl -O http://fastjet.fr/repo/fastjet-3.4.2.tar.gz 
+tar zxvf fastjet-3.4.2.tar.gz
+cd fastjet-3.4.2/
 
-./configure --prefix=$PWD/../fastjet333-install
+./configure --prefix=$PWD/../fastjet342-install
 make
 make check
 make install
-FASTJET=$PWD/../fastjet333-install
+FASTJET=$PWD/../fastjet342-install
 cd ..
 
-export FJ_CONTRIB_VER=1.045 
+export FJ_CONTRIB_VER=1.053 
 curl -Lo source.tar.gz http://fastjet.hepforge.org/contrib/downloads/fjcontrib-"$FJ_CONTRIB_VER".tar.gz
 tar xzf source.tar.gz
 cd fjcontrib-"$FJ_CONTRIB_VER"
