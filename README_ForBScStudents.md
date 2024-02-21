@@ -30,6 +30,9 @@ If you prefer to use a virtual machine running ubuntu, use google to find one th
 ### MacOS
 On a mac there is no need for a virtual machine or docker. But you will need a C++ compiler that you can get by installing xcode to be found in the AppStore.
 
+### Nikhef
+On this webpage you find useful information about connecting to the Nikhef server and setting up VSCode: https://codimd.web.cern.ch/bt5CCq7JQlCsDk5xT-EHrw#Setting-up-your-Visual-Studio-Code-remote
+
 ## JetToyHI installation
 
 Start with creating a directory in which you want to install the software that you will use for this project. For example:
