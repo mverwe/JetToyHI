@@ -57,6 +57,10 @@ echo 'source '${rootsetup}'' >> ~/.bashrc
 cd ..
 echo 'cd '${PWD}'' >> ~/.bashrc
 ```
+If you are working on a system with cvmfs you can also grep it from there. For example
+```sh
+source /cvmfs/sft.cern.ch/lcg/views/setupViews.sh LCG_105 x86_64-centos7-gcc12-opt
+```
 
 ### Install PYTHIA8.3
 ```sh
