@@ -76,15 +76,15 @@ cd ..
 ### Install fastjet
 
 ```sh
-curl -O http://fastjet.fr/repo/fastjet-3.4.2.tar.gz 
-tar zxvf fastjet-3.4.2.tar.gz
-cd fastjet-3.4.2/
+curl -O http://fastjet.fr/repo/fastjet-3.4.3.tar.gz 
+tar zxvf fastjet-3.4.3.tar.gz
+cd fastjet-3.4.3/
 
-./configure --prefix=$PWD/../fastjet342-install
+./configure --prefix=$PWD/../fastjet343-install
 make
 make check
 make install
-FASTJET=$PWD/../fastjet342-install
+FASTJET=$PWD/../fastjet343-install
 cd ..
 
 export FJ_CONTRIB_VER=1.053 
