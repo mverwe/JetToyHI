@@ -88,8 +88,7 @@ FASTJET=$PWD/../fastjet353-install
 cd ..
 
 export FJ_CONTRIB_VER=1.105 
-curl -Lo source.tar.gz 
-https://www.fastjet.fr/contrib/downloads/fjcontrib-"$FJ_CONTRIB_VER".tar.gz
+curl -Lo source.tar.gz https://www.fastjet.fr/contrib/downloads/fjcontrib-"$FJ_CONTRIB_VER".tar.gz
 tar xzf source.tar.gz
 cd fjcontrib-"$FJ_CONTRIB_VER"
 ./configure --fastjet-config=$FASTJET/bin/fastjet-config --prefix=`$FASTJET/bin/fastjet-config --prefix`
