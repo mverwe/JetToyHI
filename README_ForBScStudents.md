@@ -76,19 +76,20 @@ cd ..
 ### Install fastjet
 
 ```sh
-curl -O http://fastjet.fr/repo/fastjet-3.4.3.tar.gz 
-tar zxvf fastjet-3.4.3.tar.gz
-cd fastjet-3.4.3/
+curl -O https://www.fastjet.fr/repo/fastjet-3.5.3.tar.gz
+tar zxvf fastjet-3.5.3.tar.gz
+cd fastjet-3.5.3/
 
-./configure --prefix=$PWD/../fastjet343-install
+./configure --prefix=$PWD/../fastjet353-install
 make
 make check
 make install
-FASTJET=$PWD/../fastjet343-install
+FASTJET=$PWD/../fastjet353-install
 cd ..
 
-export FJ_CONTRIB_VER=1.053 
-curl -Lo source.tar.gz http://fastjet.hepforge.org/contrib/downloads/fjcontrib-"$FJ_CONTRIB_VER".tar.gz
+export FJ_CONTRIB_VER=1.105 
+curl -Lo source.tar.gz 
+https://www.fastjet.fr/contrib/downloads/fjcontrib-"$FJ_CONTRIB_VER".tar.gz
 tar xzf source.tar.gz
 cd fjcontrib-"$FJ_CONTRIB_VER"
 ./configure --fastjet-config=$FASTJET/bin/fastjet-config --prefix=`$FASTJET/bin/fastjet-config --prefix`
