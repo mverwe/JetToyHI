@@ -64,9 +64,9 @@ source /cvmfs/sft.cern.ch/lcg/views/setupViews.sh LCG_105 x86_64-centos7-gcc12-o
 
 ### Install PYTHIA8.3
 ```sh
-wget https://pythia.org/download/pythia83/pythia8310.tgz 
-tar xvfz pythia8310.tgz
-cd pythia8310
+wget https://www.pythia.org/releases/pythia83/pythia8318.tgz
+tar xvfz pythia8318.tgz
+cd pythia8318
 ./configure
 make
 PYTHIA=$PWD
