@@ -106,8 +106,8 @@ if (defined($options{"3"})) {
 }
 
 if (defined($options{"1"})) {
-  $makefile .= "CXXFLAGS += -std=c++11\n";
-  $makefile .= "LDFLAGS += -std=c++11\n";
+  $makefile .= "CXXFLAGS += -std=c++17\n";
+  $makefile .= "LDFLAGS += -std=c++17\n";
 }
 
 if (defined($options{"f"})) {

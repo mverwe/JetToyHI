@@ -1,6 +1,8 @@
 #ifndef csSubtractor_h
 #define csSubtractor_h
 
+#include <TMath.h>
+
 #include <iostream>
 #include <vector>
 #include <string>

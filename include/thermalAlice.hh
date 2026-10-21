@@ -1,6 +1,8 @@
 #ifndef thermalAlice_h
 #define thermalAlice_h
 
+#include <TMath.h>
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -8,12 +10,12 @@
 #include <fstream>
 #include <random>
 
-#include "extraInfo.hh"
-
 //ROOT stuff
 #include <TRandom3.h>
 #include <TMath.h>
 #include "TF1.h"
+
+#include "extraInfo.hh"
 
 using namespace fastjet;
 using namespace std;

@@ -1,6 +1,8 @@
 #ifndef skSubtractor_h
 #define skSubtractor_h
 
+#include <TMath.h>
+
 #include <iostream>
 #include <vector>
 #include <string>

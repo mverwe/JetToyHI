@@ -7,14 +7,15 @@
 #include <algorithm>
 #include <fstream>
 
+// ROOT headers must be included before FastJet headers to avoid the Error name collision.
+#include "TVector2.h"
+#include "TRandom3.h"
+#include "TMath.h"
+
 #include "fastjet/PseudoJet.hh"
 #include "fastjet/ClusterSequenceArea.hh"
 
 #include "fastjet/contrib/ConstituentSubtractor.hh"
-
-#include "TVector2.h"
-#include "TRandom3.h"
-#include "TMath.h"
 
 using namespace std;
 

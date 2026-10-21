@@ -1,18 +1,19 @@
 #ifndef thermalEvent_h
 #define thermalEvent_h
 
+#include <TMath.h>
+
 #include <iostream>
 #include <vector>
 #include <string>
 #include <algorithm>
 #include <fstream>
 
-#include "extraInfo.hh"
-
 //ROOT stuff
 #include <TRandom3.h>
-#include <TMath.h>
 #include "TF1.h"
+
+#include "extraInfo.hh"
 
 using namespace fastjet;
 using namespace std;

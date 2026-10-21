@@ -6,7 +6,7 @@
 #include <string>
 #include <algorithm>
 #include <fstream>
-#include "TF1.h"
+//#include "TF1.h"
 
 #include "../PU14/PU14.hh"
 #include "fastjet/PseudoJet.hh"
@@ -14,8 +14,8 @@
 #include "fastjet/contrib/SoftDrop.hh"
 #include "fastjet/contrib/Recluster.hh"
 
-#include "TMath.h"
-#include "TH2.h"
+//#include "TMath.h"
+//#include "TH2.h"
 
 
 #include "jetCollection.hh"
@@ -339,8 +339,8 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGrooming()
         }
 
         if(subjet1.delta_R(subjet2)!=0){
-          logdr12_.push_back(TMath::Log(1/subjet1.delta_R(subjet2)));
-          logzgdr12_.push_back(TMath::Log(zg*subjet1.delta_R(subjet2)));
+          logdr12_.push_back(log(1/subjet1.delta_R(subjet2)));
+          logzgdr12_.push_back(log(zg*subjet1.delta_R(subjet2)));
         }
         else{
           logdr12_.push_back(0.);
@@ -493,8 +493,8 @@ std::vector<fastjet::PseudoJet> softDropGroomer::doGroomingWithJewelSub(std::vec
         }
 
         if(sj1.delta_R(sj2)!=0){
-          logdr12_.push_back(TMath::Log(1/sj1.delta_R(sj2)));
-          logzgdr12_.push_back(TMath::Log(zg*sj1.delta_R(sj2)));
+          logdr12_.push_back(log(1/sj1.delta_R(sj2)));
+          logzgdr12_.push_back(log(zg*sj1.delta_R(sj2)));
         }
         else{
           logdr12_.push_back(0.);

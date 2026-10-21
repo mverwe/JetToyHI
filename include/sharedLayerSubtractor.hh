@@ -1,6 +1,8 @@
 #ifndef sharedLayerSubtractor_h
 #define sharedLayerSubtractor_h
 
+#include <TMath.h>
+
 #include <iostream>
 #include <vector>
 #include <string>

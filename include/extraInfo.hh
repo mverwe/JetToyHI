@@ -1,6 +1,8 @@
 #ifndef extraInfo_h
 #define extraInfo_h
 
+#include <TMath.h>
+
 #include "fastjet/ClusterSequence.hh"
 #include "fastjet/Selector.hh"
 
